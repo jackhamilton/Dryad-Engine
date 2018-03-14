@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dropkick Core Engine", "Dropkick Core Engine\Dropkick Core Engine.vcxproj", "{9C5C4109-9807-4272-B750-16F0AE539716}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{DE772ADC-B023-452F-9676-C02C1C957B15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Debug|x64.ActiveCfg = Debug|x64
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Debug|x64.Build.0 = Debug|x64
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Debug|x86.ActiveCfg = Debug|Win32
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Debug|x86.Build.0 = Debug|Win32
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Release|x64.ActiveCfg = Release|x64
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Release|x64.Build.0 = Release|x64
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Release|x86.ActiveCfg = Release|Win32
-		{9C5C4109-9807-4272-B750-16F0AE539716}.Release|x86.Build.0 = Release|Win32
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Debug|x64.ActiveCfg = Debug|x64
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Debug|x64.Build.0 = Debug|x64
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Debug|x86.ActiveCfg = Debug|Win32
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Debug|x86.Build.0 = Debug|Win32
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Release|x64.ActiveCfg = Release|x64
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Release|x64.Build.0 = Release|x64
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Release|x86.ActiveCfg = Release|Win32
+		{DE772ADC-B023-452F-9676-C02C1C957B15}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
