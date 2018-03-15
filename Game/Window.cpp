@@ -53,8 +53,9 @@ Window::Window(const char *title, int width, int height, Resolution res) {
 		}
 		else {
 			screenSurface = SDL_GetWindowSurface(window);
+			/*
 			SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
-			SDL_UpdateWindowSurface(window);
+			SDL_UpdateWindowSurface(window);*/
 		}
 	}
 }
@@ -83,6 +84,11 @@ void Window::changeWindowResolution(Resolution res, int width, int height)
 	}
 	SDL_SetWindowSize(window, width, height);
 	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+}
+
+void Window::setFullscreen(bool fullscreen)
+{
+	SDL_SetWindowFullscreen(window, fullscreen);
 }
 
 void Window::destroy() {

@@ -6,9 +6,9 @@
 class World {
 public:
 	World();
-	list<GameObject>* getObjects();
+	list<GameObject> getObjects();
 private:
-	list<GameObject>* objects;
+	list<GameObject> objects;
 protected:
 	void destroy(GameObject object);
 	void destroy();

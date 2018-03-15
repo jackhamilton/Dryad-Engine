@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <GameObject.h>
 #include <Point.h>
+#include <World.h>
 
-Point* position;
-World* world;
+Point position;
+World world;
 
 static int cID = 0;
 
-GameObject::GameObject(Point* position)
+GameObject::GameObject(Point position)
 {
 	if (cID == NULL) {
 		id = 0;
@@ -18,14 +19,4 @@ GameObject::GameObject(Point* position)
 		cID++;
 	}
 	::position = position;
-}
-
-void GameObject::destroy()
-{
-	delete position;
-}
-
-void GameObject::setWorld(World* world)
-{
-	::world = world;
 }

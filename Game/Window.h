@@ -34,6 +34,7 @@ public:
 	void changeWindowResolution(Resolution res);
 	void changeWindowResolution(int width, int height);
 	void changeWindowResolution(Resolution res, int width, int height);
+	void setFullscreen(bool fullscreen);
 	void destroy();
 private:
 	SDL_Window* window;
