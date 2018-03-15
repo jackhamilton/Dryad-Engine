@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char* args[]) {
-	Window window = Window("Hello World", 1280, 720);
+	Window window = Window("Hello World", ml16_9);
 	system("PAUSE");
 	window.destroy();
 	return 0;
