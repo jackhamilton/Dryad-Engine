@@ -10,6 +10,29 @@ Resolution res;
 
 SDL_Window* window;
 
+void Window::calculateResolution(Resolution res, int &width, int &height) {
+	switch (res) {
+	case xxs4_3: width = 640, height = 480; break;
+	case xs4_3: width = 800, height = 600; break;
+	case s4_3: width = 1024, height = 768; break;
+	case m4_3: width = 1280, height = 960; break;
+	case sl4_3: width = 1440, height = 1080; break;
+	case ml4_3: width = 1600, height = 1200; break;
+	case l4_3: width = 1920, height = 1440; break;
+	case s16_10: width = 1280, height = 800; break;
+	case m16_10: width = 1440, height = 900; break;
+	case sl16_10: width = 1680, height = 1050; break;
+	case l16_10: width = 1920, height = 1440; break;
+	case xl16_10: width = 2560, height = 1600; break;
+	case s16_9: width = 1024, height = 567; break;
+	case m16_9: width = 1280, height = 720; break;
+	case sl16_9: width = 1336, height = 768; break;
+	case ml16_9: width = 1600, height = 900; break;
+	case l16_9: width = 1920, height = 1080; break;
+	case xl16_9: width = 2560, height = 1440; break;
+	case xxl16_9: width = 3480, height = 2160; break;
+	}
+}
 
 Window::Window(const char *title, int width, int height, Resolution res) {
 	if (res != NULL) {
@@ -36,6 +59,15 @@ Window::Window(const char *title, int width, int height, Resolution res) {
 	}
 }
 
+void Window::changeWindowResolution(Resolution res) {
+	changeWindowResolution(res, 0, 0);
+}
+
+void Window::changeWindowResolution(int width, int height) {
+	changeWindowResolution((Resolution)NULL, width, height);
+}
+
+
 /*
 enum Resolution {
 //This is most of the standard screen resolutions for various aspect ratios.
@@ -43,28 +75,14 @@ enum Resolution {
 
 };
 */
-void Window::calculateResolution(Resolution res, int &width, int &height) {
-	switch (res) {
-	case xxs4_3: width = 640, height = 480; break;
-	case xs4_3: width = 800, height = 600; break;
-	case s4_3: width = 1024, height = 768; break;
-	case m4_3: width = 1280, height = 960; break;
-	case sl4_3: width = 1440, height = 1080; break;
-	case ml4_3: width = 1600, height = 1200; break;
-	case l4_3: width = 1920, height = 1440; break;
-	case s16_10: width = 1280, height = 800; break;
-	case m16_10: width = 1440, height = 900; break;
-	case sl16_10: width = 1680, height = 1050; break;
-	case l16_10: width = 1920, height = 1440; break;
-	case xl16_10: width = 2560, height = 1600; break;
-	case s16_9: width = 1024, height = 567; break;
-	case m16_9: width = 1280, height = 720; break;
-	case sl16_9: width = 1336, height = 768; break;
-	case ml16_9: width = 1600, height = 900; break;
-	case l16_9: width = 1920, height = 1080; break;
-	case xl16_9: width = 2560, height = 1440; break;
-	case xxl16_9: width = 3480, height = 2160; break;
+
+void Window::changeWindowResolution(Resolution res, int width, int height)
+{
+	if (res != NULL) {
+		calculateResolution(res, width, height);
 	}
+	SDL_SetWindowSize(window, width, height);
+	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 }
 
 void Window::destroy() {

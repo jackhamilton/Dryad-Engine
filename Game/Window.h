@@ -31,6 +31,9 @@ public:
 	Window(const char *title, int width, int height, Resolution res);
 	Window(const char *title, Resolution resolution) : Window(title, 0, 0, resolution) {}
 	Window() : Window("", 640, 480, (Resolution)NULL) {};
+	void changeWindowResolution(Resolution res);
+	void changeWindowResolution(int width, int height);
+	void changeWindowResolution(Resolution res, int width, int height);
 	void destroy();
 private:
 	SDL_Window* window;
