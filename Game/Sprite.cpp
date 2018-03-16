@@ -9,7 +9,7 @@ Sprite::Sprite(char filename[], Window window)
 	Renderer renderer = *windowRenderer;
 	for (int x = 0; x < sizeof(filename); x++) {
 		SDL_Surface * tempImage = IMG_Load(&filename[x]);
-		images[x] = SDL_CreateTextureFromSurface(
+		images[x] = SDL_CreateTextureFromSurface(//Maybe move this to the render loop
 			renderer.getSDLRenderer(), tempImage);
 		SDL_FreeSurface(tempImage); 
 		//might cause problems? Freeing the surface before rendering
