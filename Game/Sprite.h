@@ -9,7 +9,7 @@
 class Sprite {
 public:
 	std::list<SDL_Texture*> images;
-	Sprite(char filename[], Window window);
+	Sprite(const char* filename[], Window* window);
 	void setLocation(Point location) {
 		Sprite::location = location;
 	}

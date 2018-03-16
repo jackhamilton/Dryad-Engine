@@ -95,19 +95,14 @@ void Window::render()
 		pair<int, int> dimensions = cSprite->getDimensions();
 		SDL_Rect dsrect = { location.x, location.y, dimensions.first, dimensions.second };
 		renderer->render(cSprite->getCurrentImage(), dsrect);
-		delete cSprite;//problems?
 		it++;
 	}
 }
 
 void Window::destroy() {
-	while (!sprites.empty()) {
-		Sprite* s = sprites.front();
-		s->destroy();;
-		delete s;//problems?
-		//possible memory leak? popping might delete though
-		sprites.pop_front();
-	}
+	for (list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
+		(*i)->destroy();
+	sprites.clear();
 	delete renderer;
 	SDL_DestroyWindow(window);
 	SDL_Quit();

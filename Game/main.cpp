@@ -8,14 +8,14 @@
 using namespace std;
 
 int main(int argc, char* args[]) {
-	Window window = Window("Hello World", ml16_9);
-	window.setRenderer(new Renderer(window));
-	char images[] = { "Z:\\Pictures\\chaseistrash.png" };
+	Window* window = new Window("Hello World", ml16_9);
+	window->setRenderer(new Renderer(window));
+	const char* images[] = { "Z:\\Pictures\\test.bmp" };
 	Sprite* chase = new Sprite(images, window);
-	window.render();
-	SDL_Delay(2000);
-	window.changeWindowResolution(s16_9);
+	window->render();
+	//image array size goes super weird after rendering
 	system("PAUSE");
-	window.destroy();
+	window->destroy();
 	return 0;
+	//Missing PNG libraries: libpng, libz
 }

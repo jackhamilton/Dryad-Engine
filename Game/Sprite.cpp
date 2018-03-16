@@ -1,16 +1,16 @@
 #include <Sprite.h>
+#include <stdint.h>
 
-Sprite::Sprite(char filename[], Window window)
+Sprite::Sprite(const char* filename[], Window* window)
 {
 	startedAnimation = false;
-	window.sprites.push_back(this);
-	SDL_Texture* images[sizeof(filename)];
-	Renderer* windowRenderer = window.getRenderer();
+	(*window).sprites.push_back(this);
+	Renderer* windowRenderer = window->getRenderer();
 	Renderer renderer = *windowRenderer;
-	for (int x = 0; x < sizeof(filename); x++) {
-		SDL_Surface * tempImage = IMG_Load(&filename[x]);
-		images[x] = SDL_CreateTextureFromSurface(//Maybe move this to the render loop
-			renderer.getSDLRenderer(), tempImage);
+	for (int x = 0; x < sizeof(filename)/sizeof(filename[0]); x++) {
+		SDL_Surface * tempImage = IMG_Load(filename[x]);
+		Sprite::images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
+			renderer.getSDLRenderer(), tempImage));
 		SDL_FreeSurface(tempImage); 
 		//might cause problems? Freeing the surface before rendering
 	}
@@ -31,7 +31,7 @@ SDL_Texture * Sprite::getCurrentImage()
 		startedAnimation = true;
 	}
 	else {
-		if (currentImage != (images.end()--)) {
+		if (std::distance(currentImage, images.end()) > 1) {
 			currentImage++;
 		}
 		else {
@@ -47,13 +47,18 @@ SDL_Texture * Sprite::peekCurrentImage()
 		currentImage = images.begin();
 		startedAnimation = true;
 	}
-	return *currentImage;
+	try {
+		return *currentImage;
+	}
+	catch (exception e) {
+		printf("Error: no images found in sprite array.");
+		return NULL;
+	}
 }
 
 void Sprite::destroy()
 {
-	while (!images.empty()){
-		SDL_DestroyTexture(images.front());
-		images.pop_front();
-	}
+	for (list<SDL_Texture*>::iterator i = images.begin(); i != images.end(); i++)
+		SDL_DestroyTexture(*i);
+	images.clear();
 }
