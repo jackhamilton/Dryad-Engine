@@ -11,5 +11,4 @@ private:
 	list<GameObject> objects;
 protected:
 	void destroy(GameObject object);
-	void destroy();
 };

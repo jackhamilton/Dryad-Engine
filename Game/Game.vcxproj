@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
-    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -82,7 +82,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -126,12 +126,16 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

@@ -6,9 +6,8 @@ class World;
 class GameObject {
 public:
 	Point getPosition() { return position; };
-	GameObject(int x, int y) : GameObject(*(new Point(x, y))) {};
+	GameObject(int x, int y) : GameObject(*(new Point(x, y))) {}; //This pointer might create a memory leak.
 	GameObject(Point position);
-	void destroy();
 	bool operator == (const GameObject& obj) const { return id == obj.id; }
 	bool operator != (const GameObject& obj) const { return id != obj.id; }
 private:

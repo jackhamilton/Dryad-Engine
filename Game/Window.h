@@ -1,5 +1,7 @@
 #pragma once
-
+#include <SDL.h>
+#include <stdio.h>
+#include <list>
 
 enum Resolution {
 	//This is most of the standard screen resolutions for various aspect ratios. 
@@ -22,10 +24,15 @@ enum Resolution {
 
 };
 
+class Renderer;
+class Sprite;
+
 class Window {
 public:
 	int screenWidth;
 	int screenHeight;
+	Renderer* renderer;
+	std::list<Sprite*> sprites;
 	//Resolution on default constructor overrides width and height, 
 	//there because it has to be and constructors cant be overloaded
 	Window(const char *title, int width, int height, Resolution res);
@@ -35,6 +42,16 @@ public:
 	void changeWindowResolution(int width, int height);
 	void changeWindowResolution(Resolution res, int width, int height);
 	void setFullscreen(bool fullscreen);
+	void setRenderer(Renderer* renderer) {
+		Window::renderer = renderer;
+	}
+	Renderer* getRenderer() {
+		return renderer;
+	}
+	SDL_Window* getSDLWindow() {
+		return window;
+	}
+	void render();
 	void destroy();
 private:
 	SDL_Window* window;

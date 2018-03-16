@@ -1,14 +1,9 @@
-#include <stdio.h>
-#include <SDL.h>
 #include <Window.h>
+#include <Renderer.h>
+#include <Sprite.h>
 
 using namespace std;
 
-int screenWidth;
-int screenHeight;
-Resolution res;
-
-SDL_Window* window;
 
 void Window::calculateResolution(Resolution res, int &width, int &height) {
 	switch (res) {
@@ -91,7 +86,29 @@ void Window::setFullscreen(bool fullscreen)
 	SDL_SetWindowFullscreen(window, fullscreen);
 }
 
+void Window::render()
+{
+	std::list<Sprite*>::iterator it = sprites.begin();
+	while (it != sprites.end()) {
+		Sprite* cSprite = *it;
+		Point location = cSprite->getLocation();
+		pair<int, int> dimensions = cSprite->getDimensions();
+		SDL_Rect dsrect = { location.x, location.y, dimensions.first, dimensions.second };
+		renderer->render(cSprite->getCurrentImage(), dsrect);
+		delete cSprite;//problems?
+		it++;
+	}
+}
+
 void Window::destroy() {
+	while (!sprites.empty()) {
+		Sprite* s = sprites.front();
+		s->destroy();;
+		delete s;//problems?
+		//possible memory leak? popping might delete though
+		sprites.pop_front();
+	}
+	delete renderer;
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }

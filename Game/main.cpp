@@ -8,8 +8,7 @@ using namespace std;
 int main(int argc, char* args[]) {
 	Window window = Window("Hello World", ml16_9);
 	SDL_Delay(2000);
-	window.changeWindowResolution(l16_9);
-	window.setFullscreen(true);
+	window.changeWindowResolution(s16_9);
 	system("PAUSE");
 	window.destroy();
 	return 0;
