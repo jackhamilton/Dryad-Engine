@@ -1,6 +1,6 @@
 #include <Sprite.h>
 
-Sprite::Sprite(char* filename[], Window window)
+Sprite::Sprite(char filename[], Window window)
 {
 	startedAnimation = false;
 	window.sprites.push_back(this);
@@ -8,16 +8,12 @@ Sprite::Sprite(char* filename[], Window window)
 	Renderer* windowRenderer = window.getRenderer();
 	Renderer renderer = *windowRenderer;
 	for (int x = 0; x < sizeof(filename); x++) {
-		SDL_Surface * tempImage = IMG_Load(filename[x]);
+		SDL_Surface * tempImage = IMG_Load(&filename[x]);
 		images[x] = SDL_CreateTextureFromSurface(
 			renderer.getSDLRenderer(), tempImage);
 		SDL_FreeSurface(tempImage); 
 		//might cause problems? Freeing the surface before rendering
 	}
-	delete windowRenderer; //Problems? Not sure if this deletes 
-	//the local pointer or the one in the Window class. Pretty 
-	//sure the local one, but...
-	delete filename;
 }
 
 pair<int, int> Sprite::getDimensions()
