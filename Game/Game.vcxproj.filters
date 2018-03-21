@@ -60,6 +60,9 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files\engine\control</Filter>
     </ClCompile>
+    <ClCompile Include="Spritesheet.cpp">
+      <Filter>Source Files\engine\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
+    <ClInclude Include="Spritesheet.h">
+      <Filter>Header Files\engine\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

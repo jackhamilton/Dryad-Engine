@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
-    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2_image-2.0.3\include;C:\Users\Hamilton\Documents\GitHub\Dropkick-Core-Engine\Game;C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2-2.0.8\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2_image-2.0.3\lib\x64;C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2-2.0.8\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -80,6 +80,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -128,6 +129,7 @@
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Spritesheet.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -136,6 +138,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Spritesheet.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

@@ -4,14 +4,21 @@
 #include "Window.h"
 #include <Renderer.h>
 #include <Sprite.h>
+#include <Spritesheet.h>
 
 using namespace std;
 
 int main(int argc, char* args[]) {
-	Window* window = new Window("Hello World", ml16_9);
+	Window* window = new Window("Hello World", m16_9);
 	window->setRenderer(new Renderer(window));
-	const char* images[] = { "Z:\\Pictures\\test.bmp" };
-	Sprite* chase = new Sprite(images, window);
+	char* s = SDL_GetBasePath();
+	strcat(s, "\\");
+	strcat(s, "res\\megaman.BMP");
+	const char* images[] = { s };
+	Spritesheet* chase = new Spritesheet(images, new int[1] { 100 }, 50, window);
+	int* dim = new int[2];
+	chase->getCurrentFrame(dim);
+	cout << dim[0] <<", " << dim[1];
 	window->render();
 	//image array size goes super weird after rendering
 	system("PAUSE");
