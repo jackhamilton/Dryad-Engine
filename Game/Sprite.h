@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include <Window.h>
+#include <World.h>
 #include <Renderer.h>
 #include <Point.h>
 #include <list>
@@ -9,7 +9,7 @@
 class Sprite {
 public:
 	std::list<SDL_Texture*> images;
-	Sprite(const char* filename[], Window* window);
+	Sprite(const char* filename[], World* world);
 	void setLocation(Point location) {
 		Sprite::location = location;
 	}

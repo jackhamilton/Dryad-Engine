@@ -63,6 +63,9 @@
     <ClCompile Include="Spritesheet.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
+    <ClCompile Include="GameLoop.cpp">
+      <Filter>Source Files\engine\control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -85,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="Spritesheet.h">
       <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLoop.h">
+      <Filter>Header Files\engine\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

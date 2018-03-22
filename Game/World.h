@@ -1,14 +1,25 @@
 #pragma once
-#include <GameObject.h>
+#include <Renderer.h>
 #include <Point.h>
 #include <list>
+
+class Sprite;
+class GameObject;
 
 class World {
 public:
 	World();
-	list<GameObject> getObjects();
+	void render();
+	list<GameObject*> getObjects();
+	void setRenderer(Renderer* renderer) {
+		World::renderer = renderer;
+	}
+	Renderer* getRenderer() {
+		return renderer;
+	}
+	Renderer* renderer;
+	void destroy();
+	std::list<Sprite*> sprites;
 private:
-	list<GameObject> objects;
-protected:
-	void destroy(GameObject object);
+	list<GameObject*> objects;
 };

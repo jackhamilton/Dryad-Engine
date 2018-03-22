@@ -1,6 +1,6 @@
 #include "Spritesheet.h"
 
-Spritesheet::Spritesheet(const char* filename[], int* heights, int width, Window* window): Sprite(filename, window)
+Spritesheet::Spritesheet(const char* filename[], int* heights, int width, World* world): Sprite(filename, world)
 {
 	Spritesheet::heights = new int[sizeof(heights)];
 	for (int x = 0; x < sizeof(heights); x++) {

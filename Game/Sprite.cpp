@@ -1,11 +1,11 @@
 #include <Sprite.h>
 #include <stdint.h>
 
-Sprite::Sprite(const char* filename[], Window* window)
+Sprite::Sprite(const char* filename[], World* world)
 {
 	startedAnimation = false;
-	(*window).sprites.push_back(this);
-	Renderer* windowRenderer = window->getRenderer();
+	(*world).sprites.push_back(this);
+	Renderer* windowRenderer = world->getRenderer();
 	Renderer renderer = *windowRenderer;
 	for (int x = 0; x < sizeof(filename)/sizeof(filename[0]); x++) {
 		SDL_Surface * tempImage = IMG_Load(filename[x]);

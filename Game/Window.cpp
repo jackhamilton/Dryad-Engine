@@ -1,7 +1,5 @@
 #include <Window.h>
 #include <Renderer.h>
-#include <Sprite.h>
-#include <Spritesheet.h>
 
 using namespace std;
 
@@ -87,36 +85,7 @@ void Window::setFullscreen(bool fullscreen)
 	SDL_SetWindowFullscreen(window, fullscreen);
 }
 
-void Window::render()
-{
-	std::list<Sprite*>::iterator it = sprites.begin();
-	while (it != sprites.end()) {
-		Sprite* cSprite = *it;
-		Point location = cSprite->getLocation();
-		if (cSprite->isSpritesheet) {
-			int* box = new int[2];
-			((Spritesheet*)cSprite)->getCurrentFrame(box);
-			int width = ((Spritesheet*)cSprite)->getWidth();
-			int height = ((Spritesheet*)cSprite)->getHeight();
-			SDL_Rect dsrect = { location.x, location.y, location.x + width, location.y + height };
-			renderer->render(cSprite->getCurrentImage(), 
-				{ box[0], box[1], width, height }, dsrect);
-			((Spritesheet*)cSprite)->nextFrame();
-		}
-		else {
-			pair<int, int> dimensions = cSprite->getDimensions();
-			SDL_Rect dsrect = { location.x, location.y, dimensions.first, dimensions.second };
-			renderer->render(cSprite->getCurrentImage(), dsrect);
-		}
-		it++;
-	}
-}
-
 void Window::destroy() {
-	for (list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
-		(*i)->destroy();
-	sprites.clear();
-	delete renderer;
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }

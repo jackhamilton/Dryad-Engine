@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <GameObject.h>
 #include <Point.h>
-#include <World.h>
 
 Point position;
 World world;
@@ -19,4 +18,12 @@ GameObject::GameObject(Point position)
 		cID++;
 	}
 	::position = position;
+}
+
+void GameObject::setSprite(Sprite* sprite) {
+	GameObject::sprite = sprite;
+}
+
+Sprite* GameObject::getSprite() {
+	return GameObject::sprite;
 }

@@ -4,7 +4,7 @@
 
 class Spritesheet : Sprite {
 public:
-	Spritesheet(const char* filename[], int* heights, int width, Window* window);
+	Spritesheet(const char* filename[], int* heights, int width, World* window);
 	void getCurrentFrame(int* dim);
 	void setCurrentAnimation(int currentAnimation) {
 	    Spritesheet::currentAnimation = currentAnimation;
