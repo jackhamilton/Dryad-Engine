@@ -2,14 +2,14 @@
 
 Spritesheet::Spritesheet(const char* filename[], int* heights, int width, Window* window): Sprite(filename, window)
 {
-	Spritesheet::heights = new int[sizeof(heights)/sizeof(heights[0])];
-	for (int x = 0; x < sizeof(heights) / sizeof(heights[0]); x++) {
+	Spritesheet::heights = new int[sizeof(heights)];
+	for (int x = 0; x < sizeof(heights); x++) {
 		Spritesheet::heights[x] = heights[x];
 	}
 	Spritesheet::width = width;
-	delete heights;
 	currentFrame = 0;
 	currentAnimation = 0;
+	isSpritesheet = true;
 }
 
 //gives x and y
@@ -31,4 +31,14 @@ void Spritesheet::nextFrame()
 	else {
 		currentFrame = 0;
 	}
+}
+
+int Spritesheet::getWidth()
+{
+	return width;
+}
+
+int Spritesheet::getHeight()
+{
+	return heights[currentAnimation];
 }

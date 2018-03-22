@@ -1,6 +1,7 @@
 #include <Window.h>
 #include <Renderer.h>
 #include <Sprite.h>
+#include <Spritesheet.h>
 
 using namespace std;
 
@@ -92,9 +93,21 @@ void Window::render()
 	while (it != sprites.end()) {
 		Sprite* cSprite = *it;
 		Point location = cSprite->getLocation();
-		pair<int, int> dimensions = cSprite->getDimensions();
-		SDL_Rect dsrect = { location.x, location.y, dimensions.first, dimensions.second };
-		renderer->render(cSprite->getCurrentImage(), dsrect);
+		if (cSprite->isSpritesheet) {
+			int* box = new int[2];
+			((Spritesheet*)cSprite)->getCurrentFrame(box);
+			int width = ((Spritesheet*)cSprite)->getWidth();
+			int height = ((Spritesheet*)cSprite)->getHeight();
+			SDL_Rect dsrect = { location.x, location.y, location.x + width, location.y + height };
+			renderer->render(cSprite->getCurrentImage(), 
+				{ box[0], box[1], width, height }, dsrect);
+			((Spritesheet*)cSprite)->nextFrame();
+		}
+		else {
+			pair<int, int> dimensions = cSprite->getDimensions();
+			SDL_Rect dsrect = { location.x, location.y, dimensions.first, dimensions.second };
+			renderer->render(cSprite->getCurrentImage(), dsrect);
+		}
 		it++;
 	}
 }

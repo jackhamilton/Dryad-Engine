@@ -14,6 +14,8 @@ public:
 		delete heights;
 	}
 	void nextFrame();
+	int getWidth();
+	int getHeight();
 private:
 	int* heights;
 	int width;

@@ -14,6 +14,7 @@ Sprite::Sprite(const char* filename[], Window* window)
 		SDL_FreeSurface(tempImage); 
 		//might cause problems? Freeing the surface before rendering
 	}
+	isSpritesheet = false;
 }
 
 pair<int, int> Sprite::getDimensions()

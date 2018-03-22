@@ -13,12 +13,24 @@ int main(int argc, char* args[]) {
 	window->setRenderer(new Renderer(window));
 	char* s = SDL_GetBasePath();
 	strcat(s, "\\");
-	strcat(s, "res\\megaman.BMP");
+	strcat(s, "res\\zelda.BMP");
 	const char* images[] = { s };
-	Spritesheet* chase = new Spritesheet(images, new int[1] { 100 }, 50, window);
+	int heights[] = { 130, 130, 130, 130, 130, 130, 130, 130 };
+	Spritesheet* chase = new Spritesheet(images, heights, 120, window);
 	int* dim = new int[2];
+	chase->setCurrentAnimation(7);
 	chase->getCurrentFrame(dim);
 	cout << dim[0] <<", " << dim[1];
+	window->render();
+	SDL_Delay(200);
+	window->render();
+	SDL_Delay(200);
+	window->render();
+	SDL_Delay(200);
+	window->render();
+	SDL_Delay(200);
+	window->render();
+	SDL_Delay(200);
 	window->render();
 	//image array size goes super weird after rendering
 	system("PAUSE");

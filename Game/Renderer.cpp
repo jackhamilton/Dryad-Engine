@@ -16,6 +16,12 @@ void Renderer::render(SDL_Texture* texture, SDL_Rect dstrect)
 	SDL_RenderPresent(renderer);
 }
 
+void Renderer::render(SDL_Texture* texture, SDL_Rect srcrect, SDL_Rect dstrect)
+{
+	SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
+	SDL_RenderPresent(renderer);
+}
+
 void Renderer::destroy()
 {
 	SDL_DestroyRenderer(renderer);

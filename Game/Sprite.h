@@ -22,6 +22,7 @@ public:
 	//Does not advance, but starts animation if not started
 	SDL_Texture* peekCurrentImage();
 	void destroy();
+	bool isSpritesheet = false;
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
