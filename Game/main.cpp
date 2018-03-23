@@ -19,9 +19,8 @@ int main(int argc, char* args[]) {
 	strcat(s, "res\\zelda.BMP");
 	const char* images[] = { s };
 	int heights[] = { 130, 130, 130, 130, 130, 130, 130, 130 };
-	Spritesheet* chase = new Spritesheet(images, heights, 120, &world);
-	chase->setCurrentAnimation(7);
-	//image array size goes super weird after rendering
+	Spritesheet* link = new Spritesheet(images, heights, 120, &world);
+	link->setCurrentAnimation(7);
 	GameLoop gameLoop;
 	gameLoop.addWorld(world);
 	gameLoop.start();

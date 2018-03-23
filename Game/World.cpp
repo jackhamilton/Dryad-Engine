@@ -42,5 +42,6 @@ void World::destroy()
 	for (list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
 		(*i)->destroy();
 	sprites.clear();
+	renderer->destroy();
 	delete renderer;
 }
