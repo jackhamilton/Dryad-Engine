@@ -1,11 +1,11 @@
 #include "Scene.h"
-#include <Point.h>
+#include "Point.h"
 #include <list>
-#include <Spritesheet.h>
+#include "Spritesheet.h"
 
 Scene::Scene()
 {
-
+    
 }
 
 void Scene::render(int frame, int fps)
@@ -25,13 +25,13 @@ void Scene::render(int frame, int fps)
 			((Spritesheet*)cSprite)->getCurrentFrame(box);
 			int width = ((Spritesheet*)cSprite)->getWidth();
 			int height = ((Spritesheet*)cSprite)->getHeight();
-			SDL_Rect dsrect = { location.x, location.y, width, height };
+			SDL_Rect dsrect = { (int)location.x, (int)location.y, width, height };
 			renderer->render(cSprite->getCurrentImage(),
 				{ box[0], box[1], width, height }, dsrect);
 		}
 		else {
-			pair<int, int> dimensions = cSprite->getDimensions();
-			SDL_Rect dsrect = { location.x, location.y,
+            std::pair<int, int> dimensions = cSprite->getDimensions();
+			SDL_Rect dsrect = { (int)location.x, (int)location.y,
 				dimensions.first, dimensions.second };
 			renderer->render(cSprite->getCurrentImage(), dsrect);
 		}
@@ -48,14 +48,14 @@ void Scene::render(int frame, int fps)
 		it++;
 	}
 }
-list<GameObject*> Scene::getObjects()
+std::list<GameObject*> Scene::getObjects()
 {
 	return objects;
 }
 
 void Scene::destroy()
 {
-	for (list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
+    for (std::list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
 		(*i)->destroy();
 	sprites.clear();
 	renderer->destroy();

@@ -1,6 +1,6 @@
 #pragma once
-#include <Renderer.h>
-#include <Point.h>
+#include "Renderer.h"
+#include "Point.h"
 #include <list>
 
 class Sprite;
@@ -10,7 +10,7 @@ class Scene {
 public:
 	Scene();
 	void render(int frame, int fps);
-	list<GameObject*> getObjects();
+    std::list<GameObject*> getObjects();
 	void setRenderer(Renderer* renderer) {
 		Scene::renderer = renderer;
 	}
@@ -21,5 +21,5 @@ public:
 	void destroy();
 	std::list<Sprite*> sprites;
 private:
-	list<GameObject*> objects;
+    std::list<GameObject*> objects;
 };

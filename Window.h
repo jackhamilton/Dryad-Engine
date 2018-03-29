@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <list>
 
@@ -44,7 +44,11 @@ public:
 		return window;
 	}
 	void destroy();
+    Renderer* getRenderer() {
+        return renderer;
+    }
 private:
 	SDL_Window* window;
+    Renderer* renderer;
 	void calculateResolution(Resolution res, int &width, int &height);
 };

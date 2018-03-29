@@ -1,5 +1,5 @@
 #include "GameLoop.h"
-#include <Input.h>
+#include "Input.h"
 #include <ctime>
 
 GameLoop::GameLoop(int fps)
@@ -17,7 +17,7 @@ void GameLoop::start()
 	while (running) {
 		long double sysTimeMS = time(0) * 1000;
 		input->handleInput(this);
-		for (list<Scene>::iterator i = GameLoop::worlds.begin(); i != GameLoop::worlds.end(); i++)
+        for (std::list<Scene>::iterator i = GameLoop::worlds.begin(); i != GameLoop::worlds.end(); i++)
 			(*i).render(frame, fps);
 		frame++;
 		long double endTimeMS = time(0) * 1000;

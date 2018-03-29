@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <GameObject.h>
-#include <Point.h>
+#include "GameObject.h"
+#include "Point.h"
 
 Point position;
 Scene world;

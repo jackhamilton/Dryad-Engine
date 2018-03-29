@@ -1,10 +1,11 @@
 #pragma once
-#include <SDL.h>
-#include <Sprite.h>
+#include <SDL2/SDL.h>
+#include "Sprite.h"
+#include <vector>
 
 class Spritesheet : public Sprite {
 public:
-	Spritesheet(const char* filename[], int* framecounts, int* heights, int width, Scene* window);
+    Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<int> heights, int width, Scene* window);
 	void getCurrentFrame(int* dim);
 	void setCurrentAnimation(int currentAnimation) {
 		if (currentAnimation != Spritesheet::currentAnimation) {
@@ -14,14 +15,13 @@ public:
 	}
 	void destroy() {
 		Sprite::destroy();
-		delete heights;
 	}
 	void nextFrame();
 	int getWidth();
 	int getHeight();
 private:
-	int* framecounts;
-	int* heights;
+    std::vector<int> framecounts;
+    std::vector<int> heights;
 	int width;
 	int currentFrame;
 	int currentAnimation;

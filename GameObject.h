@@ -1,6 +1,6 @@
 #pragma once
-#include <Point.h>
-#include <Scene.h>
+#include "Point.h"
+#include "Scene.h"
 
 class Sprite;
 

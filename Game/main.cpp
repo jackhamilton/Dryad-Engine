@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "Window.h"
-#include <Renderer.h>
-#include <Sprite.h>
-#include <Spritesheet.h>
-#include <Scene.h>
-#include <GameLoop.h>
-#include <Input.h>
+#include "Renderer.h"
+#include "Sprite.h"
+#include "Spritesheet.h"
+#include "Scene.h"
+#include "GameLoop.h"
+#include "Input.h"
 
 using namespace std;
 
@@ -19,19 +19,18 @@ static double fpsSpeedFactor;
 
 int main(int argc, char* args[]) {
 
+    Window* window = new Window("Dryad", m16_9);
+    Scene world;
+    world.setRenderer(window->getRenderer());
 	fpsSpeedFactor = 60.0 / (double)fps;;
-	IMG_Init(IMG_INIT_PNG);
-	Window* window = new Window("Dryad", m16_9);
-	Scene world;
 	Input input;
 	gameLoop = GameLoop(fps);
-	world.setRenderer(new Renderer(window));
 	char* s = SDL_GetBasePath();
-	strcat(s, "\\");
-	strcat(s, "res\\zelda.png");
-	const char* images[] = { s };
-	int heights[] = { 130, 130, 130, 130, 130, 130, 130, 130 };
-	int framecounts[] = { 3, 3, 1, 3, 10, 10, 10, 10 };
+	//strcat(s, "\\");
+	strcat(s, "res/zelda.png");
+    std::vector<char*> images = { s };
+    std::vector<int> heights = { 130, 130, 130, 130, 130, 130, 130, 130 };
+    std::vector<int> framecounts = { 3, 3, 1, 3, 10, 10, 10, 10 };
 	link = new Spritesheet(images, framecounts, heights, 120, &world);
 	link->setCurrentAnimation(0);
 

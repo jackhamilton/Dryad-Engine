@@ -1,5 +1,5 @@
 #pragma once
-#include <Scene.h>
+#include "Scene.h"
 #include <list>
 
 class Input;
@@ -12,7 +12,7 @@ public:
 	void stop();
 	void setInput(Input* input);
 	void addWorld(Scene world);
-	list<Scene> worlds;
+    std::list<Scene> worlds;
 	bool running;
 	void destroy();
 private:

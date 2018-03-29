@@ -1,7 +1,7 @@
 #include "Input.h"
 #include <vector>
 #include <map>
-#include <GameLoop.h>
+#include "GameLoop.h"
 
 Input::Input()
 {
@@ -17,7 +17,7 @@ void Input::addKeyboardEvent(std::function<void()> func, SDL_EventType eventType
 			(std::pair<SDL_Keycode, SDL_EventType>(key, eventType), (Callback)func));
 	}
 }
-
+ 
 void Input::handleInput(GameLoop* gameLoop)
 {
 	SDL_Event event;

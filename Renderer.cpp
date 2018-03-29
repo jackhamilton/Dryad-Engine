@@ -1,8 +1,11 @@
 #include "Renderer.h"
 
-Renderer::Renderer(Window* window)
+Renderer::Renderer(SDL_Window* window)
 {
-	renderer = SDL_CreateRenderer(window->getSDLWindow(), -1, 0);
+	renderer = SDL_CreateRenderer(window, -1, 0);
+    if (renderer == nullptr) {
+        printf("%s", SDL_GetError());
+    }
 }
 
 SDL_Renderer* Renderer::getSDLRenderer()

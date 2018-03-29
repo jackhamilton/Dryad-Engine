@@ -1,5 +1,5 @@
-#include <Window.h>
-#include <Renderer.h>
+#include "Window.h"
+#include "Renderer.h"
 
 using namespace std;
 
@@ -29,7 +29,7 @@ void Window::calculateResolution(Resolution res, int &width, int &height) {
 }
 
 Window::Window(const char *title, int width, int height, Resolution res) {
-	if (res != NULL) {
+	if (res) {
 		calculateResolution(res, width, height);
 	}
 	screenWidth = width;
@@ -42,6 +42,7 @@ Window::Window(const char *title, int width, int height, Resolution res) {
 	}
 	else {
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
+        renderer = new Renderer(window);
 		if (window == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		}
@@ -86,6 +87,7 @@ void Window::setFullscreen(bool fullscreen)
 }
 
 void Window::destroy() {
+    delete renderer;
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
