@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <Sprite.h>
 
-class Spritesheet : Sprite {
+class Spritesheet : public Sprite {
 public:
 	Spritesheet(const char* filename[], int* heights, int width, World* window);
 	void getCurrentFrame(int* dim);

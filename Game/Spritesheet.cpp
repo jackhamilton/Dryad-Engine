@@ -25,7 +25,7 @@ void Spritesheet::getCurrentFrame(int* dim)
 
 void Spritesheet::nextFrame()
 {
-	if (currentFrame * width < Sprite::getDimensions().first) {
+	if (currentFrame * width < Sprite::getDimensions().first - width) {
 		currentFrame += 1;
 	}
 	else {

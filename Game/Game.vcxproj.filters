@@ -66,6 +66,9 @@
     <ClCompile Include="GameLoop.cpp">
       <Filter>Source Files\engine\control</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\engine\control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
     <ClInclude Include="GameLoop.h">
+      <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
       <Filter>Header Files\engine\control</Filter>
     </ClInclude>
   </ItemGroup>

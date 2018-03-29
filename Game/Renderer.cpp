@@ -22,8 +22,12 @@ void Renderer::render(SDL_Texture* texture, SDL_Rect srcrect, SDL_Rect dstrect)
 	SDL_RenderPresent(renderer);
 }
 
+void Renderer::renderBackground()
+{
+	SDL_RenderClear(renderer);
+}
+
 void Renderer::destroy()
 {
 	SDL_DestroyRenderer(renderer);
-	delete renderer;
 }

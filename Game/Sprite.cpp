@@ -1,5 +1,6 @@
 #include <Sprite.h>
 #include <stdint.h>
+#include <iostream>
 
 Sprite::Sprite(const char* filename[], World* world)
 {
