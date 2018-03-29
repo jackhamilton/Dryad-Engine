@@ -6,13 +6,13 @@
 class Sprite;
 class GameObject;
 
-class World {
+class Scene {
 public:
-	World();
+	Scene();
 	void render(int frame, int fps);
 	list<GameObject*> getObjects();
 	void setRenderer(Renderer* renderer) {
-		World::renderer = renderer;
+		Scene::renderer = renderer;
 	}
 	Renderer* getRenderer() {
 		return renderer;

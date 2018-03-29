@@ -51,9 +51,6 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\engine\control</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files\engine\world</Filter>
-    </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\engine\control</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\engine\world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -78,9 +78,6 @@
       <Filter>Header Files\engine\control</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>Header Files\engine\world</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
       <Filter>Header Files\engine\world</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
@@ -97,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\engine\world</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

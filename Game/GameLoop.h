@@ -1,5 +1,5 @@
 #pragma once
-#include <World.h>
+#include <Scene.h>
 #include <list>
 
 class Input;
@@ -11,8 +11,8 @@ public:
 	void start();
 	void stop();
 	void setInput(Input* input);
-	void addWorld(World world);
-	list<World> worlds;
+	void addWorld(Scene world);
+	list<Scene> worlds;
 	bool running;
 	void destroy();
 private:

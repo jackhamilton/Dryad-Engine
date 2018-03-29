@@ -3,7 +3,7 @@
 #include <Point.h>
 
 Point position;
-World world;
+Scene world;
 
 static int cID = 0;
 

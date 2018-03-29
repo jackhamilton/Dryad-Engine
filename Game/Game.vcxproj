@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2_image-2.0.3\include;C:\Users\Hamilton\Documents\GitHub\Dropkick-Core-Engine\Game;C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2-2.0.8\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2_image-2.0.3\lib\x64;C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2-2.0.8\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2-2.0.8\include;C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2_image-2.0.3\include;C:\Users\Hamilton\Documents\GitHub\Dropkick-Core-Engine\Game;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2-2.0.8\lib\x64;C:\Users\Hamilton\Downloads\SDL2-devel-2.0.8-VC\SDL2_image-2.0.3\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -142,7 +142,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Spritesheet.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="World.cpp" />
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameLoop.h" />
@@ -153,7 +153,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Spritesheet.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="World.h" />
+    <ClInclude Include="Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

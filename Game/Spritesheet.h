@@ -4,10 +4,13 @@
 
 class Spritesheet : public Sprite {
 public:
-	Spritesheet(const char* filename[], int* heights, int width, World* window);
+	Spritesheet(const char* filename[], int* framecounts, int* heights, int width, Scene* window);
 	void getCurrentFrame(int* dim);
 	void setCurrentAnimation(int currentAnimation) {
-	    Spritesheet::currentAnimation = currentAnimation;
+		if (currentAnimation != Spritesheet::currentAnimation) {
+			Spritesheet::currentAnimation = currentAnimation;
+			currentFrame = 0;
+		}
 	}
 	void destroy() {
 		Sprite::destroy();
@@ -17,6 +20,7 @@ public:
 	int getWidth();
 	int getHeight();
 private:
+	int* framecounts;
 	int* heights;
 	int width;
 	int currentFrame;

@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <iostream>
 
-Sprite::Sprite(const char* filename[], World* world, int fps)
+Sprite::Sprite(const char* filename[], Scene* world, int fps)
 {
 	startedAnimation = false;
 	(*world).sprites.push_back(this);

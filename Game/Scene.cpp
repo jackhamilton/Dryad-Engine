@@ -1,14 +1,14 @@
-#include "World.h"
+#include "Scene.h"
 #include <Point.h>
 #include <list>
 #include <Spritesheet.h>
 
-World::World()
+Scene::Scene()
 {
 
 }
 
-void World::render(int frame, int fps)
+void Scene::render(int frame, int fps)
 {
 	double MSPerFrame = (1 / (double)fps) * 1000;
 	renderer->renderBackground();
@@ -48,12 +48,12 @@ void World::render(int frame, int fps)
 		it++;
 	}
 }
-list<GameObject*> World::getObjects()
+list<GameObject*> Scene::getObjects()
 {
 	return objects;
 }
 
-void World::destroy()
+void Scene::destroy()
 {
 	for (list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
 		(*i)->destroy();

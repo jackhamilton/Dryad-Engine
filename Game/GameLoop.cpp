@@ -17,7 +17,7 @@ void GameLoop::start()
 	while (running) {
 		long double sysTimeMS = time(0) * 1000;
 		input->handleInput();
-		for (list<World>::iterator i = GameLoop::worlds.begin(); i != GameLoop::worlds.end(); i++)
+		for (list<Scene>::iterator i = GameLoop::worlds.begin(); i != GameLoop::worlds.end(); i++)
 			(*i).render(frame, fps);
 		frame++;
 		long double endTimeMS = time(0) * 1000;
@@ -37,7 +37,7 @@ void GameLoop::setInput(Input* input) {
 	GameLoop::input = input;
 }
 
-void GameLoop::addWorld(World world)
+void GameLoop::addWorld(Scene world)
 {
 	worlds.push_back(world);
 }

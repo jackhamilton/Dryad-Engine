@@ -1,6 +1,7 @@
 #include "Spritesheet.h"
 
-Spritesheet::Spritesheet(const char* filename[], int* heights, int width, World* world): Sprite(filename, world)
+//framecounts is not zero indexed, just the number of frames
+Spritesheet::Spritesheet(const char* filename[], int* framecounts, int* heights, int width, Scene* world): Sprite(filename, world)
 {
 	Spritesheet::heights = new int[sizeof(heights)];
 	for (int x = 0; x < sizeof(heights); x++) {
@@ -9,6 +10,7 @@ Spritesheet::Spritesheet(const char* filename[], int* heights, int width, World*
 	Spritesheet::width = width;
 	currentFrame = 0;
 	currentAnimation = 0;
+	Spritesheet::framecounts = framecounts;
 	isSpritesheet = true;
 }
 
@@ -25,7 +27,7 @@ void Spritesheet::getCurrentFrame(int* dim)
 
 void Spritesheet::nextFrame()
 {
-	if (currentFrame * width < Sprite::getDimensions().first - width) {
+	if (currentFrame < framecounts[currentAnimation] - 1) {
 		currentFrame += 1;
 	}
 	else {

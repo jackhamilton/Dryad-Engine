@@ -7,6 +7,8 @@ Input::Input()
 
 }
 
+//Currently adds a keyboard event of the event type mapping to func for each key in the vector.
+//Eventually change this to all of the keys in the vector having to be pressed simultaneously.
 void Input::addKeyboardEvent(std::function<void()> func, SDL_EventType eventType, std::vector<SDL_Keycode> keys)
 {
 	for (SDL_Keycode key : keys) {
