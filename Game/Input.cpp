@@ -1,6 +1,7 @@
 #include "Input.h"
 #include <vector>
 #include <map>
+#include <GameLoop.h>
 
 Input::Input()
 {
@@ -17,7 +18,7 @@ void Input::addKeyboardEvent(std::function<void()> func, SDL_EventType eventType
 	}
 }
 
-void Input::handleInput()
+void Input::handleInput(GameLoop* gameLoop)
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -36,6 +37,9 @@ void Input::handleInput()
 					//Call the associated function if types are equal
 				}
 			}
+			break;
+		case SDL_QUIT:
+			gameLoop->stop();
 			break;
 		}
 	}

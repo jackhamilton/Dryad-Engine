@@ -7,11 +7,13 @@
 //Use std::function wrapped to Callback so that the map works
 typedef std::function<void()> Callback;
 
+class GameLoop;
+
 class Input {
 public:
 	Input();
 	void addKeyboardEvent(std::function<void()> func, SDL_EventType eventType, std::vector<SDL_Keycode> keys);
-	void handleInput();
+	void handleInput(GameLoop* gameLoop);
 private:
 	// Saves the state(true=pressed; false=released) of each SDL_Key
 	std::map<SDL_Keycode, bool> keyboard; 

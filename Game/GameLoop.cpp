@@ -16,15 +16,19 @@ void GameLoop::start()
 	running = true;
 	while (running) {
 		long double sysTimeMS = time(0) * 1000;
-		input->handleInput();
+		input->handleInput(this);
 		for (list<Scene>::iterator i = GameLoop::worlds.begin(); i != GameLoop::worlds.end(); i++)
 			(*i).render(frame, fps);
 		frame++;
 		long double endTimeMS = time(0) * 1000;
 		long double renderTimeTakenMS = endTimeMS - sysTimeMS;
-		SDL_Delay((Uint32)(frameTimeMS - renderTimeTakenMS));
+		if (frameTimeMS - renderTimeTakenMS > 0) {
+			SDL_Delay((Uint32)(frameTimeMS - renderTimeTakenMS));
+		}
+		else {
+			SDL_Delay((Uint32)frameTimeMS);
+		}
 		frame++;
-
 	}
 }
 
