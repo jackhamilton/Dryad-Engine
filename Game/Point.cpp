@@ -1,7 +1,7 @@
 #include <Point.h>
 
 using namespace std;
-int x, y;
-Point::Point(int x, int y) {
+double x, y;
+Point::Point(double x, double y) {
 	::x = x, ::y = y;
 };

@@ -14,13 +14,17 @@ using namespace std;
 static GameLoop gameLoop;
 static Spritesheet* link;
 
+static int fps = 120;
+static double fpsSpeedFactor;
+
 int main(int argc, char* args[]) {
 
+	fpsSpeedFactor = 60.0 / (double)fps;;
 	IMG_Init(IMG_INIT_PNG);
 	Window* window = new Window("Dryad", m16_9);
 	Scene world;
 	Input input;
-	gameLoop = GameLoop(60);
+	gameLoop = GameLoop(fps);
 	world.setRenderer(new Renderer(window));
 	char* s = SDL_GetBasePath();
 	strcat(s, "\\");
@@ -35,25 +39,25 @@ int main(int argc, char* args[]) {
 	input.addKeyboardEvent([]() { gameLoop.stop(); }, SDL_KEYDOWN, { SDLK_ESCAPE });
 	input.addKeyboardEvent([]() { 
 		Point p = link->getLocation();
-		p.x += 7;
+		p.x += 7.0*fpsSpeedFactor;
 		link->setLocation(p);
 		link->setCurrentAnimation(7);
 	}, SDL_KEYDOWN, { SDLK_RIGHT });
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
-		p.x -= 7;
+		p.x -= 7.0*fpsSpeedFactor;
 		link->setLocation(p); 
 		link->setCurrentAnimation(5);
 	}, SDL_KEYDOWN, { SDLK_LEFT });
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
-		p.y += 7;
+		p.y += 7*fpsSpeedFactor;
 		link->setLocation(p);
 		link->setCurrentAnimation(4);
 	}, SDL_KEYDOWN, { SDLK_DOWN });
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
-		p.y -= 7;
+		p.y -= 7.0*fpsSpeedFactor;
 		link->setLocation(p);
 		link->setCurrentAnimation(6);
 	}, SDL_KEYDOWN, { SDLK_UP });
