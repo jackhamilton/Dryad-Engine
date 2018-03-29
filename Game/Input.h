@@ -14,7 +14,7 @@ public:
 	void handleInput();
 private:
 	// Saves the state(true=pressed; false=released) of each SDL_Key
-	std::map<int, bool> keyboard; 
+	std::map<SDL_Keycode, bool> keyboard; 
 	//a map of all keyboard events and functions to call
 	std::map<std::pair<SDL_Keycode, SDL_EventType>, Callback> keyboardEventMap;
 };

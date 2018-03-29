@@ -32,13 +32,13 @@ int main(int argc, char* args[]) {
 	input.addKeyboardEvent([]() { gameLoop.stop(); }, SDL_KEYDOWN, { SDLK_ESCAPE });
 	input.addKeyboardEvent([]() { 
 		Point p = link->getLocation();
-		p.x += 10;
+		p.x += 7;
 		link->setLocation(p);
 		link->setCurrentAnimation(7);
 	}, SDL_KEYDOWN, { SDLK_RIGHT });
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
-		p.x -= 10;
+		p.x -= 7;
 		link->setLocation(p); 
 		link->setCurrentAnimation(5);
 	}, SDL_KEYDOWN, { SDLK_LEFT });
