@@ -33,6 +33,15 @@ SDL_Texture * Sprite::getCurrentImage()
 		currentImage = images.begin();
 		startedAnimation = true;
 	}
+	return *currentImage;
+}
+
+void Sprite::nextImage()
+{
+	if (!startedAnimation) {
+		currentImage = images.begin();
+		startedAnimation = true;
+	}
 	else {
 		if (std::distance(currentImage, images.end()) > 1) {
 			currentImage++;
@@ -41,7 +50,6 @@ SDL_Texture * Sprite::getCurrentImage()
 			currentImage = images.begin();
 		}
 	}
-	return *currentImage;
 }
 
 SDL_Texture * Sprite::peekCurrentImage()

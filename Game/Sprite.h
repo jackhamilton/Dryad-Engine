@@ -25,6 +25,7 @@ public:
 	SDL_Texture* getCurrentImage();
 	//Does not advance, but starts animation if not started
 	SDL_Texture* peekCurrentImage();
+	void nextImage();
 	void destroy();
 	bool isSpritesheet = false;
 	double renderTimeBuffer;
