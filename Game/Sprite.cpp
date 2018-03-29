@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <iostream>
 
-Sprite::Sprite(const char* filename[], World* world)
+Sprite::Sprite(const char* filename[], World* world, int fps)
 {
 	startedAnimation = false;
 	(*world).sprites.push_back(this);
@@ -12,10 +12,11 @@ Sprite::Sprite(const char* filename[], World* world)
 		SDL_Surface * tempImage = IMG_Load(filename[x]);
 		Sprite::images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
 			renderer.getSDLRenderer(), tempImage));
-		SDL_FreeSurface(tempImage); 
-		//might cause problems? Freeing the surface before rendering
+		SDL_FreeSurface(tempImage);
 	}
+	Sprite::fps = fps;
 	isSpritesheet = false;
+	Sprite::renderTimeBuffer = 1 / (double)(fps);
 }
 
 pair<int, int> Sprite::getDimensions()

@@ -8,31 +8,36 @@ World::World()
 
 }
 
-void World::render()
+void World::render(int frame, int fps)
 {
+	double MSPerFrame = (1 / (double)fps) * 1000;
 	renderer->renderBackground();
 	std::list<Sprite*>::iterator it = sprites.begin();
 	while (it != sprites.end()) {
 		Sprite* cSprite = *it;
-		Point location = cSprite->getLocation();
-		//If spritesheet
+		cSprite->renderTimeBuffer += MSPerFrame;
+		if (cSprite->renderTimeBuffer > (1/(double)(cSprite->getFPS())) * 1000) {
+			Point location = cSprite->getLocation();
+			//If spritesheet
 
-		//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
-		if (cSprite->isSpritesheet) {
-			int* box = new int[2];
-			((Spritesheet*)cSprite)->getCurrentFrame(box);
-			int width = ((Spritesheet*)cSprite)->getWidth();
-			int height = ((Spritesheet*)cSprite)->getHeight();
-			SDL_Rect dsrect = { location.x, location.y, width, height };
-			renderer->render(cSprite->getCurrentImage(),
-				{ box[0], box[1], width, height }, dsrect);
-			((Spritesheet*)cSprite)->nextFrame();
-		}
-		else {
-			pair<int, int> dimensions = cSprite->getDimensions();
-			SDL_Rect dsrect = { location.x, location.y, 
-				dimensions.first, dimensions.second };
-			renderer->render(cSprite->getCurrentImage(), dsrect);
+			//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
+			if (cSprite->isSpritesheet) {
+				int* box = new int[2];
+				((Spritesheet*)cSprite)->getCurrentFrame(box);
+				int width = ((Spritesheet*)cSprite)->getWidth();
+				int height = ((Spritesheet*)cSprite)->getHeight();
+				SDL_Rect dsrect = { location.x, location.y, width, height };
+				renderer->render(cSprite->getCurrentImage(),
+					{ box[0], box[1], width, height }, dsrect);
+				((Spritesheet*)cSprite)->nextFrame();
+			}
+			else {
+				pair<int, int> dimensions = cSprite->getDimensions();
+				SDL_Rect dsrect = { location.x, location.y,
+					dimensions.first, dimensions.second };
+				renderer->render(cSprite->getCurrentImage(), dsrect);
+			}
+			cSprite->renderTimeBuffer -= (1 / (double)(cSprite->getFPS())) * 1000;
 		}
 		it++;
 	}

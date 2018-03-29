@@ -9,12 +9,16 @@
 class Sprite {
 public:
 	std::list<SDL_Texture*> images;
-	Sprite(const char* filename[], World* world);
+	Sprite(const char* filename[], World* world) : Sprite(filename, world, 20) {};
+	Sprite(const char* filename[], World* world, int fps);
 	void setLocation(Point location) {
 		Sprite::location = location;
 	}
 	Point getLocation() {
 		return location;
+	}
+	int getFPS() {
+		return fps;
 	}
 	pair<int, int> getDimensions();
 	//Gets current image, advances
@@ -23,8 +27,10 @@ public:
 	SDL_Texture* peekCurrentImage();
 	void destroy();
 	bool isSpritesheet = false;
+	double renderTimeBuffer;
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
 	Point location;
+	int fps;
 };

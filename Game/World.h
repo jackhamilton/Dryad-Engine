@@ -9,7 +9,7 @@ class GameObject;
 class World {
 public:
 	World();
-	void render();
+	void render(int frame, int fps);
 	list<GameObject*> getObjects();
 	void setRenderer(Renderer* renderer) {
 		World::renderer = renderer;

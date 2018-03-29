@@ -6,6 +6,7 @@ class Input;
 
 class GameLoop {
 public:
+	GameLoop() : GameLoop(60) {};
 	GameLoop(int fps);
 	void start();
 	void stop();
@@ -18,4 +19,5 @@ private:
 	Input* input;
 	int frame;
 	int fps;
+	double frameTimeMS;
 };

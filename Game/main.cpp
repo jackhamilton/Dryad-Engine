@@ -18,6 +18,7 @@ int main(int argc, char* args[]) {
 	Window* window = new Window("Hello World", m16_9);
 	World world;
 	Input input;
+	gameLoop = GameLoop(60);
 	world.setRenderer(new Renderer(window));
 	char* s = SDL_GetBasePath();
 	strcat(s, "\\");
