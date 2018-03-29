@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "Window.h"
 #include "Renderer.h"
 #include "Sprite.h"

@@ -1,6 +1,6 @@
 #pragma once
-#include <SDL2/SDL.h>
-#include <SDL2_Image/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include "Scene.h"
 #include "Renderer.h"
 #include "Point.h"
