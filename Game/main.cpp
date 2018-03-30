@@ -35,34 +35,37 @@ int main(int argc, char* args[]) {
 	link->setCurrentAnimation(0);
 
 	//Configure inputs
-	input.addKeyboardEvent([]() { gameLoop.stop(); }, SDL_KEYDOWN, { SDLK_ESCAPE });
+	input.addKeyboardEvent([]() { gameLoop.stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() { 
 		Point p = link->getLocation();
 		p.x += 7.0*fpsSpeedFactor;
 		link->setLocation(p);
 		link->setCurrentAnimation(7);
-	}, SDL_KEYDOWN, { SDLK_RIGHT });
+	}, { make_pair(SDLK_RIGHT, SDL_KEYDOWN)});
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
 		p.x -= 7.0*fpsSpeedFactor;
 		link->setLocation(p); 
 		link->setCurrentAnimation(5);
-	}, SDL_KEYDOWN, { SDLK_LEFT });
+	}, { make_pair(SDLK_LEFT, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
 		p.y += 7*fpsSpeedFactor;
 		link->setLocation(p);
 		link->setCurrentAnimation(4);
-	}, SDL_KEYDOWN, { SDLK_DOWN });
+	}, { make_pair(SDLK_DOWN, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
 		Point p = link->getLocation();
 		p.y -= 7.0*fpsSpeedFactor;
 		link->setLocation(p);
 		link->setCurrentAnimation(6);
-	}, SDL_KEYDOWN, { SDLK_UP });
-	input.addKeyboardEvent([](){
+	}, { make_pair(SDLK_UP, SDL_KEYDOWN) });
+	input.addKeyboardEvent([]() {
 		link->setCurrentAnimation(0);
-		}, SDL_KEYUP, { SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN });
+	}, { make_pair(SDLK_UP, SDL_KEYUP),
+		 make_pair(SDLK_DOWN, SDL_KEYUP),
+		 make_pair(SDLK_LEFT, SDL_KEYUP),
+		 make_pair(SDLK_RIGHT, SDL_KEYUP) }); //If all are up, reset animation
 	gameLoop.setInput(&input);
 
 	gameLoop.addWorld(world);

@@ -59,5 +59,4 @@ void Scene::destroy()
 		(*i)->destroy();
 	sprites.clear();
 	renderer->destroy();
-	delete renderer;
 }

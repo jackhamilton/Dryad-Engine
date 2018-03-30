@@ -8,16 +8,13 @@ Input::Input()
 
 }
 
-//Currently adds a keyboard event of the event type mapping to func for each key in the vector.
-//Eventually change this to all of the keys in the vector having to be pressed simultaneously.
-void Input::addKeyboardEvent(std::function<void()> func, SDL_EventType eventType, std::vector<SDL_Keycode> keys)
+//Adds a collection of pairs of keycodes and eventtypes matched with a function to call on that combo.
+void Input::addKeyboardEvent(std::function<void()> func, std::vector<std::pair<SDL_Keycode, SDL_EventType>> keys)
 {
-	for (SDL_Keycode key : keys) {
-		keyboardEventMap.insert(std::pair<std::pair<SDL_Keycode, SDL_EventType>, Callback>
-			(std::pair<SDL_Keycode, SDL_EventType>(key, eventType), (Callback)func));
-	}
-}
- 
+	keyboardEventMap.insert(std::pair<std::vector<std::pair<SDL_Keycode, SDL_EventType>>, Callback>
+		(keys, (Callback)func));
+} 
+
 void Input::handleInput(GameLoop* gameLoop)
 {
 	SDL_Event event;
@@ -32,9 +29,26 @@ void Input::handleInput(GameLoop* gameLoop)
 			//React to KeyUp events
 			for (auto const& x : keyboardEventMap)
 			{
-				if (SDL_KEYUP == x.first.second && event.key.keysym.sym == x.first.first) {
+				bool execute = true;
+				for (std::pair<SDL_Keycode, SDL_EventType> keycombo : x.first) {
+					//If it's not a keyup or is both in the keyboard and true
+					if ((keyboard.find(keycombo.first) != keyboard.end()
+						&& keyboard.at(keycombo.first))
+						|| keycombo.second != SDL_KEYUP) {
+						execute = false;
+					}
+				}
+				if (x.first.size() == 0) {
+					execute = false;
+				}
+				//If it is pressed and either isn't in the map (first call) or hasn't been executed yet
+				if (execute 
+					&& (keyUpExecuted.find(x.first) == keyUpExecuted.end()
+						|| !keyUpExecuted.at(x.first))) {
+					//Call the associated function if all keys matched. 
+					//Keyup functions will always call if all keys are up.
 					x.second();
-					//Call the associated function if types are equal
+					keyUpExecuted[x.first] = true;
 				}
 			}
 			break;
@@ -46,12 +60,30 @@ void Input::handleInput(GameLoop* gameLoop)
 	//React to KeyDown events
 	for (auto const& x : keyboardEventMap)
 	{
-		if (keyboard.find(x.first.first) != keyboard.end()) {
-			if (SDL_KEYDOWN == x.first.second
-				&& keyboard.at(x.first.first)) {
-				x.second();
-				//Call the associated function if types are equal
+		bool execute = true;
+		for (std::pair<SDL_Keycode, SDL_EventType> keycombo : x.first) {
+			//If the key hasn't been pressed - e.g. not in the keyboard map or false
+			if (keyboard.find(keycombo.first) == keyboard.end()
+				|| !keyboard.at(keycombo.first)) {
+				//if (keycombo.second == SDL_KEYDOWN) {
+					execute = false;
+				//}
 			}
+			//if it's in the map and pressed, and the selected combo is a keyup1
+			else if (keycombo.second == SDL_KEYUP) {
+				//reset the selected combo
+				keyUpExecuted[x.first] = false;
+			}
+		}
+		//Reset any keyup combos containing pressed keys
+
+		if (x.first.size() == 0) {
+			execute = false;
+		}
+		if (execute) {
+			//Call the associated function if all keys matched. 
+			//For keyup there should really only ever be one.
+			x.second();
 		}
 	}
 }

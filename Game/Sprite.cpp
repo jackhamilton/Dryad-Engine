@@ -2,13 +2,13 @@
 #include <stdint.h>
 #include <iostream>
 
-Sprite::Sprite(std::vector<char*> filenames, Scene* world, int fps)
+Sprite::Sprite(std::vector<char*> filenames, Scene * world, int fps)
 {
 	startedAnimation = false;
 	(*world).sprites.push_back(this);
 	Renderer* windowRenderer = world->getRenderer();
 	Renderer renderer = *windowRenderer;
-    for (char* filename : filenames) {
+	for (char* filename : filenames) {
 		SDL_Surface * tempImage = IMG_Load(filename);
 		Sprite::images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
 			renderer.getSDLRenderer(), tempImage));
