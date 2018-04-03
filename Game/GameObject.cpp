@@ -2,12 +2,19 @@
 #include "GameObject.h"
 #include "Point.h"
 
-Point position;
-Scene world;
-
 static int cID = 0;
 
-GameObject::GameObject(Point position)
+Point GameObject::getLocation()
+{
+	return GameObject::position;
+}
+
+void GameObject::setLocation(Point pos)
+{
+	GameObject::position = pos;
+}
+
+GameObject::GameObject(Point position, Sprite* sprite)
 {
 	if (cID == NULL) {
 		id = 0;
@@ -17,7 +24,8 @@ GameObject::GameObject(Point position)
 		id = cID;
 		cID++;
 	}
-	::position = position;
+	GameObject::position = position;
+	setSprite(sprite);
 }
 
 void GameObject::setSprite(Sprite* sprite) {

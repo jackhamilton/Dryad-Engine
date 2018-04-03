@@ -11,52 +11,105 @@ Scene::Scene()
 void Scene::render(int frame, int fps)
 {
 	double MSPerFrame = (1 / (double)fps) * 1000;
-	renderer->renderBackground();
-	std::list<Sprite*>::iterator it = sprites.begin();
-	while (it != sprites.end()) {
-		Sprite* cSprite = *it;
+	renderer->renderBackground();;
+	for (Sprite* cSprite: sprites) {
 		cSprite->renderTimeBuffer += MSPerFrame;
 		Point location = cSprite->getLocation();
 		//If spritesheet
 
+		//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
 		if (cSprite->isSpritesheet) {
-			((Spritesheet*)cSprite)->nextFrame();
+			int* box = new int[2];
+			((Spritesheet*)cSprite)->getCurrentFrame(box);
+			int width = ((Spritesheet*)cSprite)->getWidth();
+			int height = ((Spritesheet*)cSprite)->getHeight();
+			SDL_Rect dsrect = { (int)location.x, (int)location.y, width, height };
+			renderer->render(cSprite->getCurrentImage(),
+				{ box[0], box[1], width, height }, dsrect);
 		}
 		else {
-			cSprite->nextImage();
+			std::pair<int, int> dimensions = cSprite->getDimensions();
+			SDL_Rect dsrect = { (int)location.x, (int)location.y,
+				dimensions.first, dimensions.second };
+			renderer->render(cSprite->getCurrentImage(), dsrect);
 		}
 		
 		if (cSprite->renderTimeBuffer > (1/(double)(cSprite->getFPS())) * 1000) {
-			//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
 			if (cSprite->isSpritesheet) {
-				int* box = new int[2];
-				((Spritesheet*)cSprite)->getCurrentFrame(box);
-				int width = ((Spritesheet*)cSprite)->getWidth();
-				int height = ((Spritesheet*)cSprite)->getHeight();
-				SDL_Rect dsrect = { (int)location.x, (int)location.y, width, height };
-				renderer->render(cSprite->getCurrentImage(),
-					{ box[0], box[1], width, height }, dsrect);
+				((Spritesheet*)cSprite)->nextFrame();
 			}
 			else {
-				std::pair<int, int> dimensions = cSprite->getDimensions();
-				SDL_Rect dsrect = { (int)location.x, (int)location.y,
-					dimensions.first, dimensions.second };
-				renderer->render(cSprite->getCurrentImage(), dsrect);
+				cSprite->nextImage();
 			}
 			cSprite->renderTimeBuffer -= (1 / (double)(cSprite->getFPS())) * 1000;
 		}
-		it++;
+	}
+	//Do the same thing but for GameObjects
+	for (GameObject* obj: objects) {
+		Sprite* cSprite = obj->getSprite();
+		cSprite->renderTimeBuffer += MSPerFrame;
+		Point location = cSprite->getLocation();
+		//If spritesheet
+
+		//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
+		Point objLocation = obj->getLocation();
+		if (cSprite->isSpritesheet) {
+			int* box = new int[2];
+			((Spritesheet*)cSprite)->getCurrentFrame(box);
+			int width = ((Spritesheet*)cSprite)->getWidth();
+			int height = ((Spritesheet*)cSprite)->getHeight();
+			SDL_Rect dsrect = { (int)location.x + (int)objLocation.x, (int)location.y + (int)objLocation.y, width, height };
+			renderer->render(cSprite->getCurrentImage(),
+				{ box[0], box[1], width, height }, dsrect);
+		}
+		else {
+			std::pair<int, int> dimensions = cSprite->getDimensions();
+			SDL_Rect dsrect = { (int)location.x + (int)objLocation.x, (int)location.y + (int)objLocation.y,
+				dimensions.first, dimensions.second };
+			renderer->render(cSprite->getCurrentImage(), dsrect);
+		}
+		if (cSprite->renderTimeBuffer > (1 / (double)(cSprite->getFPS())) * 1000) {
+
+			if (cSprite->isSpritesheet) {
+				((Spritesheet*)cSprite)->nextFrame();
+			}
+			else {
+				cSprite->nextImage();
+			}
+			cSprite->renderTimeBuffer -= (1 / (double)(cSprite->getFPS())) * 1000;
+		}
 	}
 }
-std::list<GameObject*> Scene::getObjects()
+std::vector<GameObject*> Scene::getObjects()
 {
 	return objects;
 }
 
+void Scene::addObject(GameObject* object) {
+	Sprite* sprite = object->getSprite();
+	for (char* filename : sprite->getFilenames()) {
+		SDL_Surface * tempImage = IMG_Load(filename);
+		sprite->images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
+			renderer->getSDLRenderer(), tempImage));
+		SDL_FreeSurface(tempImage);
+	}
+	Scene::objects.push_back(object);
+}
+
+void Scene::addSprite(Sprite* sprite) {
+	for (char* filename : sprite->getFilenames()) {
+		SDL_Surface * tempImage = IMG_Load(filename);
+		sprite->images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
+			renderer->getSDLRenderer(), tempImage));
+		SDL_FreeSurface(tempImage);
+	}
+	sprites.push_back(sprite);
+}
+
 void Scene::destroy()
 {
-    for (std::list<Sprite*>::iterator i = sprites.begin(); i != sprites.end(); i++)
-		(*i)->destroy();
+    for (Sprite* s: sprites)
+		s->destroy();
 	sprites.clear();
 	renderer->destroy();
 }

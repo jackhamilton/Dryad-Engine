@@ -5,7 +5,7 @@
 
 class Spritesheet : public Sprite {
 public:
-    Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<int> heights, int width, Scene* window);
+    Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<int> heights, int width);
 	void getCurrentFrame(int* dim);
 	void setCurrentAnimation(int currentAnimation) {
 		if (currentAnimation != Spritesheet::currentAnimation) {

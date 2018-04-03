@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include "Scene.h"
 #include "Renderer.h"
 #include "Point.h"
 #include <list>
@@ -10,8 +9,8 @@
 class Sprite {
 public:
 	std::list<SDL_Texture*> images;
-    Sprite(std::vector<char*> filenames, Scene* world) : Sprite(filenames, world, 20) {};
-    Sprite(std::vector<char*> filenames, Scene* world, int fps);
+    Sprite(std::vector<char*> filenames) : Sprite(filenames, 20) {};
+    Sprite(std::vector<char*> filenames, int fps);
 	void setLocation(Point location) {
 		Sprite::location = location;
 	}
@@ -30,9 +29,13 @@ public:
 	void destroy();
 	bool isSpritesheet = false;
 	double renderTimeBuffer;
+	std::vector<char*> getFilenames() {
+		return filenames;
+	}
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
 	Point location;
 	int fps;
+	std::vector<char*> filenames;
 };

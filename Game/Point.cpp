@@ -1,6 +1,5 @@
 #include "Point.h"
 
-double x, y;
-Point::Point(double x, double y) {
-	::x = x, ::y = y;
+Point::Point(double xPos, double yPos) {
+	Point::x = xPos, Point::y = yPos;
 };

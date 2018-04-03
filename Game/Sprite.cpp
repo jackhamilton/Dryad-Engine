@@ -2,18 +2,10 @@
 #include <stdint.h>
 #include <iostream>
 
-Sprite::Sprite(std::vector<char*> filenames, Scene * world, int fps)
+Sprite::Sprite(std::vector<char*> filenames, int fps)
 {
+	Sprite::filenames = filenames;
 	startedAnimation = false;
-	(*world).sprites.push_back(this);
-	Renderer* windowRenderer = world->getRenderer();
-	Renderer renderer = *windowRenderer;
-	for (char* filename : filenames) {
-		SDL_Surface * tempImage = IMG_Load(filename);
-		Sprite::images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
-			renderer.getSDLRenderer(), tempImage));
-		SDL_FreeSurface(tempImage);
-	}
 	Sprite::fps = fps;
 	isSpritesheet = false;
 	Sprite::renderTimeBuffer = 1 / (double)(fps);
@@ -32,6 +24,9 @@ SDL_Texture * Sprite::getCurrentImage()
 	if (!startedAnimation) {
 		currentImage = images.begin();
 		startedAnimation = true;
+	}
+	if (images.size() == 0) {
+		printf("Error: sprite has no images.");
 	}
 	return *currentImage;
 }

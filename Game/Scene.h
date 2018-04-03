@@ -2,15 +2,15 @@
 #include "Renderer.h"
 #include "Point.h"
 #include <list>
-
-class Sprite;
-class GameObject;
+#include <GameObject.h>
+#include <vector>
+#include <Sprite.h>
 
 class Scene {
 public:
 	Scene();
 	void render(int frame, int fps);
-    std::list<GameObject*> getObjects();
+    std::vector<GameObject*> getObjects();
 	void setRenderer(Renderer* renderer) {
 		Scene::renderer = renderer;
 	}
@@ -19,7 +19,9 @@ public:
 	}
 	Renderer* renderer;
 	void destroy();
-	std::list<Sprite*> sprites;
+	std::vector<Sprite*> sprites;
+	void addObject(GameObject* object);
+	void addSprite(Sprite* sprite);
 private:
-    std::list<GameObject*> objects;
+    std::vector<GameObject*> objects;
 };
