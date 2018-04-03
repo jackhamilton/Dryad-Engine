@@ -19,29 +19,29 @@ void Scene::render(int frame, int fps)
 		Point location = cSprite->getLocation();
 		//If spritesheet
 
-		//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
 		if (cSprite->isSpritesheet) {
-			int* box = new int[2];
-			((Spritesheet*)cSprite)->getCurrentFrame(box);
-			int width = ((Spritesheet*)cSprite)->getWidth();
-			int height = ((Spritesheet*)cSprite)->getHeight();
-			SDL_Rect dsrect = { (int)location.x, (int)location.y, width, height };
-			renderer->render(cSprite->getCurrentImage(),
-				{ box[0], box[1], width, height }, dsrect);
+			((Spritesheet*)cSprite)->nextFrame();
 		}
 		else {
-            std::pair<int, int> dimensions = cSprite->getDimensions();
-			SDL_Rect dsrect = { (int)location.x, (int)location.y,
-				dimensions.first, dimensions.second };
-			renderer->render(cSprite->getCurrentImage(), dsrect);
+			cSprite->nextImage();
 		}
+		
 		if (cSprite->renderTimeBuffer > (1/(double)(cSprite->getFPS())) * 1000) {
-
+			//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
 			if (cSprite->isSpritesheet) {
-				((Spritesheet*)cSprite)->nextFrame();
+				int* box = new int[2];
+				((Spritesheet*)cSprite)->getCurrentFrame(box);
+				int width = ((Spritesheet*)cSprite)->getWidth();
+				int height = ((Spritesheet*)cSprite)->getHeight();
+				SDL_Rect dsrect = { (int)location.x, (int)location.y, width, height };
+				renderer->render(cSprite->getCurrentImage(),
+					{ box[0], box[1], width, height }, dsrect);
 			}
 			else {
-				cSprite->nextImage();
+				std::pair<int, int> dimensions = cSprite->getDimensions();
+				SDL_Rect dsrect = { (int)location.x, (int)location.y,
+					dimensions.first, dimensions.second };
+				renderer->render(cSprite->getCurrentImage(), dsrect);
 			}
 			cSprite->renderTimeBuffer -= (1 / (double)(cSprite->getFPS())) * 1000;
 		}

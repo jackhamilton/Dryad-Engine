@@ -14,7 +14,7 @@ using namespace std;
 static GameLoop gameLoop;
 static Spritesheet* link;
 
-static int fps = 120;
+static int fps = 5;
 static double fpsSpeedFactor;
 
 int main(int argc, char* args[]) {
