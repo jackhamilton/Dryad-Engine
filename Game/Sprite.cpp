@@ -2,9 +2,26 @@
 #include <stdint.h>
 #include <iostream>
 
+Sprite::Sprite(std::vector<SDL_Texture*> textures, int fps)
+{
+	fileBased = false;
+	initDefaultParams(fps);
+	for (SDL_Texture* texture : textures)
+	{
+		images.push_back(texture);
+	}
+}
+
 Sprite::Sprite(std::vector<char*> filenames, int fps)
 {
+	fileBased = true;
 	Sprite::filenames = filenames;
+	initDefaultParams(fps);
+}
+
+//Common elements of the two constructors
+void Sprite::initDefaultParams(int fps)
+{
 	startedAnimation = false;
 	Sprite::fps = fps;
 	isSpritesheet = false;

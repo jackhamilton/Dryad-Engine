@@ -40,15 +40,15 @@ int main(int argc, char* args[]) {
 	//Configure inputs
 	input.addKeyboardEvent([]() { gameLoop.stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() { 
-		Point p = link->getLocation();
+		Point p = link->getPosition();
 		p.x += 7.0*fpsSpeedFactor;
-		link->setLocation(p);
+		link->setPosition(p);
 		((Spritesheet*)link->getSprite())->setCurrentAnimation(7);
 	}, { make_pair(SDLK_RIGHT, SDL_KEYDOWN)});
 	input.addKeyboardEvent([]() {
-		Point p = link->getLocation();
+		Point p = link->getPosition();
 		p.x -= 7.0*fpsSpeedFactor;
-		link->setLocation(p);
+		link->setPosition(p);
 		((Spritesheet*)link->getSprite())->setCurrentAnimation(5);
 	}, { make_pair(SDLK_LEFT, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {

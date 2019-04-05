@@ -4,12 +4,12 @@
 
 static int cID = 0;
 
-Point GameObject::getLocation()
+Point GameObject::getPosition()
 {
 	return GameObject::position;
 }
 
-void GameObject::setLocation(Point pos)
+void GameObject::setPosition(Point pos)
 {
 	GameObject::position = pos;
 }
@@ -34,4 +34,14 @@ void GameObject::setSprite(Sprite* sprite) {
 
 Sprite* GameObject::getSprite() {
 	return GameObject::sprite;
+}
+
+void GameObject::setPhysics(Physics * p)
+{
+	physics = p;
+}
+
+Physics* GameObject::getPhysics()
+{
+	return physics;
 }

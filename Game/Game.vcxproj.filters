@@ -37,6 +37,12 @@
     <Filter Include="Header Files\engine\world">
       <UniqueIdentifier>{1ef7402b-b225-4291-8fc7-7572bfe256b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\engine\ui">
+      <UniqueIdentifier>{c05b7cc4-fa61-49b2-a09a-26423ce2bd6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\ui">
+      <UniqueIdentifier>{2e28a5e6-5c5b-466d-867b-03b51250954f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -69,6 +75,12 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\engine\world</Filter>
     </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\engine\control</Filter>
+    </ClCompile>
+    <ClCompile Include="button.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -97,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
+    <ClInclude Include="button.h">
+      <Filter>Header Files\engine\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

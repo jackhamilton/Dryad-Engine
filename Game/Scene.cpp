@@ -52,7 +52,7 @@ void Scene::render(int frame, int fps)
 		//If spritesheet
 
 		//TODO : put this in a sprite/spritesheet render() method, take out isSpritesheet?
-		Point objLocation = obj->getLocation();
+		Point objLocation = obj->getPosition();
 		if (cSprite->isSpritesheet) {
 			int* box = new int[2];
 			((Spritesheet*)cSprite)->getCurrentFrame(box);
@@ -86,22 +86,32 @@ std::vector<GameObject*> Scene::getObjects()
 }
 
 void Scene::addObject(GameObject* object) {
+	//Load the sprite's images with the scene renderer
 	Sprite* sprite = object->getSprite();
-	for (char* filename : sprite->getFilenames()) {
-		SDL_Surface * tempImage = IMG_Load(filename);
-		sprite->images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
-			renderer->getSDLRenderer(), tempImage));
-		SDL_FreeSurface(tempImage);
+	if (sprite->fileBased) {
+		for (char* filename : sprite->getFilenames()) {
+			SDL_Surface * tempImage = IMG_Load(filename);
+			sprite->images.push_back(SDL_CreateTextureFromSurface(
+				renderer->getSDLRenderer(), tempImage));
+			SDL_FreeSurface(tempImage);
+		}
+	} else {
+		printf("Texture loading functionality not implemented (Scene.cpp:99)");
 	}
 	Scene::objects.push_back(object);
 }
 
 void Scene::addSprite(Sprite* sprite) {
-	for (char* filename : sprite->getFilenames()) {
-		SDL_Surface * tempImage = IMG_Load(filename);
-		sprite->images.push_back(SDL_CreateTextureFromSurface(//Maybe move this to the render loop
-			renderer->getSDLRenderer(), tempImage));
-		SDL_FreeSurface(tempImage);
+	//Load the sprite's images with the scene renderer
+	if (sprite->fileBased) {
+		for (char* filename : sprite->getFilenames()) {
+			SDL_Surface * tempImage = IMG_Load(filename);
+			sprite->images.push_back(SDL_CreateTextureFromSurface(
+				renderer->getSDLRenderer(), tempImage));
+			SDL_FreeSurface(tempImage);
+		}
+	} else {
+		printf("Texture loading functionality not implemented (Scene.cpp:114)");
 	}
 	sprites.push_back(sprite);
 }
