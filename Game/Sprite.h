@@ -1,33 +1,35 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include "Renderer.h"
-#include "Point.h"
 #include <list>
 #include <vector>
+#include "Point.h"
+
+class Renderer;
 
 class Sprite {
 public:
+	//Blank constructor
+	Sprite();
 	//Initialize using list of textures
-	Sprite(std::vector<SDL_Texture*> textures) : Sprite(textures, 20) {};
-	Sprite(std::vector<SDL_Texture*> textures, int fps);
+	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 20) {};
+	Sprite(std::vector<SDL_Surface*> images, int fps);
 	//Initialize using image files
     Sprite(std::vector<char*> filenames) : Sprite(filenames, 20) {};
     Sprite(std::vector<char*> filenames, int fps);
 
 	std::list<SDL_Texture*> images;
-	bool isSpritesheet = false;
 	double renderTimeBuffer;
-	//True if sprite uses files, false if sprite uses a textureset
-	bool fileBased;
 
-    std::pair<int, int> getDimensions();
+    virtual std::pair<int, int> getDimensions();
 	//Gets current image, advances
 	SDL_Texture* getCurrentImage();
 	//Does not advance, but starts animation if not started
 	SDL_Texture* peekCurrentImage();
-	void nextImage();
+	virtual void nextImage();
+	virtual void render(Renderer* renderer, Point locationMod);
 	void destroy();
+	void loadTextures(Renderer* renderer);
 
 	std::vector<char*> getFilenames() {
 		return filenames;
@@ -46,7 +48,10 @@ private:
 	bool startedAnimation;
 	Point location;
 	int fps;
+	//True if sprite uses files, false if sprite uses a textureset
+	bool fileBased;
 	std::vector<char*> filenames;
+	std::vector<SDL_Surface*> surfaces;
 
 	void initDefaultParams(int fps);
 };

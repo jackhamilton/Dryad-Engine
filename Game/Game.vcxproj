@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
-    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_ttf-2.0.15\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_ttf-2.0.15\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\lib\x64;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>Z:\Documents\Visual Studio 2017\Projects\Dropkick Core Engine\Game;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\SDL2_image-2.0.3\include;Z:\Documents\Programming\C++\Libraries\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
@@ -87,7 +87,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -133,7 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="button.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -147,7 +147,7 @@
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="button.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />

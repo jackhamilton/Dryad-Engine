@@ -78,8 +78,8 @@
     <ClCompile Include="Physics.cpp">
       <Filter>Source Files\engine\control</Filter>
     </ClCompile>
-    <ClCompile Include="button.cpp">
-      <Filter>Source Files\engine\ui</Filter>
+    <ClCompile Include="Button.cpp">
+      <Filter>Header Files\engine\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,8 +113,8 @@
     <ClInclude Include="Physics.h">
       <Filter>Header Files\engine\control</Filter>
     </ClInclude>
-    <ClInclude Include="button.h">
-      <Filter>Header Files\engine\ui</Filter>
+    <ClInclude Include="Button.h">
+      <Filter>Source Files\engine\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,15 +1,20 @@
 #include "Sprite.h"
+#include "Renderer.h"
 #include <stdint.h>
 #include <iostream>
 
-Sprite::Sprite(std::vector<SDL_Texture*> textures, int fps)
+Sprite::Sprite()
 {
 	fileBased = false;
+	Sprite::surfaces = {};
+	initDefaultParams(20);
+}
+
+Sprite::Sprite(std::vector<SDL_Surface*> images, int fps)
+{
+	fileBased = false;
+	Sprite::surfaces = images;
 	initDefaultParams(fps);
-	for (SDL_Texture* texture : textures)
-	{
-		images.push_back(texture);
-	}
 }
 
 Sprite::Sprite(std::vector<char*> filenames, int fps)
@@ -24,7 +29,6 @@ void Sprite::initDefaultParams(int fps)
 {
 	startedAnimation = false;
 	Sprite::fps = fps;
-	isSpritesheet = false;
 	Sprite::renderTimeBuffer = 1 / (double)(fps);
 }
 
@@ -79,9 +83,36 @@ SDL_Texture * Sprite::peekCurrentImage()
 	}
 }
 
+void Sprite::render(Renderer* renderer, Point locationMod) 
+{
+	std::pair<int, int> dimensions = getDimensions();
+	SDL_Rect dsrect = { (int)location.x + (int)locationMod.x, (int)location.y + (int)locationMod.y, dimensions.first, dimensions.second };
+	renderer->render(getCurrentImage(), dsrect);
+}
+
+void Sprite::loadTextures(Renderer* renderer) 
+{
+	if (fileBased) {
+		for (char* filename : getFilenames()) {
+			SDL_Surface * tempImage = IMG_Load(filename);
+			images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), tempImage));
+			SDL_FreeSurface(tempImage);
+		}
+	}
+	else {
+		for (SDL_Surface* surface : surfaces) {
+			images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), surface));
+			SDL_FreeSurface(surface);
+		}
+	}
+}
+
 void Sprite::destroy()
 {
     for (std::list<SDL_Texture*>::iterator i = images.begin(); i != images.end(); i++)
 		SDL_DestroyTexture(*i);
 	images.clear();
+	for (char* ptr : filenames) {
+		free(ptr);
+	}
 }

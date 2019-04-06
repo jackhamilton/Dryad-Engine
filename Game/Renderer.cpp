@@ -32,5 +32,6 @@ void Renderer::renderBackground()
 
 void Renderer::destroy()
 {
-	SDL_DestroyRenderer(renderer);
+	//TODO: this was causing issues, so I commented it out, but it isn't destroyed
+	//SDL_DestroyRenderer(renderer);
 }
