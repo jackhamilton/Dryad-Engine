@@ -1,6 +1,6 @@
 #include "Button.h"
 #include "SDL_ttf.h"
-#include <Sprite.h>
+#include <CompositeSprite.h>
 
 //Include .ttf in font name
 Button::Button(const char* text, const char* font, int fontSize, Point position, SDL_Color textColor) : GameObject(position)
@@ -23,7 +23,11 @@ Button::Button(const char* text, const char* font, int fontSize, Point position,
 		/* Filling the surface with red color. */
 		SDL_FillRect(surfaceMessage, NULL, SDL_MapRGB(surfaceMessage->format, 255, 0, 0));
 	}
-	Sprite* sprite = new Sprite({ surfaceMessage });
+	SDL_Surface *bg = SDL_CreateRGBSurface(0, 200, 100, 32, 0, 0, 0, 0);
+	SDL_FillRect(bg, NULL, SDL_MapRGB(bg->format, 255, 0, 0));
+	CompositeSprite* sprite = new CompositeSprite();
+	sprite->addSpriteFromSurfaces({ bg });
+	sprite->addSpriteFromSurfaces({ surfaceMessage });
 	hasSprite = true;
 	setSprite(sprite);
 }

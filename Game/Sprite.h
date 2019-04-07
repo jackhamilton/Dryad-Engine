@@ -23,13 +23,13 @@ public:
 
     virtual std::pair<int, int> getDimensions();
 	//Gets current image, advances
-	SDL_Texture* getCurrentImage();
+	virtual SDL_Texture* getCurrentImage();
 	//Does not advance, but starts animation if not started
-	SDL_Texture* peekCurrentImage();
+	virtual SDL_Texture* peekCurrentImage();
 	virtual void nextImage();
 	virtual void render(Renderer* renderer, Point locationMod);
 	void destroy();
-	void loadTextures(Renderer* renderer);
+	virtual void loadTextures(Renderer* renderer);
 
 	std::vector<char*> getFilenames() {
 		return filenames;
@@ -52,6 +52,6 @@ private:
 	bool fileBased;
 	std::vector<char*> filenames;
 	std::vector<SDL_Surface*> surfaces;
-
+protected:
 	void initDefaultParams(int fps);
 };
