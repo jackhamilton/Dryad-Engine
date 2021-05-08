@@ -10,6 +10,7 @@
 #include "Input.h"
 #include <GameObject.h>
 #include <Point.h>
+#include "Button.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ static GameLoop gameLoop;
 static Spritesheet* linkSpr;
 static GameObject* link;
 
-static int fps = 120;
+static int fps = 60;
 static double fpsSpeedFactor;
 
 int main(int argc, char* args[]) {
@@ -28,6 +29,8 @@ int main(int argc, char* args[]) {
 	fpsSpeedFactor = 60.0 / (double)fps;;
 	Input input;
 	gameLoop = GameLoop(fps);
+	Button* buttonTest = new Button("Test", "Bebas.ttf", 24, Point(50, 50), { 255, 255, 255 });
+	world.addObject(buttonTest);
 	char* s = SDL_GetBasePath();
 	strcat(s, "res/zelda.png");
     std::vector<char*> images = { s };
@@ -37,26 +40,27 @@ int main(int argc, char* args[]) {
 	linkSpr->setCurrentAnimation(0);
 	link = new GameObject(Point(50, 50), linkSpr);
 	world.addObject(link);
+
 	//Configure inputs
 	input.addKeyboardEvent([]() { gameLoop.stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() { 
-		Point p = link->getLocation();
+		Point p = link->getPosition();
 		p.x += 7.0*fpsSpeedFactor;
-		link->setLocation(p);
+		link->setPosition(p);
 		((Spritesheet*)link->getSprite())->setCurrentAnimation(7);
 	}, { make_pair(SDLK_RIGHT, SDL_KEYDOWN)});
 	input.addKeyboardEvent([]() {
-		Point p = link->getLocation();
+		Point p = link->getPosition();
 		p.x -= 7.0*fpsSpeedFactor;
-		link->setLocation(p);
+		link->setPosition(p);
 		((Spritesheet*)link->getSprite())->setCurrentAnimation(5);
 	}, { make_pair(SDLK_LEFT, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
 		((Spritesheet*)link->getSprite())->setCurrentAnimation(0);
 	}, { make_pair(SDLK_LEFT, SDL_KEYUP),
-		 make_pair(SDLK_RIGHT, SDL_KEYUP) }); //If all are up, reset animation
+		 make_pair(SDLK_RIGHT, SDL_KEYUP) }); //If all are up, reset animation*/
 	gameLoop.setInput(&input);
-
+	
 	gameLoop.addWorld(world);
 	gameLoop.start();
 	window->destroy();

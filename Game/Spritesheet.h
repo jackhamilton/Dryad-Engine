@@ -3,8 +3,11 @@
 #include "Sprite.h"
 #include <vector>
 
+class Renderer;
+
 class Spritesheet : public Sprite {
 public:
+	Spritesheet();
     Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<int> heights, int width);
 	void getCurrentFrame(int* dim);
 	void setCurrentAnimation(int currentAnimation) {
@@ -16,9 +19,11 @@ public:
 	void destroy() {
 		Sprite::destroy();
 	}
-	void nextFrame();
+	void nextImage();
+	void render(Renderer* renderer, Point locationMod);
 	int getWidth();
 	int getHeight();
+	std::pair<int, int> getDimensions();
 private:
     std::vector<int> framecounts;
     std::vector<int> heights;

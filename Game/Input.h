@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <map>
+#include <functional>
 
 //Use std::function wrapped to Callback so that the map works
 typedef std::function<void()> Callback;

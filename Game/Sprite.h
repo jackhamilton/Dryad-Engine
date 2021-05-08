@@ -1,16 +1,41 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include "Renderer.h"
-#include "Point.h"
 #include <list>
 #include <vector>
+#include "Point.h"
+#include "ModifiableProperty.h"
+
+class Renderer;
 
 class Sprite {
 public:
-	std::list<SDL_Texture*> images;
+	//Blank constructor
+	Sprite();
+	//Initialize using list of textures
+	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 20) {};
+	Sprite(std::vector<SDL_Surface*> images, int fps);
+	//Initialize using image files
     Sprite(std::vector<char*> filenames) : Sprite(filenames, 20) {};
     Sprite(std::vector<char*> filenames, int fps);
+
+	std::list<SDL_Texture*> images;
+	double renderTimeBuffer;
+
+    virtual std::pair<int, int> getDimensions();
+	//Gets current image, advances
+	virtual SDL_Texture* getCurrentImage();
+	//Does not advance, but starts animation if not started
+	virtual SDL_Texture* peekCurrentImage();
+	virtual void nextImage();
+	virtual void render(Renderer* renderer, Point locationMod);
+	void destroy();
+	virtual void loadTextures(Renderer* renderer);
+	void tick();
+
+	std::vector<char*> getFilenames() {
+		return filenames;
+	}
 	void setLocation(Point location) {
 		Sprite::location = location;
 	}
@@ -20,22 +45,17 @@ public:
 	int getFPS() {
 		return fps;
 	}
-    std::pair<int, int> getDimensions();
-	//Gets current image, advances
-	SDL_Texture* getCurrentImage();
-	//Does not advance, but starts animation if not started
-	SDL_Texture* peekCurrentImage();
-	void nextImage();
-	void destroy();
-	bool isSpritesheet = false;
-	double renderTimeBuffer;
-	std::vector<char*> getFilenames() {
-		return filenames;
-	}
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
 	Point location;
 	int fps;
+	ModifiableProperty animationSpeed;
+	double animationSpeedMultiplier;
+	//True if sprite uses files, false if sprite uses a textureset
+	bool fileBased;
 	std::vector<char*> filenames;
+	std::vector<SDL_Surface*> surfaces;
+protected:
+	void initDefaultParams(int fps);
 };

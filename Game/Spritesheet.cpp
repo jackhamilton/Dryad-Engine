@@ -1,4 +1,14 @@
 #include "Spritesheet.h"
+#include "Renderer.h"
+
+Spritesheet::Spritesheet() : Sprite()
+{
+	Spritesheet::heights = {};
+	Spritesheet::width = 0;
+	currentFrame = 0;
+	currentAnimation = 0;
+	Spritesheet::framecounts = {};
+}
 
 //framecounts is not zero indexed, just the number of frames
 Spritesheet::Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<int> heights, int width): Sprite(filename)
@@ -8,7 +18,6 @@ Spritesheet::Spritesheet(std::vector<char*> filename, std::vector<int> framecoun
 	currentFrame = 0;
 	currentAnimation = 0;
 	Spritesheet::framecounts = framecounts;
-	isSpritesheet = true;
 }
 
 //gives x and y
@@ -22,7 +31,7 @@ void Spritesheet::getCurrentFrame(int* dim)
 	dim[1] = starty;
 }
 
-void Spritesheet::nextFrame()
+void Spritesheet::nextImage()
 {
 	if (currentFrame < framecounts[currentAnimation] - 1) {
 		currentFrame += 1;
@@ -40,4 +49,19 @@ int Spritesheet::getWidth()
 int Spritesheet::getHeight()
 {
 	return heights[currentAnimation];
+}
+
+std::pair<int, int> Spritesheet::getDimensions()
+{
+	return std::pair<int, int>(getWidth(), getHeight());
+}
+
+void Spritesheet::render(Renderer* renderer, Point locationMod)
+{
+	int* box = new int[2];
+	getCurrentFrame(box);
+	Point location = getLocation();
+	SDL_Rect dsrect = { (int)location.x + (int)locationMod.x, (int)location.y + (int)locationMod.y, getWidth(), getHeight() };
+	renderer->render(getCurrentImage(),
+		{ box[0], box[1], getWidth(), getHeight() }, dsrect);
 }
