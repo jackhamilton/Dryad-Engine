@@ -5,20 +5,23 @@
 
 Sprite::Sprite()
 {
+	loopAnimation = false;
 	fileBased = false;
 	Sprite::surfaces = {};
 	initDefaultParams(20);
 }
 
-Sprite::Sprite(std::vector<SDL_Surface*> images, int fps)
+Sprite::Sprite(std::vector<SDL_Surface*> images, int fps, bool loop)
 {
+	loopAnimation = loop;
 	fileBased = false;
 	Sprite::surfaces = images;
 	initDefaultParams(fps);
 }
 
-Sprite::Sprite(std::vector<char*> filenames, int fps)
+Sprite::Sprite(std::vector<char*> filenames, int fps, bool loop)
 {
+	loopAnimation = loop;
 	fileBased = true;
 	Sprite::filenames = filenames;
 	initDefaultParams(fps);
@@ -28,6 +31,7 @@ Sprite::Sprite(std::vector<char*> filenames, int fps)
 void Sprite::initDefaultParams(int fps)
 {
 	startedAnimation = false;
+	paused = false;
 	Sprite::fps = fps;
 	Sprite::renderTimeBuffer = 1 / (double)(fps);
 	Sprite::animationSpeed = ModifiableProperty(1);
@@ -67,12 +71,15 @@ void Sprite::nextImage()
 		currentImage = images.begin();
 		startedAnimation = true;
 	}
-	else {
+	else if (!paused) {
 		if (std::distance(currentImage, images.end()) > 1) {
 			currentImage++;
 		}
 		else {
 			currentImage = images.begin();
+			if (!loopAnimation) {
+				paused = true;
+			}
 		}
 	}
 }

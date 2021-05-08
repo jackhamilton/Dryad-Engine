@@ -13,11 +13,11 @@ public:
 	//Blank constructor
 	Sprite();
 	//Initialize using list of textures
-	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 20) {};
-	Sprite(std::vector<SDL_Surface*> images, int fps);
+	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 20, false) {};
+	Sprite(std::vector<SDL_Surface*> images, int fps, bool loop);
 	//Initialize using image files
-    Sprite(std::vector<char*> filenames) : Sprite(filenames, 20) {};
-    Sprite(std::vector<char*> filenames, int fps);
+    Sprite(std::vector<char*> filenames) : Sprite(filenames, 20, false) {};
+    Sprite(std::vector<char*> filenames, int fps, bool loop);
 
 	std::list<SDL_Texture*> images;
 	double renderTimeBuffer;
@@ -45,11 +45,19 @@ public:
 	int getFPS() {
 		return fps;
 	}
+	void setAnimationSpeed(double speed) {
+		animationSpeed.clearModifiers();
+		animationSpeed.addModifier(speed);
+	}
+	void setPaused(bool pause) {
+		Sprite::paused = pause;
+	}
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
 	Point location;
 	int fps;
+	bool loopAnimation;
 	ModifiableProperty animationSpeed;
 	double animationSpeedMultiplier;
 	//True if sprite uses files, false if sprite uses a textureset
@@ -58,4 +66,5 @@ private:
 	std::vector<SDL_Surface*> surfaces;
 protected:
 	void initDefaultParams(int fps);
+	bool paused;
 };

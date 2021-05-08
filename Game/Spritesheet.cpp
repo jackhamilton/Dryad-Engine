@@ -3,6 +3,7 @@
 
 Spritesheet::Spritesheet() : Sprite()
 {
+	paused = true;
 	Spritesheet::heights = {};
 	Spritesheet::width = 0;
 	currentFrame = 0;
@@ -11,12 +12,13 @@ Spritesheet::Spritesheet() : Sprite()
 }
 
 //framecounts is not zero indexed, just the number of frames
-Spritesheet::Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<int> heights, int width): Sprite(filename)
+Spritesheet::Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<bool> looping, std::vector<int> heights, int width): Sprite(filename)
 {
     Spritesheet::heights = heights;
 	Spritesheet::width = width;
 	currentFrame = 0;
 	currentAnimation = 0;
+	Spritesheet::looping = looping;
 	Spritesheet::framecounts = framecounts;
 }
 
@@ -33,11 +35,16 @@ void Spritesheet::getCurrentFrame(int* dim)
 
 void Spritesheet::nextImage()
 {
-	if (currentFrame < framecounts[currentAnimation] - 1) {
-		currentFrame += 1;
-	}
-	else {
-		currentFrame = 0;
+	if (!paused) {
+		if (currentFrame < framecounts[currentAnimation] - 1) {
+			currentFrame += 1;
+		}
+		else {
+			currentFrame = 0;
+			if (!looping[currentAnimation]) {
+				paused = true;
+			}
+		}
 	}
 }
 
