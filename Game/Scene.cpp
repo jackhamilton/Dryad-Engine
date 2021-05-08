@@ -29,7 +29,7 @@ void Scene::render(int frame, int fps)
 			//If spritesheet
 
 			cSprite->render(renderer, obj->getPosition());
-
+			
 			cSprite->tick();
 		}
 	}
