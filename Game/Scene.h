@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "Sprite.h"
 #include "Rectangle.h"
+#include "Line.h"
 
 //Use std::function wrapped to Callback so that the map works
 typedef std::function<void()> Callback;
@@ -14,6 +15,7 @@ typedef std::function<void()> Callback;
 using namespace std;
 class Scene {
 public:
+	Scene();
     vector<GameObject*> getObjects();
 	void destroy();
 	vector<Sprite*> sprites;
@@ -32,4 +34,6 @@ public:
 	const char* name;
 private:
     vector<GameObject*> objects;
+	function<void(GameObject*, ModifiableProperty<Line, double>)> movementCallback;
+	void moveObject(GameObject* g, ModifiableProperty<Line, double> vector);
 };

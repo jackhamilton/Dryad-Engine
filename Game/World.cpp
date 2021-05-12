@@ -100,3 +100,13 @@ void World::destroy()
 		it->second->destroy();
 	}
 }
+
+void World::setDisplayFPS(bool enabled)
+{
+	World::displayFPS = enabled;
+	if (World::displayFPS) {
+		if (!fpsIndicator) {
+			fpsIndicator = new GameObject();
+		}
+	}
+}

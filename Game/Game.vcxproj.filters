@@ -78,9 +78,6 @@
     <ClCompile Include="CompositeSprite.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
-    <ClCompile Include="ModifiableProperty.cpp">
-      <Filter>Source Files\engine\data</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Source Files\engine\ui</Filter>
     </ClCompile>
@@ -92,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="World.cpp">
       <Filter>Source Files\engine\world</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files\engine\data</Filter>
+    </ClCompile>
+    <ClCompile Include="Hitbox.cpp">
+      <Filter>Source Files\engine\data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +147,15 @@
       <Filter>Header Files\engine\world</Filter>
     </ClInclude>
     <ClInclude Include="Rectangle.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Hitbox.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
   </ItemGroup>

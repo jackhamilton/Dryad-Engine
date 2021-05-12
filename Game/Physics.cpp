@@ -2,6 +2,8 @@
 #include <math.h>
 #include <Sprite.h>
 
+//TODO: Movement adjusted for FPS
+//TODO: Spherical physics bodies
 
 bool Physics::testAABBCollision(AABB a, AABB b)
 {

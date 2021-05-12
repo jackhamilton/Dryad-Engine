@@ -138,9 +138,10 @@
     <ClCompile Include="CompositeSprite.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Hitbox.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ModifiableProperty.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Point.cpp" />
@@ -153,10 +154,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="CompositeSprite.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Hitbox.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="ModifiableProperty.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Physics.h" />

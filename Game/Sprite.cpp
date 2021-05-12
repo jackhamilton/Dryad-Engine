@@ -34,7 +34,7 @@ void Sprite::initDefaultParams(int fps)
 	paused = false;
 	Sprite::fps = fps;
 	Sprite::renderTimeBuffer = 1 / (double)(fps);
-	Sprite::animationSpeed = ModifiableProperty(1);
+	Sprite::animationSpeed = ModifiableProperty<double, double>(1);
 }
 
 std::pair<int, int> Sprite::getDimensions()

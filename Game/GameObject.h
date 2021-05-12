@@ -1,11 +1,13 @@
 #pragma once
-#include "Point.h"
 #include <vector>
 #include <functional>
+#include "Point.h"
 #include "Sprite.h"
-#include <Size.h>
+#include "Size.h"
+#include "Line.h"
 
 class Physics;
+class Hitbox;
 
 using namespace std;
 class GameObject {
@@ -24,11 +26,14 @@ public:
 	Sprite* getSprite();
 	vector<Sprite*> renderQueue;
 
+	void move(ModifiableProperty<Line, double> vector);
+
 	void setPhysics(Physics* p);
 	Physics* getPhysics();
 	bool operator == (const GameObject& obj) const { return id == obj.id; }
 	bool operator != (const GameObject& obj) const { return id != obj.id; }
 	void getMouseEvents(function<void()>* ret);
+	//TODO: REWORK THIS WHOLE THING'S VISIBLITY USING FRIEND CLASSES (also in input, mouse, scene classes)
 	bool hasMouseMoveEvent;
 	bool hasMouseEnteredEvent;
 	bool hasMouseExitedEvent;
@@ -52,9 +57,13 @@ protected:
 	function<void()> mouseRightClickUpEvent;
 private:
 	int id;
+	Hitbox* hitbox;
 	Point position;
 	Size size;
 	Sprite* sprite;
 	Physics* physics;
+	function<void(GameObject*, ModifiableProperty<Line, double>)>* movementCallback;
 	void addSpriteToSceneRenderQueue(Sprite* s);
+	friend class Scene;
+	friend class Hitbox;
 };

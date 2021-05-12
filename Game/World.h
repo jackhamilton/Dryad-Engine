@@ -17,11 +17,14 @@ public:
 	void render(int frame, int fps);
 	Renderer* getRenderer();
 	void destroy();
+	void setDisplayFPS(bool enabled);
 private:
 	Input* input;
 	Mouse* mouse;
 	Renderer* renderer;
 	map<const char*, Scene*> scenes;
 	Scene* currentScene;
+	bool displayFPS;
+	GameObject* fpsIndicator;
 };
 

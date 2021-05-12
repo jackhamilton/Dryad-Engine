@@ -23,6 +23,7 @@ void GameLoop::start()
 		frame++;
 		long double endTimeMS = (long double)(time(0) * 1000);
 		long double renderTimeTakenMS = endTimeMS - sysTimeMS;
+		int cPotentialFPS = 1/(renderTimeTakenMS - sysTimeMS);
 		//TODO: scene preloading will go here
 		if (frameTimeMS - renderTimeTakenMS > 0) {
 			SDL_Delay((Uint32)(frameTimeMS - renderTimeTakenMS));
@@ -30,6 +31,8 @@ void GameLoop::start()
 		else {
 			SDL_Delay((Uint32)frameTimeMS);
 		}
+		long double actualEndTimeMS = (long double)(time(0) * 1000);
+		cFPS.push_back(1/(actualEndTimeMS - sysTimeMS));
 		frame++;
 	}
 }

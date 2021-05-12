@@ -4,6 +4,12 @@
 #include "Spritesheet.h"
 #include "Button.h"
 
+Scene::Scene()
+{
+	using namespace placeholders;
+	Scene::movementCallback = bind(&Scene::moveObject, this, _1, _2);
+}
+
 std::vector<GameObject*> Scene::getObjects()
 {
 	return objects;
@@ -21,6 +27,8 @@ void Scene::addObject(GameObject* object) {
 		}
 		Scene::objects.push_back(object);
 	}
+
+	object->movementCallback = &movementCallback;
 
 	function<void()> objectMouseEvents[9];
 	object->getMouseEvents(objectMouseEvents);
@@ -67,6 +75,11 @@ void Scene::addSprite(Sprite* sprite) {
 	//Load the sprite's images with the scene renderer
 	sprite->loadTextures(renderer);
 	sprites.push_back(sprite);
+}
+
+void Scene::moveObject(GameObject* g, ModifiableProperty<Line, double> vector)
+{
+	
 }
 
 void Scene::destroy()

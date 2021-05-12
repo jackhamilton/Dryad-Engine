@@ -1,18 +1,32 @@
 #pragma once
 #include <vector>
 
+//Basetype and modifier type respectively.
+template <typename T, typename M>
 class ModifiableProperty {
 private:
-	double value;
+	T value;
 	//multipliers
-	std::vector<double> modifierList;
+	std::vector<M> modifierList;
 	//add a dictionary as well, for the use case of buffs and debuffs (so you can target-remove)
 
 public:
-	ModifiableProperty(double value);
-	ModifiableProperty() : ModifiableProperty(0) {};
+	ModifiableProperty(T value) {
+		ModifiableProperty::value = value;
+	};
+	ModifiableProperty() {};
 
-	double getValue();
-	void addModifier(double modifier);
-	void clearModifiers();
+	T getValue() {
+		T computedValue = value;
+		for (M d : modifierList) {
+			computedValue *= d;
+		}
+		return computedValue;
+	};
+	void addModifier(M modifier) {
+		ModifiableProperty::modifierList.push_back(modifier);
+	}
+	void clearModifiers() {
+		ModifiableProperty::modifierList.clear();
+	};
 };

@@ -61,7 +61,7 @@ private:
 	Size size;
 	int fps;
 	bool loopAnimation;
-	ModifiableProperty animationSpeed;
+	ModifiableProperty<double, double> animationSpeed;
 	double animationSpeedMultiplier;
 	//True if sprite uses files, false if sprite uses a textureset
 	bool fileBased;

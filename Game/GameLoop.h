@@ -19,6 +19,8 @@ private:
 	Input* input;
 	int frame;
 	int fps;
+	vector<int> cFPS;
+	vector<int> cPotentialFPS;
 	double frameTimeMS;
 	World* world;
 };

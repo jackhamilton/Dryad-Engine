@@ -63,6 +63,12 @@ Sprite* GameObject::getSprite() {
 	return GameObject::sprite;
 }
 
+void GameObject::move(ModifiableProperty<Line, double> vector)
+{
+	function<void(GameObject*, ModifiableProperty<Line, double>)> cb = *movementCallback;
+	cb(this, vector);
+}
+
 void GameObject::setPhysics(Physics * p)
 {
 	physics = p;
