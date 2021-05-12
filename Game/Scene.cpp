@@ -39,19 +39,19 @@ void Scene::addObject(GameObject* object) {
 	if (object->hasMouseExitedEvent) {
 		sceneMouseExitedEvents.push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
 	}
-	if (object->hasMouseClickEvent) {
+	if (object->hasMouseClickGraphicEvent) {
 		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
 	}
-	if (object->hasMouseClickGraphicEvent) {
+	if (object->hasMouseClickEvent) {
 		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
 	}
 	if (object->hasMouseRightClickEvent) {
 		sceneMouseRightClickEvents.push_back(make_pair(objectMouseEvents[5], objectSizeRectangle));
 	}
-	if (object->hasMouseClickUpEvent) {
+	if (object->hasMouseClickUpGraphicEvent) {
 		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[6], objectSizeRectangle));
 	}
-	if (object->hasMouseClickUpGraphicEvent) {
+	if (object->hasMouseClickUpEvent) {
 		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[7], objectSizeRectangle));
 	}
 	if (object->hasMouseRightClickUpEvent) {

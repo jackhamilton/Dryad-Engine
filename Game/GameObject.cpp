@@ -78,11 +78,11 @@ void GameObject::getMouseEvents(function<void()>* ret)
 	ret[0] = mouseMoveEvent;
 	ret[1] = mouseEnteredEvent;
 	ret[2] = mouseExitedEvent;
-	ret[3] = mouseClickEvent;
-	ret[4] = mouseClickGraphicEvent;
+	ret[3] = mouseClickGraphicEvent;
+	ret[4] = mouseClickEvent;
 	ret[5] = mouseRightClickEvent;
-	ret[6] = mouseClickUpEvent;
-	ret[7] = mouseClickUpGraphicEvent;
+	ret[6] = mouseClickUpGraphicEvent;
+	ret[7] = mouseClickUpEvent;
 	ret[8] = mouseRightClickUpEvent;
 }
 
