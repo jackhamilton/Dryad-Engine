@@ -4,7 +4,7 @@
 #include "Point.h"
 #include "Sprite.h"
 #include "Size.h"
-#include "Line.h"
+#include "Vector.h"
 
 class Physics;
 class Hitbox;
@@ -26,7 +26,7 @@ public:
 	Sprite* getSprite();
 	vector<Sprite*> renderQueue;
 
-	void move(ModifiableProperty<Line, double> vector);
+	void move(ModifiableProperty<Vector, double> vector);
 
 	void setPhysics(Physics* p);
 	Physics* getPhysics();
@@ -62,7 +62,7 @@ private:
 	Size size;
 	Sprite* sprite;
 	Physics* physics;
-	function<void(GameObject*, ModifiableProperty<Line, double>)>* movementCallback;
+	function<void(GameObject*, ModifiableProperty<Vector, double>)>* movementCallback;
 	void addSpriteToSceneRenderQueue(Sprite* s);
 	friend class Scene;
 	friend class Hitbox;

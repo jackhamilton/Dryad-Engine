@@ -77,7 +77,7 @@ void Scene::addSprite(Sprite* sprite) {
 	sprites.push_back(sprite);
 }
 
-void Scene::moveObject(GameObject* g, ModifiableProperty<Line, double> vector)
+void Scene::moveObject(GameObject* g, ModifiableProperty<Vector, double> vector)
 {
 	
 }

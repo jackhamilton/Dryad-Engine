@@ -4,14 +4,9 @@
 #include <GameObject.h>
 #include <Point.h>
 
-struct Vector {
-	double x;
-	double y;
-};
-
 struct AABB {
-	struct Vector min;
-	struct Vector max;
+	Vector min;
+	Vector max;
 };
 
 //Handles 2D physics
@@ -31,8 +26,8 @@ public:
 	void setRestitution(double r);
 	double getMass();
 	void setMass(double m);
-	struct Vector getVelocity();
-	void setVelocity(struct Vector v);
+	Vector getVelocity();
+	void setVelocity(Vector v);
 	Point getPosition();
 	AABB getBounds();
 	void setBounds(AABB b);
@@ -43,7 +38,7 @@ public:
 	//If enabled, the physics object will not react to gravity, impulses, or collisions.
 	bool positionFixed;
 private:
-	struct Vector velocity;
+	Vector velocity;
 	double restitution;
 	double mass;
 	GameObject* object;

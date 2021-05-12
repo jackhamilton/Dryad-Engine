@@ -140,7 +140,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Hitbox.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Physics.cpp" />
@@ -160,7 +160,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Hitbox.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="Line.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="ModifiableProperty.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Physics.h" />

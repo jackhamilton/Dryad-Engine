@@ -90,7 +90,7 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files\engine\world</Filter>
     </ClCompile>
-    <ClCompile Include="Line.cpp">
+    <ClCompile Include="Vector.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
     <ClCompile Include="Hitbox.cpp">
@@ -149,7 +149,7 @@
     <ClInclude Include="Rectangle.h">
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
-    <ClInclude Include="Line.h">
+    <ClInclude Include="Vector.h">
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
     <ClInclude Include="Hitbox.h">

@@ -89,7 +89,7 @@ void Physics::resolveComplexCollision(Physics A, Physics B)
 	j /= 1 / A.getMass() + 1 / B.getMass();
 
 	// Apply impulse
-	struct Vector impulse = {
+	Vector impulse = {
 		j * d.x,
 		j * d.y
 	};
@@ -124,7 +124,7 @@ Physics::Physics(GameObject* object) {
 	};
 }
 
-struct Vector Physics::getVelocity()
+Vector Physics::getVelocity()
 {
 	return velocity;
 }

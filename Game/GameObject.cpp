@@ -63,9 +63,9 @@ Sprite* GameObject::getSprite() {
 	return GameObject::sprite;
 }
 
-void GameObject::move(ModifiableProperty<Line, double> vector)
+void GameObject::move(ModifiableProperty<Vector, double> vector)
 {
-	function<void(GameObject*, ModifiableProperty<Line, double>)> cb = *movementCallback;
+	function<void(GameObject*, ModifiableProperty<Vector, double>)> cb = *movementCallback;
 	cb(this, vector);
 }
 
