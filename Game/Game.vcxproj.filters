@@ -48,9 +48,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Point.cpp">
-      <Filter>Source Files\engine\data</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files\engine\world</Filter>
     </ClCompile>
@@ -78,14 +75,23 @@
     <ClCompile Include="Physics.cpp">
       <Filter>Source Files\engine\control</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Header Files\engine\ui</Filter>
-    </ClCompile>
     <ClCompile Include="CompositeSprite.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
     <ClCompile Include="ModifiableProperty.cpp">
       <Filter>Source Files\engine\data</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files\engine\control</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>Source Files\engine\data</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\engine\world</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,13 +125,25 @@
     <ClInclude Include="Physics.h">
       <Filter>Header Files\engine\control</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Source Files\engine\ui</Filter>
-    </ClInclude>
     <ClInclude Include="CompositeSprite.h">
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
     <ClInclude Include="ModifiableProperty.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Size.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
   </ItemGroup>

@@ -121,6 +121,8 @@ void Sprite::loadTextures(Renderer* renderer)
 			SDL_FreeSurface(surface);
 		}
 	}
+	std::pair<int, int> cSize = getDimensions();
+	size = { cSize.first, cSize.second };
 }
 
 void Sprite::destroy()

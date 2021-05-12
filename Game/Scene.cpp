@@ -1,54 +1,56 @@
+#include <list>
 #include "Scene.h"
 #include "Point.h"
-#include <list>
 #include "Spritesheet.h"
+#include "Button.h"
 
-Scene::Scene()
-{
-    
-}
-
-void Scene::render(int frame, int fps)
-{
-	double MSPerFrame = (1 / (double)fps) * 1000;
-	renderer->renderBackground();;
-	for (Sprite* cSprite: sprites) {
-		cSprite->renderTimeBuffer += MSPerFrame;
-		Point location = cSprite->getLocation();
-		
-		cSprite->render(renderer, Point(0, 0));
-
-		cSprite->tick();
-	}
-	//Do the same thing but for GameObjects
-	for (GameObject* obj: objects) {
-		if (obj->hasSprite) {
-			Sprite* cSprite = obj->getSprite();
-			cSprite->renderTimeBuffer += MSPerFrame;
-			Point location = cSprite->getLocation();
-			//If spritesheet
-
-			cSprite->render(renderer, obj->getPosition());
-			
-			cSprite->tick();
-		}
-	}
-}
 std::vector<GameObject*> Scene::getObjects()
 {
 	return objects;
 }
 
 void Scene::addObject(GameObject* object) {
+	if (!renderer) {
+		printf("ERROR: Scene has no renderer. Cannot load sprite textures.");
+		return;
+	}
 	//Load the sprite's images with the scene renderer
 	if (object->hasSprite) {
 		Sprite* sprite = object->getSprite();
 		sprite->loadTextures(renderer);
 		Scene::objects.push_back(object);
 	}
+
+	function<void()> objectMouseEvents[5];
+	object->getMouseEvents(objectMouseEvents);
+
+	Rectangle objectSizeRectangle;
+	objectSizeRectangle.x = object->getPosition().x;
+	objectSizeRectangle.y = object->getPosition().y;
+	objectSizeRectangle.width = object->getSize().width;
+	objectSizeRectangle.height = object->getSize().height;
+	if (object->hasMouseMoveEvent) {
+		sceneMouseMovementEvents.push_back(make_pair(objectMouseEvents[0], objectSizeRectangle));
+	}
+	if (object->hasMouseClickEvent) {
+		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[1], objectSizeRectangle));
+	}
+	if (object->hasMouseRightClickEvent) {
+		sceneMouseRightClickEvents.push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
+	}
+	if (object->hasMouseClickUpEvent) {
+		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
+	}
+	if (object->hasMouseRightClickUpEvent) {
+		sceneMouseRightClickUpEvents.push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
+	}
 }
 
 void Scene::addSprite(Sprite* sprite) {
+	if (!renderer) {
+		printf("ERROR: Scene has no renderer. Cannot load sprite textures.");
+		return;
+	}
 	//Load the sprite's images with the scene renderer
 	sprite->loadTextures(renderer);
 	sprites.push_back(sprite);

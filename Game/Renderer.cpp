@@ -10,6 +10,9 @@ Renderer::Renderer(SDL_Window* window)
 
 SDL_Renderer* Renderer::getSDLRenderer()
 {
+	if (!renderer) {
+		printf("Error: Could not retrieve renderer. One potential cause is a floating scene - make sure all your scenes are part of a world.\n");
+	}
 	return renderer;
 }
 

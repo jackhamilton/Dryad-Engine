@@ -2,13 +2,15 @@
 #include "Input.h"
 #include <ctime>
 
-GameLoop::GameLoop(int fps)
+GameLoop::GameLoop(int fps, World* world, Input* input)
 {
+	GameLoop::world = world;
 	running = false;
 	frame = 0;
 	GameLoop::fps = fps;
 	//calculate the time per frame
 	GameLoop::frameTimeMS = (1 / ((double)fps)) * 1000;
+	GameLoop::input = input;
 }
 
 void GameLoop::start()
@@ -17,8 +19,7 @@ void GameLoop::start()
 	while (running) {
 		long double sysTimeMS = (long double)(time(0) * 1000);
 		input->handleInput(this);
-        for (std::list<Scene>::iterator i = GameLoop::worlds.begin(); i != GameLoop::worlds.end(); i++)
-			(*i).render(frame, fps);
+		world->render(frame, fps);
 		frame++;
 		long double endTimeMS = (long double)(time(0) * 1000);
 		long double renderTimeTakenMS = endTimeMS - sysTimeMS;
@@ -41,9 +42,9 @@ void GameLoop::setInput(Input* input) {
 	GameLoop::input = input;
 }
 
-void GameLoop::addWorld(Scene world)
+void GameLoop::setWorld(World* world)
 {
-	worlds.push_back(world);
+	GameLoop::world = world;
 }
 
 void GameLoop::destroy()

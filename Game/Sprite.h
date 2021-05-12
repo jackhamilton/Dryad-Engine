@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <list>
 #include <vector>
+#include "Size.h"
 #include "Point.h"
 #include "ModifiableProperty.h"
 
@@ -56,6 +57,7 @@ private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
 	Point location;
+	Size size;
 	int fps;
 	bool loopAnimation;
 	ModifiableProperty animationSpeed;

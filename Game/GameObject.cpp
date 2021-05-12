@@ -9,6 +9,15 @@ Point GameObject::getPosition()
 	return GameObject::position;
 }
 
+void GameObject::setSize(Size size) {
+	GameObject::size = size;
+}
+
+Size GameObject::getSize()
+{
+	return size;
+}
+
 void GameObject::setPosition(Point pos)
 {
 	GameObject::position = pos;
@@ -59,4 +68,18 @@ void GameObject::setPhysics(Physics * p)
 Physics* GameObject::getPhysics()
 {
 	return physics;
+}
+
+void GameObject::getMouseEvents(function<void()>* ret)
+{
+	ret[0] = mouseMoveEvent;
+	ret[1] = mouseClickEvent;
+	ret[2] = mouseRightClickEvent;
+	ret[3] = mouseClickUpEvent;
+	ret[4] = mouseRightClickUpEvent;
+}
+
+bool GameObject::testInBounds(Point p)
+{
+	return (p.x > position.x and p.x < position.x + size.width and p.y > position.y and p.y < position.y + size.height);
 }

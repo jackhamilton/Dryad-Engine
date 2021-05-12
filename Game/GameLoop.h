@@ -1,18 +1,18 @@
 #pragma once
-#include "Scene.h"
 #include <list>
+#include "Scene.h"
+#include "World.h"
 
 class Input;
 
 class GameLoop {
 public:
-	GameLoop() : GameLoop(60) {};
-	GameLoop(int fps);
+	GameLoop(World* world, Input* input) : GameLoop(60, world, input) {};
+	GameLoop(int fps, World* world, Input* input);
 	void start();
 	void stop();
 	void setInput(Input* input);
-	void addWorld(Scene world);
-    std::list<Scene> worlds;
+	void setWorld(World* world);
 	bool running;
 	void destroy();
 private:
@@ -20,4 +20,5 @@ private:
 	int frame;
 	int fps;
 	double frameTimeMS;
+	World* world;
 };
