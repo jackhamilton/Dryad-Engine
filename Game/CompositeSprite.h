@@ -28,6 +28,5 @@ private:
 	vector<Point> fileOffsets;
 	vector<Point> surfaceOffsets;
 	bool centerAll;
-	bool hasCalledLoadTextures;
 };
 

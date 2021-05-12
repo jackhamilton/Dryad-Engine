@@ -17,11 +17,23 @@ public:
 	Button(function<void()> onClick, const char* text, const char* font, int fontSize, SDL_Color textColor, SDL_Color backgroundColor, Point position) : Button(onClick, text, font, fontSize, textColor, backgroundColor, position, { 0, 0 }) {};
 	~Button();
 	void setHoverTexture(Sprite* sprite);
+	void createHoverTexture(SDL_Color textColor, SDL_Color backgroundColor);
 	void setClickTexture(Sprite* sprite);
+	void createClickTexture(SDL_Color textColor, SDL_Color backgroundColor);
 private:
 	//0: base, 1: hover, 2: click
+	const char* text;
+	const char* font;
+	int fontSize;
+	bool hasTextureData;
 	Sprite* buttonStates[3];
 	int currentState;
-	void triggerCallback(Point a, Point b);
+	bool hasHoverTexture;
+	bool hasClickTexture;
+	void mouseEntered();
+	void mouseExited();
+	void mouseClickDown();
+	void mouseClickUp();
+	Sprite* createTexture(SDL_Color textColor, SDL_Color backgroundColor);
 };
 

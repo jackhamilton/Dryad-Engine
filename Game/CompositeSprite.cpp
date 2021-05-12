@@ -4,7 +4,6 @@ using namespace std;
 CompositeSprite::CompositeSprite(int fps)
 {
 	initDefaultParams(20);
-	hasCalledLoadTextures = false;
 }
 
 void CompositeSprite::addSpriteFromSurfaces(vector<SDL_Surface*> surfaces, Point offset)
@@ -41,8 +40,8 @@ void CompositeSprite::addSpriteFromFiles(vector<char*> files)
 
 void CompositeSprite::loadTextures(Renderer* renderer)
 {
-	if (!hasCalledLoadTextures) {
-		hasCalledLoadTextures = true;
+	if (!loaded) {
+		Sprite::loaded = true;
 		vector<Point> offsets;
 		int iterator = 0;
 		//DESTROYS imageFileStack and fileOffsets

@@ -54,6 +54,9 @@ GameObject::GameObject(Point position, Sprite* sprite)
 void GameObject::setSprite(Sprite* sprite) {
 	hasSprite = true;
 	GameObject::sprite = sprite;
+	if (!sprite->loaded) {
+		addSpriteToSceneRenderQueue(sprite);
+	}
 }
 
 Sprite* GameObject::getSprite() {
@@ -73,13 +76,22 @@ Physics* GameObject::getPhysics()
 void GameObject::getMouseEvents(function<void()>* ret)
 {
 	ret[0] = mouseMoveEvent;
-	ret[1] = mouseClickEvent;
-	ret[2] = mouseRightClickEvent;
-	ret[3] = mouseClickUpEvent;
-	ret[4] = mouseRightClickUpEvent;
+	ret[1] = mouseEnteredEvent;
+	ret[2] = mouseExitedEvent;
+	ret[3] = mouseClickEvent;
+	ret[4] = mouseClickGraphicEvent;
+	ret[5] = mouseRightClickEvent;
+	ret[6] = mouseClickUpEvent;
+	ret[7] = mouseClickUpGraphicEvent;
+	ret[8] = mouseRightClickUpEvent;
 }
 
 bool GameObject::testInBounds(Point p)
 {
 	return (p.x > position.x and p.x < position.x + size.width and p.y > position.y and p.y < position.y + size.height);
+}
+
+void GameObject::addSpriteToSceneRenderQueue(Sprite* s)
+{
+	renderQueue.push_back(s);
 }

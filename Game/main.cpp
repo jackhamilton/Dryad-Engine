@@ -64,9 +64,13 @@ int main(int argc, char* args[]) {
 
 	//Button
 	Button* buttonTest = new Button(&startGame, "Start", "Bebas.ttf", 24, { 255, 255, 255 }, { 50, 50, 50 }, Point(1000, 250), { 200, 100 });
+	buttonTest->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 });
+	buttonTest->createClickTexture({ 0, 0, 0 }, { 120, 120, 120 });
 	menu.addObject(buttonTest);
 
 	Button* buttonTestBack = new Button(&backToMenu, "Menu", "Bebas.ttf", 24, { 255, 255, 255 }, { 50, 50, 50 }, Point(1000, 500), { 200, 100 });
+	buttonTestBack->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 });
+	buttonTestBack->createClickTexture({ 0, 0, 0 }, { 120, 120, 120 });
 	gameScene.addObject(buttonTestBack);
 
 	//Configure inputs

@@ -22,6 +22,7 @@ public:
 
 	std::list<SDL_Texture*> images;
 	double renderTimeBuffer;
+	bool loaded;
 
     virtual std::pair<int, int> getDimensions();
 	//Gets current image, advances

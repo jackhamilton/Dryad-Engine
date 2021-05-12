@@ -19,8 +19,19 @@ void World::addScene(Scene* s, const char* name)
 
 void World::setScene(const char* name)
 {
+	if (mouse->sceneMouseExitedEvents) {
+		vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseExitedEvents;
+		for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
+		{
+			pair<function<void()>, Rectangle> pair = *it;
+			function<void()> func = pair.first;
+			func();
+		}
+	}
 	currentScene = scenes[name];
 	mouse->sceneMouseClickEvents = &currentScene->sceneMouseClickEvents;
+	mouse->sceneMouseEnteredEvents = &currentScene->sceneMouseEnteredEvents;
+	mouse->sceneMouseExitedEvents = &currentScene->sceneMouseExitedEvents;
 	mouse->sceneMouseClickUpEvents = &currentScene->sceneMouseClickUpEvents;
 	mouse->sceneMouseMovementEvents = &currentScene->sceneMouseMovementEvents;
 	mouse->sceneMouseRightClickEvents = &currentScene->sceneMouseRightClickEvents;
@@ -49,6 +60,9 @@ void World::render(int frame, int fps)
 		double MSPerFrame = (1 / (double)fps) * 1000;
 		renderer->renderBackground();
 		for (Sprite* cSprite : currentScene->sprites) {
+			if (!cSprite->loaded) {
+				cSprite->loadTextures(renderer);
+			}
 			cSprite->renderTimeBuffer += MSPerFrame;
 			Point location = cSprite->getLocation();
 
@@ -60,6 +74,9 @@ void World::render(int frame, int fps)
 		for (GameObject* obj : currentScene->getObjects()) {
 			if (obj->hasSprite) {
 				Sprite* cSprite = obj->getSprite();
+				if (!cSprite->loaded) {
+					cSprite->loadTextures(renderer);
+				}
 				cSprite->renderTimeBuffer += MSPerFrame;
 				Point location = cSprite->getLocation();
 				//If spritesheet

@@ -22,6 +22,8 @@ public:
 
 	//Engine objects - do not modify without very good reason
 	vector<pair<Callback, Rectangle>> sceneMouseMovementEvents;
+	vector<pair<Callback, Rectangle>> sceneMouseEnteredEvents;
+	vector<pair<Callback, Rectangle>> sceneMouseExitedEvents;
 	vector<pair<Callback, Rectangle>> sceneMouseClickEvents;
 	vector<pair<Callback, Rectangle>> sceneMouseRightClickEvents;
 	vector<pair<Callback, Rectangle>> sceneMouseClickUpEvents;

@@ -58,6 +58,7 @@ SDL_Texture * Sprite::getCurrentImage()
 }
 
 void Sprite::tick() {
+	//TODO: dont bother with this for non animated sprites
 	double renderTimeDiff = (1 / (double)(fps * animationSpeed.getValue())) * 1000;
 	if (renderTimeBuffer > renderTimeDiff) {
 		nextImage();
@@ -108,21 +109,24 @@ void Sprite::render(Renderer* renderer, Point locationMod)
 
 void Sprite::loadTextures(Renderer* renderer) 
 {
-	if (fileBased) {
-		for (char* filename : getFilenames()) {
-			SDL_Surface * tempImage = IMG_Load(filename);
-			images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), tempImage));
-			SDL_FreeSurface(tempImage);
+	if (!loaded) {
+		Sprite::loaded = true;
+		if (fileBased) {
+			for (char* filename : getFilenames()) {
+				SDL_Surface* tempImage = IMG_Load(filename);
+				images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), tempImage));
+				SDL_FreeSurface(tempImage);
+			}
 		}
-	}
-	else {
-		for (SDL_Surface* surface : surfaces) {
-			images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), surface));
-			SDL_FreeSurface(surface);
+		else {
+			for (SDL_Surface* surface : surfaces) {
+				images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), surface));
+				SDL_FreeSurface(surface);
+			}
 		}
+		std::pair<int, int> cSize = getDimensions();
+		size = { cSize.first, cSize.second };
 	}
-	std::pair<int, int> cSize = getDimensions();
-	size = { cSize.first, cSize.second };
 }
 
 void Sprite::destroy()

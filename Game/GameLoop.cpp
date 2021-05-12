@@ -23,6 +23,7 @@ void GameLoop::start()
 		frame++;
 		long double endTimeMS = (long double)(time(0) * 1000);
 		long double renderTimeTakenMS = endTimeMS - sysTimeMS;
+		//TODO: scene preloading will go here
 		if (frameTimeMS - renderTimeTakenMS > 0) {
 			SDL_Delay((Uint32)(frameTimeMS - renderTimeTakenMS));
 		}

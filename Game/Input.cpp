@@ -62,8 +62,6 @@ void Input::handleInput(GameLoop* gameLoop)
 		case SDL_MOUSEMOTION:
 			int x, y;
 			SDL_GetMouseState(&x, &y);
-			mouse->position.x = x;
-			mouse->position.y = y;
 			for (function<void(Point)> func : mouse->mouseMovementEvents) {
 				//Will have to create point every time. Perhaps change to int pair? would be very marginally more efficient
 				func(Point(x, y));
@@ -79,7 +77,31 @@ void Input::handleInput(GameLoop* gameLoop)
 						func();
 					}
 				}
+				vec = *mouse->sceneMouseEnteredEvents;
+				for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
+				{
+					pair<function<void()>, Rectangle> pair = *it;
+					function<void()> func = pair.first;
+					Rectangle activeRect = pair.second;
+					if ((x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) and
+						!(mouse->position.x > activeRect.x and mouse->position.x < activeRect.x + activeRect.width and mouse->position.y > activeRect.y and mouse->position.y < activeRect.y + activeRect.height)) {
+						func();
+					}
+				}
+				vec = *mouse->sceneMouseExitedEvents;
+				for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
+				{
+					pair<function<void()>, Rectangle> pair = *it;
+					function<void()> func = pair.first;
+					Rectangle activeRect = pair.second;
+					if (!(x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) and
+						(mouse->position.x > activeRect.x and mouse->position.x < activeRect.x + activeRect.width and mouse->position.y > activeRect.y and mouse->position.y < activeRect.y + activeRect.height)) {
+						func();
+					}
+				}
 			}
+			mouse->position.x = x;
+			mouse->position.y = y;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_LEFT) {

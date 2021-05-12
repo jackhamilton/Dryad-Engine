@@ -16,12 +16,13 @@ void Scene::addObject(GameObject* object) {
 	}
 	//Load the sprite's images with the scene renderer
 	if (object->hasSprite) {
-		Sprite* sprite = object->getSprite();
-		sprite->loadTextures(renderer);
+		for (Sprite* s : object->renderQueue) {
+			s->loadTextures(renderer);
+		}
 		Scene::objects.push_back(object);
 	}
 
-	function<void()> objectMouseEvents[5];
+	function<void()> objectMouseEvents[9];
 	object->getMouseEvents(objectMouseEvents);
 
 	Rectangle objectSizeRectangle;
@@ -32,17 +33,29 @@ void Scene::addObject(GameObject* object) {
 	if (object->hasMouseMoveEvent) {
 		sceneMouseMovementEvents.push_back(make_pair(objectMouseEvents[0], objectSizeRectangle));
 	}
+	if (object->hasMouseEnteredEvent) {
+		sceneMouseEnteredEvents.push_back(make_pair(objectMouseEvents[1], objectSizeRectangle));
+	}
+	if (object->hasMouseExitedEvent) {
+		sceneMouseExitedEvents.push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
+	}
 	if (object->hasMouseClickEvent) {
-		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[1], objectSizeRectangle));
+		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
+	}
+	if (object->hasMouseClickGraphicEvent) {
+		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
 	}
 	if (object->hasMouseRightClickEvent) {
-		sceneMouseRightClickEvents.push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
+		sceneMouseRightClickEvents.push_back(make_pair(objectMouseEvents[5], objectSizeRectangle));
 	}
 	if (object->hasMouseClickUpEvent) {
-		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
+		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[6], objectSizeRectangle));
+	}
+	if (object->hasMouseClickUpGraphicEvent) {
+		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[7], objectSizeRectangle));
 	}
 	if (object->hasMouseRightClickUpEvent) {
-		sceneMouseRightClickUpEvents.push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
+		sceneMouseRightClickUpEvents.push_back(make_pair(objectMouseEvents[8], objectSizeRectangle));
 	}
 }
 
