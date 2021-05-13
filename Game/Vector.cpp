@@ -8,8 +8,8 @@ Vector::Vector(double x, double y, double x2, double y2) {
 	Vector::y = y2 - y;
 }
 
-Vector::Vector(double dx, double dy) {
-	Vector::x = dx, Vector::y = dy;
+Vector::Vector(Point p) {
+	Vector::x = p.x, Vector::y = p.y;
 }
 
 Vector::Vector(double r, int theta) {
@@ -26,34 +26,34 @@ Point Vector::getCartesian()
 std::pair<double, double> Vector::getPolar()
 {
 	double r = abs(sqrt(pow(x, 2) + pow(y, 2)));
-	double theta = acos(x / r);
+	double theta = atan2(y, x);
 	return std::make_pair(r, theta);
 }
 
 Vector operator+(const Vector& a, const Vector& b)
 {
-	return Vector(a.x + b.x, a.y + b.y);
+	return Vector(Point(a.x + b.x, a.y + b.y));
 }
 
 Vector operator-(const Vector& a, const Vector& b)
 {
-	return Vector(a.x - b.x, a.y - b.y);
+	return Vector(Point(a.x - b.x, a.y - b.y));
 }
 
 Vector operator*(const Vector& a, const double b)
 {
 	double r = abs(sqrt(pow(a.x, 2) + pow(a.y, 2)));
-	double theta = acos(a.x / r);
+	double theta = atan2(a.y, a.x);
 	r *= b;
-	return Vector(r * cos((((double)theta) * PI) / 180.0), r * sin((((double)theta) * PI) / 180.0));
+	return Vector(Point(r * cos((((double)theta) * PI) / 180.0), r * sin((((double)theta) * PI) / 180.0)));
 }
 
 Vector operator*(const double a, const Vector& b)
 {
 	double r = abs(sqrt(pow(b.x, 2) + pow(b.y, 2)));
-	double theta = acos(b.x / r);
+	double theta = atan2(b.y, b.x);
 	r *= a;
-	return Vector(r * cos((((double)theta) * PI) / 180.0), r * sin((((double)theta) * PI) / 180.0));
+	return Vector(Point(r * cos((((double)theta) * PI) / 180.0), r * sin((((double)theta) * PI) / 180.0)));
 }
 
 bool operator>(const Vector& a, const Vector& b)
@@ -80,7 +80,7 @@ Vector& Vector::operator+=(const Vector& b)
 Vector& Vector::operator+=(const double b)
 {
 	double r = abs(sqrt(pow(x, 2) + pow(y, 2)));
-	double theta = 180*acos(x / r)/PI;
+	double theta = atan2(y, x);
 	r += b;
 	x = r * cos(theta);
 	y = r * sin(theta);
@@ -90,7 +90,7 @@ Vector& Vector::operator+=(const double b)
 Vector& Vector::operator-=(const double b)
 {
 	double r = abs(sqrt(pow(x, 2) + pow(y, 2)));
-	double theta = 180*acos(x / r)/PI;
+	double theta = atan2(y, x);
 	r -= b;
 	x = r * cos(theta);
 	y = r * sin(theta);
@@ -107,7 +107,7 @@ Vector& Vector::operator-=(const Vector& b)
 Vector& Vector::operator*=(const double b)
 {
 	double r = abs(sqrt(pow(x, 2) + pow(y, 2)));
-	double theta = 180*acos(x / r)/PI;
+	double theta = atan2(y, x);
 	r *= b;
 	x = r * cos(theta);
 	y = r * sin(theta);

@@ -30,6 +30,7 @@ public:
 	void addChild(GameObject* obj);
 
 	void move(ModifiableProperty<Vector, double> vector);
+	void move(Vector vector);
 
 	void setPhysics(Physics* p);
 	Physics* getPhysics();

@@ -3,17 +3,19 @@
 #include <vector>
 #include "Point.h"
 
-Hitbox::Hitbox(Circle c)
+Hitbox::Hitbox(Circle c, Point* parentPosition)
 {
 	hitboxCircle = c;
 	usesCircleHitbox = true;
+	Hitbox::parentPosition = parentPosition;
 }
 
-Hitbox::Hitbox(Rectangle r)
+Hitbox::Hitbox(Rectangle r, Point* parentPosition)
 {
 	hitboxRect = r;
 	usesCircleHitbox = false;
 	rotation = 0;
+	Hitbox::parentPosition = parentPosition;
 }
 
 bool Hitbox::testCollision(Hitbox h)
@@ -51,31 +53,38 @@ Point Hitbox::getCenter()
 //Assumes vector calculated from object origin. Hitbox array is for all other gameobjects
 Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> objects, Vector vector)
 {
-	bool clear = false;
+	bool clear = true;
+	Vector minimumLineGlobal(Point(650000, 650000));
 	for (Hitbox* o : objects) {
-		double x = getCenter().x;
-		double y = getCenter().y;
+		Point myCenter = getCenter() + *parentPosition;
+		double x = myCenter.x;
+		double y = myCenter.y;
 		Hitbox* targetHitbox = o;
-		Point center = targetHitbox->getCenter();
+		Point center = targetHitbox->getCenter() + *targetHitbox->parentPosition;
+		bool objectClear = true;
 		if (usesCircleHitbox and targetHitbox->usesCircleHitbox) {
 			//both circles
 			vector += hitboxCircle.r;
 			Point nearestCollision;
-			clear = lineCircle(x, y, x + vector.x, y + vector.y, targetHitbox->hitboxCircle.center.x, targetHitbox->hitboxCircle.center.y, targetHitbox->hitboxCircle.r, &nearestCollision);
-			if (!clear) {
+			objectClear = lineCircle(x, y, x + vector.x, y + vector.y, center.x, center.y, targetHitbox->hitboxCircle.r, &nearestCollision);
+			if (!objectClear) {
 				Vector ret = Vector(x, y, nearestCollision.x, nearestCollision.y);
 				ret -= (double)(hitboxCircle.r);
-				return ret;
+				clear = false;
+				if (ret < minimumLineGlobal) {
+					minimumLineGlobal = ret;
+				}
 			}
 		} else if (!o->usesCircleHitbox && !usesCircleHitbox) {
 			//both rectangles
 			std::vector<Point> origins = getRectangularPointsSet();
-			Vector minimumLine(650000, 650000);
+			Vector minimumLine(Point(650000, 650000));
 			bool collisionRegistered = false;
-			for (Point pt : origins) {
+			for (Point p1 : origins) {
+				Point pt = p1 + myCenter;
 				std::vector<Point> targetCorners = targetHitbox->getCorners();
-				Point c1 = targetCorners.at(0);
-				Point c2 = targetCorners.at(2);
+				Point c1 = targetCorners.at(0) + *targetHitbox->parentPosition;
+				Point c2 = targetCorners.at(2) + *targetHitbox->parentPosition;
 				Point collision;
 				bool collided = lineRect(pt.x, pt.y, pt.x + vector.x, pt.y + vector.y, c1.x, c1.y, c2.x, c2.y, &collision);
 				if (collided) {
@@ -86,11 +95,13 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 					}
 				}
 			}
-			if (!collisionRegistered) {
-				clear = true;
+			if (collisionRegistered) {
+				clear = false;
 			}
 			else {
-				return minimumLine;
+				if (minimumLine < minimumLineGlobal) {
+					minimumLineGlobal = minimumLine;
+				}
 			}
 		}
 		else {
@@ -98,12 +109,13 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 			if (targetHitbox->usesCircleHitbox) {
 				//target circle, source rect
 				std::vector<Point> origins = getRectangularPointsSet();
-				Vector minimumLine(650000, 650000);
+				Vector minimumLine(Point(650000, 650000));
 				bool collisionRegistered = false;
-				for (Point pt : origins) {
+				for (Point p1 : origins) {
+					Point pt = p1 + myCenter;
 					Point collision;
 					Circle c1 = targetHitbox->hitboxCircle;
-					bool collided = lineCircle(pt.x, pt.y, pt.x + vector.x, pt.y + vector.y, c1.center.x, c1.center.y, c1.r, &collision);
+					bool collided = lineCircle(pt.x, pt.y, pt.x + vector.x, pt.y + vector.y, center.x, center.y, c1.r, &collision);
 					if (collided) {
 						collisionRegistered = true;
 						Vector collVector = Vector(pt.x, pt.y, collision.x, collision.y);
@@ -112,11 +124,13 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 						}
 					}
 				}
-				if (!collisionRegistered) {
-					clear = true;
+				if (collisionRegistered) {
+					clear = false;
 				}
 				else {
-					return minimumLine;
+					if (minimumLine < minimumLineGlobal) {
+						minimumLineGlobal = minimumLine;
+					}
 				}
 			}
 			else {
@@ -124,13 +138,16 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 				vector += hitboxCircle.r;
 				Point nearestCollision;
 				std::vector<Point> targetCorners = targetHitbox->getCorners();
-				Point c1 = targetCorners.at(0);
-				Point c2 = targetCorners.at(2);
-				clear = lineRect(x, y, x + vector.x, y + vector.y, c1.x, c1.y, c2.x, c2.y, &nearestCollision);
-				if (!clear) {
+				Point c1 = targetCorners.at(0) + *targetHitbox->parentPosition;
+				Point c2 = targetCorners.at(2) + *targetHitbox->parentPosition;
+				objectClear = lineRect(x, y, x + vector.x, y + vector.y, c1.x, c1.y, c2.x, c2.y, &nearestCollision);
+				if (!objectClear) {
 					Vector ret = Vector(x, y, nearestCollision.x, nearestCollision.y);
 					ret -= (double)(hitboxCircle.r);
-					return ret;
+					clear = false;
+					if (ret < minimumLineGlobal) {
+						minimumLineGlobal = ret;
+					}
 				}
 			}
 		}
@@ -138,8 +155,10 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 	if (clear) {
 		return vector;
 	}
+	return Vector(Point(0, 0));
 }
 
+//relative to parent position
 vector<Point> Hitbox::getRectangularPointsSet() {
 	vector<Point> points;
 	if (!usesCircleHitbox) {
@@ -194,6 +213,7 @@ vector<Point> Hitbox::getRectangularPointsSet() {
 	return points;
 }
 
+//relative to parent position
 vector<Point> Hitbox::getCorners() {
 	vector<Point> points;
 	if (!usesCircleHitbox) {

@@ -6,7 +6,7 @@ class Vector {
 public:
 	double x, y;
 	Vector(double x, double y, double x2, double y2);
-	Vector(double dx, double dy);
+	Vector(Point p);
 	Vector(double r, int theta);
 	Vector() : Vector(0, 0) {};
 

@@ -11,6 +11,8 @@ GameLoop::GameLoop(int fps, World* world, Input* input)
 	//calculate the time per frame
 	GameLoop::frameTimeMS = (1 / ((double)fps)) * 1000;
 	GameLoop::input = input;
+	world->lastFrameTimeMS = &lastFrameTimeMS;
+	world->defaultFps = &(GameLoop::fps);
 }
 
 void GameLoop::start()
@@ -34,11 +36,9 @@ void GameLoop::start()
 		if (frameTimeMS - renderTimeTakenMS > 0) {
 			SDL_Delay((Uint32)(frameTimeMS - renderTimeTakenMS));
 		}
-		else {
-			SDL_Delay((Uint32)frameTimeMS);
-		}
 		clock_t actualEndTime = clock();
 		cFPS.push_back((long double)(actualEndTime - sysTime));
+		lastFrameTimeMS = (actualEndTime - sysTime) / (CLOCKS_PER_SEC / 1000);
 		frame++;
 	}
 }

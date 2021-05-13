@@ -22,6 +22,7 @@ private:
 	vector<long double> cFPS;
 	vector<long double> cPotentialFPS;
 	long double frameTimeMS;
+	long double lastFrameTimeMS;
 	World* world;
 	void logFPS();
 };

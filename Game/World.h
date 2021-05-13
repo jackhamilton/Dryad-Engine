@@ -37,8 +37,10 @@ private:
 	Scene* currentScene;
 
 	//debug layer
+	long double* lastFrameTimeMS;
 	const char* debugFont = "OpenSans-Regular.ttf";
 	int debugFontSize = 14;
+	int* defaultFps;
 	int cFPS;
 	int potentialFPS;
 	bool displayFPS;

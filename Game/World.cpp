@@ -12,6 +12,8 @@ void World::addScene(Scene* s, const char* name)
 {
 	s->renderer = renderer;
 	s->name = name;
+	s->lastFrameTimeMS = &lastFrameTimeMS;
+	s->defaultFps = &defaultFps;
 	scenes[name] = s;
 	if (!currentScene) {
 		setScene(name);
@@ -101,11 +103,11 @@ void World::renderGameObject(GameObject* obj, Point positionMod, double MSPerFra
 			obj->updateSize();
 		}
 		cSprite->renderTimeBuffer += MSPerFrame;
-		cSprite->render(renderer, Point(obj->getPosition().x + positionMod.x, obj->getPosition().y + positionMod.y));
+		cSprite->render(renderer, obj->getPosition() + cSprite->getLocation() + positionMod);
 		cSprite->tick();
 	}
 	for (GameObject* objC : obj->children) {
-		renderGameObject(objC, obj->getPosition(), MSPerFrame);
+		renderGameObject(objC, obj->getPosition() + positionMod, MSPerFrame);
 	}
 }
 

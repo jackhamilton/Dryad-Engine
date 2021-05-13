@@ -33,7 +33,11 @@ public:
 	Renderer* renderer;
 	const char* name;
 private:
+	//set to actual time including delay
+	int** defaultFps;
+	long double** lastFrameTimeMS;
     vector<GameObject*> objects;
 	function<void(GameObject*, ModifiableProperty<Vector, double>)> movementCallback;
 	void moveObject(GameObject* g, ModifiableProperty<Vector, double> vector);
+	friend class World;
 };

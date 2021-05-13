@@ -3,6 +3,7 @@
 #include "Point.h"
 #include "Spritesheet.h"
 #include "Button.h"
+#include "Hitbox.h"
 
 Scene::Scene()
 {
@@ -77,9 +78,29 @@ void Scene::addSprite(Sprite* sprite) {
 	sprites.push_back(sprite);
 }
 
+//Speed can be affected by modifiers, including frame speed. Vector is px/sec. Set position for absolute movement.
 void Scene::moveObject(GameObject* g, ModifiableProperty<Vector, double> vector)
 {
-	
+	std::vector<Hitbox*> hitboxes;
+	for (GameObject* o : objects) {
+		if (!g->id == o->id && o->hitboxEnabled && o->hitbox) {
+			hitboxes.push_back(o->hitbox);
+		}
+	}
+	double fpsSpeedFactor;
+	if (lastFrameTimeMS) {
+		fpsSpeedFactor = **lastFrameTimeMS / 1000;
+	}
+	else if (defaultFps) {
+		fpsSpeedFactor = 1.0 / (double)(**defaultFps);
+	}
+	else {
+		fpsSpeedFactor = 1.0 / 60.0;
+	}
+	vector.addModifier(fpsSpeedFactor);
+	Vector v = g->hitbox->getMaximumClearDistanceForVectorFromGameObject(hitboxes, vector.getValue());
+	Point adjustedPosition = g->position + v.getCartesian();
+	g->setPosition(adjustedPosition);
 }
 
 void Scene::destroy()

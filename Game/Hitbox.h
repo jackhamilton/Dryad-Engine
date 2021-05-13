@@ -10,8 +10,8 @@ class GameObject;
 class Hitbox
 {
 public:
-	Hitbox(Circle c);
-	Hitbox(Rectangle r);
+	Hitbox(Circle c, Point* parentPosition);
+	Hitbox(Rectangle r, Point* parentPosition);
 	//UNIMPLEMENTED
 	//does not work with rotated rectangles
 	bool testCollision(Hitbox h);
@@ -21,6 +21,7 @@ public:
 	static Point rotate(Point p, double deg);
 	vector<Point> getCorners();
 private:
+	Point* parentPosition;
 	int rectCollisionTestPrecision = 3;
 	double rotation;
 	bool usesCircleHitbox;

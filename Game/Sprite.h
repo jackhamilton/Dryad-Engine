@@ -14,10 +14,10 @@ public:
 	//Blank constructor
 	Sprite();
 	//Initialize using list of textures
-	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 20, false) {};
+	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 1, false) {};
 	Sprite(std::vector<SDL_Surface*> images, int fps, bool loop);
 	//Initialize using image files
-    Sprite(std::vector<char*> filenames) : Sprite(filenames, 20, false) {};
+    Sprite(std::vector<char*> filenames) : Sprite(filenames, 1, false) {};
     Sprite(std::vector<char*> filenames, int fps, bool loop);
 
 	std::list<SDL_Texture*> images;
@@ -59,10 +59,10 @@ protected:
 	bool paused;
 	Point location;
 	Size size;
+	int fps;
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
-	int fps;
 	bool loopAnimation;
 	ModifiableProperty<double, double> animationSpeed;
 	double animationSpeedMultiplier;

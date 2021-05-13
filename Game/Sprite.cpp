@@ -35,14 +35,18 @@ void Sprite::initDefaultParams(int fps)
 	Sprite::fps = fps;
 	Sprite::renderTimeBuffer = 1 / (double)(fps);
 	Sprite::animationSpeed = ModifiableProperty<double, double>(1);
+	Sprite::location = Point(0, 0);
 }
 
 std::pair<int, int> Sprite::getDimensions()
 {
+	if (!loaded || images.size() == 0) {
+		return std::make_pair(0, 0);
+	}
 	SDL_Texture* source = peekCurrentImage();
 	int w, h;
 	SDL_QueryTexture(source, NULL, NULL, &w, &h);
-    return std::pair<int, int>(w, h);
+    return std::make_pair(w, h);
 }
 
 SDL_Texture * Sprite::getCurrentImage()
@@ -91,10 +95,9 @@ SDL_Texture * Sprite::peekCurrentImage()
 		currentImage = images.begin();
 		startedAnimation = true;
 	}
-	try {
+	if (loaded && *currentImage) {
 		return *currentImage;
-	}
-    catch (std::exception e) {
+	} else {
 		printf("Error: no images found in sprite array.");
 		return NULL;
 	}

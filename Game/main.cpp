@@ -13,6 +13,7 @@
 #include "Button.h"
 #include "World.h"
 #include "Line.h"
+#include "Vector.h"
 
 using namespace std;
 
@@ -22,8 +23,8 @@ static GameObject* link;
 static World* gameWorld;
 
 static int fps = 60;
-static double fpsSpeedFactor;
 static float version = 0.3f;
+static Vector v = Vector(Point(50, 50));
 
 void startGame() {
 	gameWorld->setScene("Game");
@@ -49,10 +50,8 @@ int main(int argc, char* args[]) {
 	world.setDisplayFPS(true);
 	world.setDisplayObjectCount(true);
 	world.setDisplayHitboxes(true);
-	fpsSpeedFactor = 60.0 / (double)fps;
 	GameLoop g = GameLoop(fps, &world, &input);
 	gameLoop = &g;
-	char* file_home = SDL_GetBasePath();
 	//--------END SETUP----------
 
 	//Metadata
@@ -62,17 +61,24 @@ int main(int argc, char* args[]) {
 	world.addDebugObject(&engineVersionLabel);
 
 	//Spritesheet
-	char* zelda_dir = file_home;
-	strcat(zelda_dir, "res/zelda.png");
+	char* zelda_dir = SDL_GetBasePath();
+	strcat(zelda_dir, "res\\zelda.png");
     vector<char*> images = { zelda_dir };
     vector<int> heights = { 130, 130, 130, 130, 130, 130, 130, 130 };
 	vector<bool> looping = { false, false, false, false, true, true, true, true };
     vector<int> framecounts = { 3, 3, 1, 3, 10, 10, 10, 10 };
-	linkSpr = new Spritesheet(images, framecounts, looping, heights, 120);
+	linkSpr = new Spritesheet(images, framecounts, looping, heights, 120, 10);
 	linkSpr->setCurrentAnimation(0);
 	link = new GameObject(Point(50, 50), linkSpr);
 	link->enableHitbox();
 	gameScene.addObject(link);
+
+	char* wall_dir = SDL_GetBasePath();
+	strcat(wall_dir, "res\\wall.png");
+	Sprite* wallSpr = new Sprite({ wall_dir });
+	GameObject* wall = new GameObject(Point(200, 30), wallSpr);
+	wall->enableHitbox();
+	gameScene.addObject(wall);
 
 	//Button
 	Button* buttonTest = new Button(&startGame, "Start", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(550, 250), { 200, 100 });
@@ -89,33 +95,25 @@ int main(int argc, char* args[]) {
 	input.addKeyboardEvent([]() { gameLoop->stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() { 
 		if (gameWorld->getCurrentSceneName() == "Game") {
-			Point p = link->getPosition();
-			p.x += 7.0*fpsSpeedFactor;
-			link->setPosition(p);
+			link->move(Vector(Point(300, 0)));
 			((Spritesheet*)link->getSprite())->setCurrentAnimation(7);
 		}
 	}, { make_pair(SDLK_RIGHT, SDL_KEYDOWN)});
 	input.addKeyboardEvent([]() {
 		if (gameWorld->getCurrentSceneName() == "Game") {
-			Point p = link->getPosition();
-			p.x -= 7.0 * fpsSpeedFactor;
-			link->setPosition(p);
+			link->move(Vector(Point(-300, 0)));
 			((Spritesheet*)link->getSprite())->setCurrentAnimation(5);
 		}
 	}, { make_pair(SDLK_LEFT, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
 		if (gameWorld->getCurrentSceneName() == "Game") {
-			Point p = link->getPosition();
-			p.y -= 7.0 * fpsSpeedFactor;
-			link->setPosition(p);
+			link->move(Vector(Point(0, -300)));
 			((Spritesheet*)link->getSprite())->setCurrentAnimation(6);
 		}
 		}, { make_pair(SDLK_UP, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
 		if (gameWorld->getCurrentSceneName() == "Game") {
-			Point p = link->getPosition();
-			p.y += 7.0 * fpsSpeedFactor;
-			link->setPosition(p);
+			link->move(Vector(Point(0, 300)));
 			((Spritesheet*)link->getSprite())->setCurrentAnimation(4);
 		}
 		}, { make_pair(SDLK_DOWN, SDL_KEYDOWN) });

@@ -82,6 +82,12 @@ void GameObject::move(ModifiableProperty<Vector, double> vector)
 	cb(this, vector);
 }
 
+void GameObject::move(Vector vector)
+{
+	function<void(GameObject*, ModifiableProperty<Vector, double>)> cb = *movementCallback;
+	cb(this, ModifiableProperty<Vector, double>(vector));
+}
+
 void GameObject::setPhysics(Physics * p)
 {
 	physics = p;
@@ -117,16 +123,16 @@ void GameObject::enableHitbox()
 	Size objSize = getSize();
 	if (objSize.width != 0 && objSize.height != 0) {
 		Rectangle r;
-		r.x = position.x - objSize.width/2;
-		r.y = position.y - objSize.height/2;
+		r.x = 0;
+		r.y = 0;
 		r.width = objSize.width;
 		r.height = objSize.height;
-		hitbox = new Hitbox(r);
+		hitbox = new Hitbox(r, &position);
 	}
 }
 
 void GameObject::renderHitbox() {
-	if (!hitboxRendered) {
+	if (hitbox && !hitboxRendered) {
 		vector<Point> corners = hitbox->getCorners();
 		for (int i = 0; i < 4; i++) {
 			Line* l = new Line({ 255, 0, 0 }, corners.at(i), corners.at(i == 3 ? 0 : i+1));

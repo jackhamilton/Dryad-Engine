@@ -1,6 +1,7 @@
 #include <Physics.h>
 #include <math.h>
 #include <Sprite.h>
+#include "Point.h"
 
 //TODO: Movement adjusted for FPS
 //TODO: Spherical physics bodies
@@ -47,16 +48,16 @@ void Physics::resolveSimpleCollision(Physics A, Physics B) {
 			unfixed->object->getPosition().y + (yOverlap * -1)});
 		//adjust velocity, just give it half velocity in the opposite direction
 		if (yOverlap != 0) {
-			unfixed->setVelocity({
+			unfixed->setVelocity(Vector(Point(
 				unfixed->getVelocity().x,
 				(unfixed->getVelocity().y * -1) / 2
-				});
+				)));
 		}
 		if (xOverlap != 0) {
-			unfixed->setVelocity({
+			unfixed->setVelocity(Vector(Point(
 				(unfixed->getVelocity().x * -1) / 2,
 				unfixed->getVelocity().y
-				});
+				)));
 		}
 		//possible undeleted pointers, not sure if I need to do that (fixed, unfixed)
 	}
@@ -67,12 +68,12 @@ void Physics::resolveSimpleCollision(Physics A, Physics B) {
 void Physics::resolveComplexCollision(Physics A, Physics B)
 {
 	// Calculate relative velocity
-	static Vector rv = { B.getVelocity().x - A.getVelocity().x,
-		B.getVelocity().y - A.getVelocity().y };
+	static Vector rv = Vector(Point(B.getVelocity().x - A.getVelocity().x,
+		B.getVelocity().y - A.getVelocity().y));
 
 	//Calculate displacement
-	static Vector d = { B.getPosition().x - A.getPosition().x,
-		B.getPosition().y - A.getPosition().y };
+	static Vector d = Vector(Point(B.getPosition().x - A.getPosition().x,
+		B.getPosition().y - A.getPosition().y));
 
 	// Calculate relative velocity in terms of the normal direction
 	double relativeVelocity = dotProduct(rv, d);
@@ -89,16 +90,13 @@ void Physics::resolveComplexCollision(Physics A, Physics B)
 	j /= 1 / A.getMass() + 1 / B.getMass();
 
 	// Apply impulse
-	Vector impulse = {
-		j * d.x,
-		j * d.y
-	};
+	Vector impulse = Vector(Point(j * d.x, j * d.y));
 	//D here replaces the normal, this might not work.
 	//Look up collision reflection in 2D. 
-	A.setVelocity({ A.getVelocity().x - (1 / A.getMass() * impulse.x),
-		A.getVelocity().y - (1 / A.getMass() * impulse.y) });
-	B.setVelocity({ B.getVelocity().x + (1 / B.getMass() * impulse.x),
-		B.getVelocity().y + (1 / B.getMass() * impulse.y) });
+	A.setVelocity(Vector(Point(A.getVelocity().x - (1 / A.getMass() * impulse.x),
+		A.getVelocity().y - (1 / A.getMass() * impulse.y) )));
+	B.setVelocity(Vector(Point(B.getVelocity().x + (1 / B.getMass() * impulse.x),
+		B.getVelocity().y + (1 / B.getMass() * impulse.y) )));
 }
 
 //Only works on 2D vectors (Vector struct is two-dimensional)
@@ -119,8 +117,8 @@ Physics::Physics(GameObject* object) {
 	Point pos = object->getPosition();
 	std::pair<int, int> dim = object->getSprite()->getDimensions();
 	bounds = {
-		{pos.x, pos.y},
-		{dim.first + pos.x, dim.second + pos.y}
+		Vector(Point(pos.x, pos.y)),
+		Vector(Point(dim.first + pos.x, dim.second + pos.y))
 	};
 }
 
@@ -154,8 +152,8 @@ void Physics::computeBounds()
 	Point pos = object->getPosition();
 	std::pair<int, int> dim = object->getSprite()->getDimensions();
 	bounds = {
-		{ pos.x, pos.y },
-	{ dim.first + pos.x, dim.second + pos.y }
+		Vector(Point(pos.x, pos.y)),
+		Vector(Point(dim.first + pos.x, dim.second + pos.y))
 	};
 }
 
