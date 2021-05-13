@@ -19,12 +19,14 @@ SDL_Renderer* Renderer::getSDLRenderer()
 void Renderer::render(SDL_Texture* texture, SDL_Rect dstrect)
 {
 	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-	SDL_RenderPresent(renderer);
 }
 
 void Renderer::render(SDL_Texture* texture, SDL_Rect srcrect, SDL_Rect dstrect)
 {
 	SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
+}
+
+void Renderer::renderPresent() {
 	SDL_RenderPresent(renderer);
 }
 

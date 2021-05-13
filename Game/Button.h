@@ -2,6 +2,7 @@
 #include <list>
 #include <GameObject.h>
 #include <SDL.h>
+#include "SDL_ttf.h"
 #include <Size.h>
 #include <functional>
 
@@ -36,4 +37,3 @@ private:
 	void mouseClickUp();
 	Sprite* createTexture(SDL_Color textColor, SDL_Color backgroundColor);
 };
-

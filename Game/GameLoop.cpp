@@ -1,6 +1,6 @@
 #include "GameLoop.h"
 #include "Input.h"
-#include <ctime>
+#include <time.h>
 
 GameLoop::GameLoop(int fps, World* world, Input* input)
 {
@@ -17,24 +17,56 @@ void GameLoop::start()
 {
 	running = true;
 	while (running) {
-		long double sysTimeMS = (long double)(time(0) * 1000);
+		clock_t sysTime = clock();
 		input->handleInput(this);
 		world->render(frame, fps);
+		if (frame % 10 == 0) {
+			//every 10 frames
+			if (world->displayFPS) {
+				logFPS();
+			}
+		}
 		frame++;
-		long double endTimeMS = (long double)(time(0) * 1000);
-		long double renderTimeTakenMS = endTimeMS - sysTimeMS;
-		int cPotentialFPS = 1/(renderTimeTakenMS - sysTimeMS);
-		//TODO: scene preloading will go here
+		clock_t endTime = clock();
+		long double renderTimeTakenMS = ((long double)(endTime - sysTime))/(CLOCKS_PER_SEC/1000);
+		GameLoop::cPotentialFPS.push_back((long double)(endTime - sysTime));
+		//TODO: scene preloading will go here. ALSO PUT SPRITE LOADER HERE (for stuff like fps that must be reloaded. anything with !loaded)
 		if (frameTimeMS - renderTimeTakenMS > 0) {
 			SDL_Delay((Uint32)(frameTimeMS - renderTimeTakenMS));
 		}
 		else {
 			SDL_Delay((Uint32)frameTimeMS);
 		}
-		long double actualEndTimeMS = (long double)(time(0) * 1000);
-		cFPS.push_back(1/(actualEndTimeMS - sysTimeMS));
+		clock_t actualEndTime = clock();
+		cFPS.push_back((long double)(actualEndTime - sysTime));
 		frame++;
 	}
+}
+
+void GameLoop::logFPS() {
+	//log current fps
+	long double total = 0;
+	long double count = 0;
+	for (long double i : cFPS) {
+		total += i;
+		count++;
+	}
+	total /= (CLOCKS_PER_SEC/1000);
+	total /= count;
+	world->cFPS = (int)(1000/total);
+	cFPS.clear();
+	//log potential fps
+	total = 0;
+	count = 0;
+	for (long double i : cPotentialFPS) {
+		total += i;
+		count++;
+	}
+	total /= (CLOCKS_PER_SEC / 1000);
+	total /= count;
+	world->potentialFPS = (int)(1000/total);
+	cPotentialFPS.clear();
+	world->refreshFPS();
 }
 
 void GameLoop::stop()

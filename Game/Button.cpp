@@ -1,5 +1,4 @@
 #include "Button.h"
-#include "SDL_ttf.h"
 #include <CompositeSprite.h>
 
 //Include .ttf in font name

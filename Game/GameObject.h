@@ -55,7 +55,6 @@ protected:
 	function<void()> mouseClickUpEvent;
 	function<void()> mouseClickUpGraphicEvent;
 	function<void()> mouseRightClickUpEvent;
-private:
 	int id;
 	Hitbox* hitbox;
 	Point position;
@@ -64,6 +63,7 @@ private:
 	Physics* physics;
 	function<void(GameObject*, ModifiableProperty<Vector, double>)>* movementCallback;
 	void addSpriteToSceneRenderQueue(Sprite* s);
+private:
 	friend class Scene;
 	friend class Hitbox;
 };

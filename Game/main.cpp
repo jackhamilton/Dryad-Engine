@@ -12,6 +12,7 @@
 #include <Point.h>
 #include "Button.h"
 #include "World.h"
+#include "Line.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ static World* gameWorld;
 
 static int fps = 60;
 static double fpsSpeedFactor;
+static float version = 0.3f;
 
 void startGame() {
 	gameWorld->setScene("Game");
@@ -33,7 +35,7 @@ void backToMenu() {
 
 int main(int argc, char* args[]) {
 	//----------SETUP------------
-    Window* window = new Window("Dryad", m16_9);
+    Window* window = new Window("Dryad", ml16_9);
 	Mouse mouse;
 	Input input = Input(&mouse);
     World world = World(window->getRenderer(), &input);
@@ -44,11 +46,19 @@ int main(int argc, char* args[]) {
 	world.addScene(&menu, "Menu");
 	world.setScene("Menu");
 	//TODO: abstract
+	world.setDisplayFPS(true);
+	world.setDisplayObjectCount(true);
 	fpsSpeedFactor = 60.0 / (double)fps;
 	GameLoop g = GameLoop(fps, &world, &input);
 	gameLoop = &g;
 	char* file_home = SDL_GetBasePath();
 	//--------END SETUP----------
+
+	//Metadata
+	char engineVersionText[40];
+	sprintf(engineVersionText, "Dryad v%.1fa, 2021", version);
+	Text engineVersionLabel = Text(engineVersionText, world.getDebugFont(), 18, { 255, 255, 255 }, Point(10, 870));
+	world.addDebugObject(&engineVersionLabel);
 
 	//Spritesheet
 	char* zelda_dir = file_home;
@@ -63,7 +73,7 @@ int main(int argc, char* args[]) {
 	gameScene.addObject(link);
 
 	//Button
-	Button* buttonTest = new Button(&startGame, "Start", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(1000, 250), { 200, 100 });
+	Button* buttonTest = new Button(&startGame, "Start", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(550, 250), { 200, 100 });
 	buttonTest->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 });
 	buttonTest->createClickTexture({ 0, 0, 0 }, { 150, 150, 150 });
 	menu.addObject(buttonTest);

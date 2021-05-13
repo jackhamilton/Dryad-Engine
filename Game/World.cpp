@@ -1,4 +1,5 @@
 #include "World.h"
+#include <stdio.h>
 
 World::World(Renderer* renderer, Input* input)
 {
@@ -57,8 +58,14 @@ void World::setRenderer(Renderer* renderer)
 void World::render(int frame, int fps)
 {
 	if (currentScene) {
-		double MSPerFrame = (1 / (double)fps) * 1000;
 		renderer->renderBackground();
+		if (frame % 10 == 0) {
+			if (displayObjectCount) {
+				refreshObjectCount();
+			}
+		}
+
+		double MSPerFrame = (1 / (double)fps) * 1000;
 		for (Sprite* cSprite : currentScene->sprites) {
 			if (!cSprite->loaded) {
 				cSprite->loadTextures(renderer);
@@ -86,6 +93,23 @@ void World::render(int frame, int fps)
 				cSprite->tick();
 			}
 		}
+		//And finally for the debug layer
+		for (GameObject* obj : debugObjects) {
+			if (obj->hasSprite) {
+				Sprite* cSprite = obj->getSprite();
+				if (!cSprite->loaded) {
+					cSprite->loadTextures(renderer);
+				}
+				cSprite->renderTimeBuffer += MSPerFrame;
+				Point location = cSprite->getLocation();
+				//If spritesheet
+
+				cSprite->render(renderer, obj->getPosition());
+
+				cSprite->tick();
+			}
+		}
+		renderer->renderPresent();
 	}
 }
 
@@ -104,9 +128,60 @@ void World::destroy()
 void World::setDisplayFPS(bool enabled)
 {
 	World::displayFPS = enabled;
-	if (World::displayFPS) {
+}
+
+void World::setDisplayObjectCount(bool enabled)
+{
+	World::displayObjectCount = enabled;
+}
+
+void World::refreshFPS()
+{
+	if (displayFPS) {
 		if (!fpsIndicator) {
-			fpsIndicator = new GameObject();
+			char buffer[40];
+			sprintf(buffer, "FPS  %d : %d", cFPS, potentialFPS);
+			fpsIndicator = new Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6));
+			debugObjects.push_back(fpsIndicator);
+		}
+		else {
+			char buffer[40];
+			sprintf(buffer, "FPS  %d : %d", cFPS, potentialFPS);
+			fpsIndicator->setText(buffer);
 		}
 	}
+}
+
+void World::refreshObjectCount()
+{
+	if (displayObjectCount) {
+		if (!objectCountIndicator) {
+			char buffer[40];
+			int objC = currentScene->sprites.size() + currentScene->getObjects().size();
+			sprintf(buffer, "OBJ  %d", objC);
+			objectCountIndicator = new Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6*2 + debugFontSize));
+			debugObjects.push_back(objectCountIndicator);
+		}
+		else {
+			char buffer[40];
+			int objC = currentScene->sprites.size() + currentScene->getObjects().size();
+			sprintf(buffer, "OBJ  %d", objC);
+			objectCountIndicator->setText(buffer);
+		}
+	}
+}
+
+void World::addDebugObject(GameObject* g)
+{
+	debugObjects.push_back(g);
+}
+
+const char* World::getDebugFont()
+{
+	return debugFont;
+}
+
+int World::getDebugFontSize()
+{
+	return debugFontSize;
 }

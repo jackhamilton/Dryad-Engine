@@ -96,6 +96,12 @@
     <ClCompile Include="Hitbox.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -157,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="Circle.h">
       <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Header Files\engine\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
