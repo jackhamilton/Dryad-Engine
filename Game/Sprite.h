@@ -54,11 +54,14 @@ public:
 	void setPaused(bool pause) {
 		Sprite::paused = pause;
 	}
+protected:
+	void initDefaultParams(int fps);
+	bool paused;
+	Point location;
+	Size size;
 private:
 	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
-	Point location;
-	Size size;
 	int fps;
 	bool loopAnimation;
 	ModifiableProperty<double, double> animationSpeed;
@@ -67,7 +70,4 @@ private:
 	bool fileBased;
 	std::vector<char*> filenames;
 	std::vector<SDL_Surface*> surfaces;
-protected:
-	void initDefaultParams(int fps);
-	bool paused;
 };

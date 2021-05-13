@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "Size.h"
 #include "Vector.h"
+#include "Hitbox.h"
 
 class Physics;
 class Hitbox;
@@ -26,6 +27,8 @@ public:
 	Sprite* getSprite();
 	vector<Sprite*> renderQueue;
 
+	void addChild(GameObject* obj);
+
 	void move(ModifiableProperty<Vector, double> vector);
 
 	void setPhysics(Physics* p);
@@ -45,7 +48,12 @@ public:
 	bool hasMouseRightClickUpEvent;
 	//check if a point is inside the object. Size must be set.
 	bool testInBounds(Point p);
+	void enableHitbox();
+	void renderHitbox();
+	//TODO: void enableHitbox(Hitbox h);
 protected:
+	//currently, children render on top
+	vector<GameObject*> children;
 	function<void()> mouseMoveEvent;
 	function<void()> mouseEnteredEvent;
 	function<void()> mouseExitedEvent;
@@ -57,6 +65,8 @@ protected:
 	function<void()> mouseRightClickUpEvent;
 	int id;
 	Hitbox* hitbox;
+	bool hitboxEnabled;
+	bool hitboxRendered;
 	Point position;
 	Size size;
 	Sprite* sprite;
@@ -64,6 +74,8 @@ protected:
 	function<void(GameObject*, ModifiableProperty<Vector, double>)>* movementCallback;
 	void addSpriteToSceneRenderQueue(Sprite* s);
 private:
+	void updateSize();
+	friend class World;
 	friend class Scene;
 	friend class Hitbox;
 };

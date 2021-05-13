@@ -2,10 +2,11 @@
 #include "Rectangle.h"
 #include "Circle.h"
 #include "Vector.h"
-#include "GameObject.h"
 #include <vector>
 
 using namespace std;
+class GameObject;
+
 class Hitbox
 {
 public:
@@ -15,7 +16,7 @@ public:
 	//does not work with rotated rectangles
 	bool testCollision(Hitbox h);
 	Point getCenter();
-	Vector getMaximumClearDistanceForVectorFromGameObject(std::vector<GameObject*> objects, Vector vector);
+	Vector getMaximumClearDistanceForVectorFromGameObject(std::vector<Hitbox*> objects, Vector vector);
 	//Rotates point around center of hitbox
 	static Point rotate(Point p, double deg);
 	vector<Point> getCorners();

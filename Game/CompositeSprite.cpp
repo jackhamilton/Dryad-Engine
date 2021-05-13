@@ -103,6 +103,8 @@ void CompositeSprite::loadTextures(Renderer* renderer)
 				i++;
 			}
 		}
+		std::pair<int, int> cSize = getDimensions();
+		size = { cSize.first, cSize.second };
 	}
 }
 

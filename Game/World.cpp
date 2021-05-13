@@ -72,44 +72,40 @@ void World::render(int frame, int fps)
 			}
 			cSprite->renderTimeBuffer += MSPerFrame;
 			Point location = cSprite->getLocation();
-
-			cSprite->render(renderer, Point(0, 0));
-
+			cSprite->render(renderer, location);
 			cSprite->tick();
 		}
 		//Do the same thing but for GameObjects
 		for (GameObject* obj : currentScene->getObjects()) {
-			if (obj->hasSprite) {
-				Sprite* cSprite = obj->getSprite();
-				if (!cSprite->loaded) {
-					cSprite->loadTextures(renderer);
-				}
-				cSprite->renderTimeBuffer += MSPerFrame;
-				Point location = cSprite->getLocation();
-				//If spritesheet
-
-				cSprite->render(renderer, obj->getPosition());
-
-				cSprite->tick();
-			}
+			renderGameObject(obj, Point(0, 0), MSPerFrame);
 		}
 		//And finally for the debug layer
 		for (GameObject* obj : debugObjects) {
-			if (obj->hasSprite) {
-				Sprite* cSprite = obj->getSprite();
-				if (!cSprite->loaded) {
-					cSprite->loadTextures(renderer);
-				}
-				cSprite->renderTimeBuffer += MSPerFrame;
-				Point location = cSprite->getLocation();
-				//If spritesheet
-
-				cSprite->render(renderer, obj->getPosition());
-
-				cSprite->tick();
-			}
+			renderGameObject(obj, Point(0, 0), MSPerFrame);
 		}
 		renderer->renderPresent();
+	}
+}
+
+void World::renderGameObject(GameObject* obj, Point positionMod, double MSPerFrame) {
+	if (obj->hitboxEnabled && !obj->hitbox) {
+		obj->enableHitbox();
+	}
+	if (displayHitboxes && obj->hitboxEnabled && !obj->hitboxRendered) {
+		obj->renderHitbox();
+	}
+	if (obj->hasSprite) {
+		Sprite* cSprite = obj->getSprite();
+		if (!cSprite->loaded) {
+			cSprite->loadTextures(renderer);
+			obj->updateSize();
+		}
+		cSprite->renderTimeBuffer += MSPerFrame;
+		cSprite->render(renderer, Point(obj->getPosition().x + positionMod.x, obj->getPosition().y + positionMod.y));
+		cSprite->tick();
+	}
+	for (GameObject* objC : obj->children) {
+		renderGameObject(objC, obj->getPosition(), MSPerFrame);
 	}
 }
 
@@ -133,6 +129,11 @@ void World::setDisplayFPS(bool enabled)
 void World::setDisplayObjectCount(bool enabled)
 {
 	World::displayObjectCount = enabled;
+}
+
+void World::setDisplayHitboxes(bool enabled)
+{
+	World::displayHitboxes = enabled;
 }
 
 void World::refreshFPS()

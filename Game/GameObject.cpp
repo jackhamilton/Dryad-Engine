@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "GameObject.h"
 #include "Point.h"
+#include "Line.h"
 
 static int cID = 0;
 
@@ -15,6 +16,10 @@ void GameObject::setSize(Size size) {
 
 Size GameObject::getSize()
 {
+	if (size.width == 0 && size.height == 0) {
+		pair<int, int> sizes = getSprite()->getDimensions();
+		size = { sizes.first, sizes.second };
+	}
 	return size;
 }
 
@@ -57,10 +62,18 @@ void GameObject::setSprite(Sprite* sprite) {
 	if (!sprite->loaded) {
 		addSpriteToSceneRenderQueue(sprite);
 	}
+	else {
+		updateSize();
+	}
 }
 
 Sprite* GameObject::getSprite() {
 	return GameObject::sprite;
+}
+
+void GameObject::addChild(GameObject* obj)
+{
+	children.push_back(obj);
 }
 
 void GameObject::move(ModifiableProperty<Vector, double> vector)
@@ -97,7 +110,39 @@ bool GameObject::testInBounds(Point p)
 	return (p.x > position.x and p.x < position.x + size.width and p.y > position.y and p.y < position.y + size.height);
 }
 
+void GameObject::enableHitbox()
+{
+	//called from world to set up a default hitbox after sprite size loads
+	hitboxEnabled = true;
+	Size objSize = getSize();
+	if (objSize.width != 0 && objSize.height != 0) {
+		Rectangle r;
+		r.x = position.x - objSize.width/2;
+		r.y = position.y - objSize.height/2;
+		r.width = objSize.width;
+		r.height = objSize.height;
+		hitbox = new Hitbox(r);
+	}
+}
+
+void GameObject::renderHitbox() {
+	if (!hitboxRendered) {
+		vector<Point> corners = hitbox->getCorners();
+		for (int i = 0; i < 4; i++) {
+			Line* l = new Line({ 255, 0, 0 }, corners.at(i), corners.at(i == 3 ? 0 : i+1));
+			addChild(l);
+		}
+		hitboxRendered = true;
+	}
+}
+
 void GameObject::addSpriteToSceneRenderQueue(Sprite* s)
 {
 	renderQueue.push_back(s);
+}
+
+void GameObject::updateSize()
+{
+	pair<int, int> sizeOfSprite = sprite->getDimensions();
+	size = { sizeOfSprite.first, sizeOfSprite.second };
 }

@@ -19,6 +19,7 @@ Spritesheet::Spritesheet(std::vector<char*> filename, std::vector<int> framecoun
 	currentFrame = 0;
 	currentAnimation = 0;
 	Spritesheet::looping = looping;
+	Sprite::size = { width, heights[0] };
 	Spritesheet::framecounts = framecounts;
 }
 

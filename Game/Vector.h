@@ -7,7 +7,6 @@ public:
 	double x, y;
 	Vector(double x, double y, double x2, double y2);
 	Vector(double dx, double dy);
-	Vector(int dx, int dy) : Vector((double)dx, (double)dy) {};
 	Vector(double r, int theta);
 	Vector() : Vector(0, 0) {};
 

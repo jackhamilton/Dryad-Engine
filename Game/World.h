@@ -17,14 +17,18 @@ public:
 	Scene* getCurrentScene();
 	void setRenderer(Renderer* renderer);
 	void render(int frame, int fps);
+	void renderGameObject(GameObject* obj, Point positionMod, double MSPerFrame);
 	Renderer* getRenderer();
 	void destroy();
+
+	//debug layer
 	void setDisplayFPS(bool enabled);
 	void setDisplayObjectCount(bool enabled);
-	//Adds an object to the superimposed debug layer
-	void addDebugObject(GameObject* g);
+	void setDisplayHitboxes(bool enabled);
 	const char* getDebugFont();
 	int getDebugFontSize();
+	//Adds an object to the superimposed debug layer
+	void addDebugObject(GameObject* g);
 private:
 	Input* input;
 	Mouse* mouse;
@@ -35,10 +39,11 @@ private:
 	//debug layer
 	const char* debugFont = "OpenSans-Regular.ttf";
 	int debugFontSize = 14;
-	bool displayFPS;
 	int cFPS;
 	int potentialFPS;
+	bool displayFPS;
 	bool displayObjectCount;
+	bool displayHitboxes;
 
 	void refreshFPS();
 	void refreshObjectCount();

@@ -48,14 +48,14 @@ Point Hitbox::getCenter()
 	}
 }
 
-//Assumes vector calculated from object origin
-Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<GameObject*> objects, Vector vector)
+//Assumes vector calculated from object origin. Hitbox array is for all other gameobjects
+Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> objects, Vector vector)
 {
 	bool clear = false;
-	for (GameObject* o : objects) {
+	for (Hitbox* o : objects) {
 		double x = getCenter().x;
 		double y = getCenter().y;
-		Hitbox* targetHitbox = o->hitbox;
+		Hitbox* targetHitbox = o;
 		Point center = targetHitbox->getCenter();
 		if (usesCircleHitbox and targetHitbox->usesCircleHitbox) {
 			//both circles
@@ -67,7 +67,7 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<GameObject*
 				ret -= (double)(hitboxCircle.r);
 				return ret;
 			}
-		} else if (!o->hitbox->usesCircleHitbox && !usesCircleHitbox) {
+		} else if (!o->usesCircleHitbox && !usesCircleHitbox) {
 			//both rectangles
 			std::vector<Point> origins = getRectangularPointsSet();
 			Vector minimumLine(650000, 650000);
@@ -199,13 +199,13 @@ vector<Point> Hitbox::getCorners() {
 	if (!usesCircleHitbox) {
 		Point cCorner = rotate(Point(hitboxRect.x, hitboxRect.y), rotation);
 		points.push_back(cCorner);
-		Vector line = Vector(hitboxRect.width, (int)rotation);
+		Vector line = Vector(hitboxRect.width, { (int)rotation });
 		cCorner = Point(cCorner.x + line.x, cCorner.y + line.y);
 		points.push_back(cCorner);
-		line = Vector(hitboxRect.height, (int)(270 + rotation));
+		line = Vector(hitboxRect.height, { (int)(90 + rotation) });
 		cCorner = Point(cCorner.x + line.x, cCorner.y + line.y);
 		points.push_back(cCorner);
-		line = Vector(hitboxRect.width, (int)(180 + rotation));
+		line = Vector(hitboxRect.width, { (int)(180 + rotation) });
 		cCorner = Point(cCorner.x + line.x, cCorner.y + line.y);
 		points.push_back(cCorner);
 	}

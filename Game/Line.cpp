@@ -54,7 +54,7 @@ SDL_Surface* Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
     {
         if (steep)
         {
-            set_pixel(surface, x, y, SDL_MapRGB(surface->format, color.r, color.g, color.b));
+            set_pixel(surface, y, x, SDL_MapRGB(surface->format, color.r, color.g, color.b));
         }
         else
         {

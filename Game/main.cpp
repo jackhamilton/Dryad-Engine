@@ -48,6 +48,7 @@ int main(int argc, char* args[]) {
 	//TODO: abstract
 	world.setDisplayFPS(true);
 	world.setDisplayObjectCount(true);
+	world.setDisplayHitboxes(true);
 	fpsSpeedFactor = 60.0 / (double)fps;
 	GameLoop g = GameLoop(fps, &world, &input);
 	gameLoop = &g;
@@ -70,6 +71,7 @@ int main(int argc, char* args[]) {
 	linkSpr = new Spritesheet(images, framecounts, looping, heights, 120);
 	linkSpr->setCurrentAnimation(0);
 	link = new GameObject(Point(50, 50), linkSpr);
+	link->enableHitbox();
 	gameScene.addObject(link);
 
 	//Button
