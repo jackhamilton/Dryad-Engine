@@ -73,6 +73,7 @@ int main(int argc, char* args[]) {
 	link->enableHitbox();
 	gameScene.addObject(link);
 
+	//Wall
 	char* wall_dir = SDL_GetBasePath();
 	strcat(wall_dir, "res\\wall.png");
 	Sprite* wallSpr = new Sprite({ wall_dir });
@@ -80,16 +81,20 @@ int main(int argc, char* args[]) {
 	wall->enableHitbox();
 	gameScene.addObject(wall);
 
-	//Button
-	Button* buttonTest = new Button(&startGame, "Start", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(550, 250), { 200, 100 });
+	//Buttons
+	Button* buttonTest = new Button(&startGame, "Start", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(700, 400), { 200, 100 });
 	buttonTest->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 });
 	buttonTest->createClickTexture({ 0, 0, 0 }, { 150, 150, 150 });
 	menu.addObject(buttonTest);
 
-	Button* buttonTestBack = new Button(&backToMenu, "Menu", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(1000, 500), { 200, 100 });
+	Button* buttonTestBack = new Button(&backToMenu, "Menu", "Bebas.ttf", 24, { 255, 255, 255 }, { 30, 30, 30 }, Point(1300, 700), { 200, 100 });
 	buttonTestBack->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 });
 	buttonTestBack->createClickTexture({ 0, 0, 0 }, { 150, 150, 150 });
 	gameScene.addObject(buttonTestBack);
+
+	//Title
+	Text titleLabel = Text("Engine Test Sandbox", "OpenSans-Bold.ttf", 48, { 255, 255, 255 }, Point(560, 250));
+	menu.addObject(&titleLabel);
 
 	//Configure inputs
 	input.addKeyboardEvent([]() { gameLoop->stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });

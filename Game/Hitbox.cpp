@@ -56,6 +56,7 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 	bool clear = true;
 	Vector minimumLineGlobal(Point(650000, 650000));
 	for (Hitbox* o : objects) {
+		Vector vecCopy = Vector(Point(vector.x, vector.y));
 		Point myCenter = getCenter() + *parentPosition;
 		double x = myCenter.x;
 		double y = myCenter.y;
@@ -64,9 +65,9 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 		bool objectClear = true;
 		if (usesCircleHitbox and targetHitbox->usesCircleHitbox) {
 			//both circles
-			vector += hitboxCircle.r;
+			vecCopy += hitboxCircle.r;
 			Point nearestCollision;
-			objectClear = lineCircle(x, y, x + vector.x, y + vector.y, center.x, center.y, targetHitbox->hitboxCircle.r, &nearestCollision);
+			objectClear = lineCircle(x, y, x + vecCopy.x, y + vecCopy.y, center.x, center.y, targetHitbox->hitboxCircle.r, &nearestCollision);
 			if (!objectClear) {
 				Vector ret = Vector(x, y, nearestCollision.x, nearestCollision.y);
 				ret -= (double)(hitboxCircle.r);
@@ -75,18 +76,18 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 					minimumLineGlobal = ret;
 				}
 			}
-		} else if (!o->usesCircleHitbox && !usesCircleHitbox) {
+		} else if (!targetHitbox->usesCircleHitbox && !usesCircleHitbox) {
 			//both rectangles
 			std::vector<Point> origins = getRectangularPointsSet();
 			Vector minimumLine(Point(650000, 650000));
 			bool collisionRegistered = false;
 			for (Point p1 : origins) {
-				Point pt = p1 + myCenter;
+				Point pt = p1 + *parentPosition;
 				std::vector<Point> targetCorners = targetHitbox->getCorners();
 				Point c1 = targetCorners.at(0) + *targetHitbox->parentPosition;
 				Point c2 = targetCorners.at(2) + *targetHitbox->parentPosition;
 				Point collision;
-				bool collided = lineRect(pt.x, pt.y, pt.x + vector.x, pt.y + vector.y, c1.x, c1.y, c2.x, c2.y, &collision);
+				bool collided = lineRect(pt.x, pt.y, pt.x + vecCopy.x, pt.y + vecCopy.y, c1.x, c1.y, c2.x, c2.y, &collision);
 				if (collided) {
 					collisionRegistered = true;
 					Vector collVector = Vector(pt.x, pt.y, collision.x, collision.y);
@@ -112,10 +113,10 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 				Vector minimumLine(Point(650000, 650000));
 				bool collisionRegistered = false;
 				for (Point p1 : origins) {
-					Point pt = p1 + myCenter;
+					Point pt = p1 + *parentPosition;
 					Point collision;
 					Circle c1 = targetHitbox->hitboxCircle;
-					bool collided = lineCircle(pt.x, pt.y, pt.x + vector.x, pt.y + vector.y, center.x, center.y, c1.r, &collision);
+					bool collided = lineCircle(pt.x, pt.y, pt.x + vecCopy.x, pt.y + vecCopy.y, center.x, center.y, c1.r, &collision);
 					if (collided) {
 						collisionRegistered = true;
 						Vector collVector = Vector(pt.x, pt.y, collision.x, collision.y);
@@ -135,12 +136,12 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 			}
 			else {
 				//target rect, source circle
-				vector += hitboxCircle.r;
+				vecCopy += hitboxCircle.r;
 				Point nearestCollision;
 				std::vector<Point> targetCorners = targetHitbox->getCorners();
 				Point c1 = targetCorners.at(0) + *targetHitbox->parentPosition;
 				Point c2 = targetCorners.at(2) + *targetHitbox->parentPosition;
-				objectClear = lineRect(x, y, x + vector.x, y + vector.y, c1.x, c1.y, c2.x, c2.y, &nearestCollision);
+				objectClear = lineRect(myCenter.x, myCenter.x, myCenter.x + vecCopy.x, myCenter.y + vecCopy.y, c1.x, c1.y, c2.x, c2.y, &nearestCollision);
 				if (!objectClear) {
 					Vector ret = Vector(x, y, nearestCollision.x, nearestCollision.y);
 					ret -= (double)(hitboxCircle.r);
@@ -155,6 +156,9 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 	if (clear) {
 		return vector;
 	}
+	else if (minimumLineGlobal.x < 640000 && minimumLineGlobal.y < 640000) {
+		return minimumLineGlobal;
+	}
 	return Vector(Point(0, 0));
 }
 
@@ -162,10 +166,10 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 vector<Point> Hitbox::getRectangularPointsSet() {
 	vector<Point> points;
 	if (!usesCircleHitbox) {
-		Point trueOrigin = rotate(Point(hitboxRect.x, hitboxRect.y), rotation);
-		Vector line = Vector(hitboxRect.width, (int)rotation);
+		Point cCorner = rotate(Point(hitboxRect.x, hitboxRect.y), rotation);
+		Vector line = Vector(hitboxRect.width, (int)rotation );
 		bool first = true;
-		for (Point p : getEquallySpacedPointsAlongLine(trueOrigin, line, rectCollisionTestPrecision)) {
+		for (Point p : getEquallySpacedPointsAlongLine(cCorner, line, rectCollisionTestPrecision)) {
 			if (!first) {
 				points.push_back(p);
 			}
@@ -174,34 +178,31 @@ vector<Point> Hitbox::getRectangularPointsSet() {
 			}
 		}
 		first = true;
-		trueOrigin.x += line.x;
-		trueOrigin.y += line.y;
-		line = Vector(hitboxRect.height, (int)(270 + rotation));
-		for (Point p : getEquallySpacedPointsAlongLine(trueOrigin, line, rectCollisionTestPrecision)) {
-			if (!first) {
-				points.push_back(p);
-			}
-			else {
-				first = false;
-			}
-		}
-		first = true;
-		trueOrigin.x += line.x;
-		trueOrigin.y += line.y;
-		line = Vector(hitboxRect.width, (int)(180 + rotation));
-		for (Point p : getEquallySpacedPointsAlongLine(trueOrigin, line, rectCollisionTestPrecision)) {
-			if (!first) {
-				points.push_back(p);
-			}
-			else {
-				first = false;
-			}
-		}
-		first = true;
-		trueOrigin.x += line.x;
-		trueOrigin.y += line.y;
+		cCorner = Point(cCorner.x + line.x, cCorner.y + line.y);
 		line = Vector(hitboxRect.height, (int)(90 + rotation));
-		for (Point p : getEquallySpacedPointsAlongLine(trueOrigin, line, rectCollisionTestPrecision)) {
+		for (Point p : getEquallySpacedPointsAlongLine(cCorner, line, rectCollisionTestPrecision)) {
+			if (!first) {
+				points.push_back(p);
+			}
+			else {
+				first = false;
+			}
+		}
+		first = true;
+		cCorner = Point(cCorner.x + line.x, cCorner.y + line.y);
+		line = Vector(hitboxRect.width, (int)(180 + rotation));
+		for (Point p : getEquallySpacedPointsAlongLine(cCorner, line, rectCollisionTestPrecision)) {
+			if (!first) {
+				points.push_back(p);
+			}
+			else {
+				first = false;
+			}
+		}
+		first = true;
+		cCorner = Point(cCorner.x + line.x, cCorner.y + line.y);
+		line = Vector(hitboxRect.height, (int)(270 + rotation));
+		for (Point p : getEquallySpacedPointsAlongLine(cCorner, line, rectCollisionTestPrecision)) {
 			if (!first) {
 				points.push_back(p);
 			}
@@ -319,6 +320,8 @@ bool Hitbox::lineLine(double x1, double y1, double x2, double y2, double x3, dou
 		// optionally, draw a circle where the lines meet
 		double intersectionX = x1 + (uA * (x2 - x1));
 		double intersectionY = y1 + (uA * (y2 - y1));
+		collision->x = intersectionX;
+		collision->y = intersectionY;
 		return true;
 	}
 	

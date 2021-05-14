@@ -127,7 +127,7 @@ Sprite* Button::createTexture(SDL_Color textColor, SDL_Color backgroundColor)
 	if (TTF_SizeText(fontTTF, text, &textWidth, &textHeight)) {
 		printf(TTF_GetError());
 	}
-	if (!(surfaceMessage = TTF_RenderText_Solid(fontTTF, text, textColor))) { // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+	if (!(surfaceMessage = TTF_RenderText_Blended(fontTTF, text, textColor))) { // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
 		printf("Error rendering text in button.");
 		const char* text = TTF_GetError();
 		printf(text);

@@ -83,7 +83,7 @@ void Scene::moveObject(GameObject* g, ModifiableProperty<Vector, double> vector)
 {
 	std::vector<Hitbox*> hitboxes;
 	for (GameObject* o : objects) {
-		if (!g->id == o->id && o->hitboxEnabled && o->hitbox) {
+		if (g->id != o->id && o->hitboxEnabled && o->hitbox) {
 			hitboxes.push_back(o->hitbox);
 		}
 	}
