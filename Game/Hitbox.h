@@ -7,6 +7,11 @@
 using namespace std;
 class GameObject;
 
+struct Collision {
+	bool collided;
+	Point p;
+};
+
 class Hitbox
 {
 public:
@@ -16,7 +21,8 @@ public:
 	//does not work with rotated rectangles
 	bool testCollision(Hitbox h);
 	Point getCenter();
-	Vector getMaximumClearDistanceForVectorFromGameObject(std::vector<Hitbox*> objects, Vector vector);
+	//second return is whether a collision happened
+	std::pair<Vector, Collision> getMaximumClearDistanceForVectorFromGameObject(std::vector<Hitbox*> objects, Vector vector);
 	//Rotates point around center of hitbox
 	static Point rotate(Point p, double deg);
 	vector<Point> getCorners();

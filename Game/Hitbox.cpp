@@ -51,9 +51,10 @@ Point Hitbox::getCenter()
 }
 
 //Assumes vector calculated from object origin. Hitbox array is for all other gameobjects
-Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> objects, Vector vector)
+std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> objects, Vector vector)
 {
 	bool clear = true;
+	Point colPoint;
 	Vector minimumLineGlobal(Point(650000, 650000));
 	for (Hitbox* o : objects) {
 		Vector vecCopy = Vector(Point(vector.x, vector.y));
@@ -154,12 +155,15 @@ Vector Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> ob
 		}
 	}
 	if (clear) {
-		return vector;
+		Collision c = { false, colPoint };
+		return make_pair(vector, c);
 	}
 	else if (minimumLineGlobal.x < 640000 && minimumLineGlobal.y < 640000) {
-		return minimumLineGlobal;
+		Collision c = { true, colPoint };
+		return make_pair(minimumLineGlobal, c);
 	}
-	return Vector(Point(0, 0));
+	Collision c = { true, colPoint };
+	return make_pair(Vector(Point(0, 0)), c);
 }
 
 //relative to parent position

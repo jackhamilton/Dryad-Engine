@@ -142,6 +142,11 @@ void GameObject::renderHitbox() {
 	}
 }
 
+void GameObject::addCollisionEvent(function<void(Point)> event)
+{
+	collisionEvents.push_back(event);
+}
+
 void GameObject::addSpriteToSceneRenderQueue(Sprite* s)
 {
 	renderQueue.push_back(s);

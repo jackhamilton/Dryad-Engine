@@ -102,6 +102,9 @@
     <ClCompile Include="Text.cpp">
       <Filter>Source Files\engine\ui</Filter>
     </ClCompile>
+    <ClCompile Include="AssetLibrary.cpp">
+      <Filter>Source Files\engine\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="Text.h">
       <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetLibrary.h">
+      <Filter>Header Files\engine\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -160,14 +160,14 @@ void World::refreshObjectCount()
 	if (displayObjectCount) {
 		if (!objectCountIndicator) {
 			char buffer[40];
-			int objC = currentScene->sprites.size() + currentScene->getObjects().size();
+			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjects().size());
 			sprintf(buffer, "OBJ  %d", objC);
 			objectCountIndicator = new Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6*2 + debugFontSize));
 			debugObjects.push_back(objectCountIndicator);
 		}
 		else {
 			char buffer[40];
-			int objC = currentScene->sprites.size() + currentScene->getObjects().size();
+			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjects().size());
 			sprintf(buffer, "OBJ  %d", objC);
 			objectCountIndicator->setText(buffer);
 		}

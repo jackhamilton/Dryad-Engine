@@ -98,7 +98,13 @@ void Scene::moveObject(GameObject* g, ModifiableProperty<Vector, double> vector)
 		fpsSpeedFactor = 1.0 / 60.0;
 	}
 	vector.addModifier(fpsSpeedFactor);
-	Vector v = g->hitbox->getMaximumClearDistanceForVectorFromGameObject(hitboxes, vector.getValue());
+	pair<Vector, Collision> vecPair = g->hitbox->getMaximumClearDistanceForVectorFromGameObject(hitboxes, vector.getValue());
+	if (vecPair.second.collided) {
+		for (function<void(Point)> func : g->collisionEvents) {
+			func(vecPair.second.p);
+		}
+	}
+	Vector v = vecPair.first;
 	Point adjustedPosition = g->position + v.getCartesian();
 	g->setPosition(adjustedPosition);
 }

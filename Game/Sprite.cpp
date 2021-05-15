@@ -19,7 +19,7 @@ Sprite::Sprite(std::vector<SDL_Surface*> images, int fps, bool loop)
 	initDefaultParams(fps);
 }
 
-Sprite::Sprite(std::vector<char*> filenames, int fps, bool loop)
+Sprite::Sprite(std::vector<const char*> filenames, int fps, bool loop)
 {
 	loopAnimation = loop;
 	fileBased = true;
@@ -115,7 +115,7 @@ void Sprite::loadTextures(Renderer* renderer)
 	if (!loaded) {
 		Sprite::loaded = true;
 		if (fileBased) {
-			for (char* filename : getFilenames()) {
+			for (const char* filename : getFilenames()) {
 				SDL_Surface* tempImage = IMG_Load(filename);
 				images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), tempImage));
 				SDL_FreeSurface(tempImage);
@@ -137,7 +137,4 @@ void Sprite::destroy()
     for (std::list<SDL_Texture*>::iterator i = images.begin(); i != images.end(); i++)
 		SDL_DestroyTexture(*i);
 	images.clear();
-	for (char* ptr : filenames) {
-		free(ptr);
-	}
 }

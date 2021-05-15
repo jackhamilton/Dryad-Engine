@@ -64,6 +64,7 @@ protected:
 	function<void()> mouseClickUpEvent;
 	function<void()> mouseClickUpGraphicEvent;
 	function<void()> mouseRightClickUpEvent;
+	vector<function<void(Point)>> collisionEvents;
 	int id;
 	Hitbox* hitbox;
 	bool hitboxEnabled;
@@ -74,6 +75,7 @@ protected:
 	Physics* physics;
 	function<void(GameObject*, ModifiableProperty<Vector, double>)>* movementCallback;
 	void addSpriteToSceneRenderQueue(Sprite* s);
+	void addCollisionEvent(function<void(Point)> event);
 private:
 	void updateSize();
 	friend class World;

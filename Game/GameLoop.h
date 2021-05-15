@@ -2,6 +2,7 @@
 #include <list>
 #include "Scene.h"
 #include "World.h"
+#include <functional>
 
 class Input;
 

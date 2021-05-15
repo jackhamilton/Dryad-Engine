@@ -12,7 +12,7 @@ Spritesheet::Spritesheet() : Sprite()
 }
 
 //framecounts is not zero indexed, just the number of frames
-Spritesheet::Spritesheet(std::vector<char*> filename, std::vector<int> framecounts, std::vector<bool> looping, std::vector<int> heights, int width, int fps): Sprite(filename)
+Spritesheet::Spritesheet(std::vector<const char*> filename, std::vector<int> framecounts, std::vector<bool> looping, std::vector<int> heights, int width, int fps): Sprite(filename)
 {
     Spritesheet::heights = heights;
 	Spritesheet::width = width;

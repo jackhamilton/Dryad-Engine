@@ -17,8 +17,8 @@ public:
 	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 1, false) {};
 	Sprite(std::vector<SDL_Surface*> images, int fps, bool loop);
 	//Initialize using image files
-    Sprite(std::vector<char*> filenames) : Sprite(filenames, 1, false) {};
-    Sprite(std::vector<char*> filenames, int fps, bool loop);
+    Sprite(std::vector<const char*> filenames) : Sprite(filenames, 1, false) {};
+    Sprite(std::vector<const char*> filenames, int fps, bool loop);
 
 	std::list<SDL_Texture*> images;
 	double renderTimeBuffer;
@@ -35,7 +35,7 @@ public:
 	virtual void loadTextures(Renderer* renderer);
 	void tick();
 
-	std::vector<char*> getFilenames() {
+	std::vector<const char*> getFilenames() {
 		return filenames;
 	}
 	void setLocation(Point location) {
@@ -68,6 +68,6 @@ private:
 	double animationSpeedMultiplier;
 	//True if sprite uses files, false if sprite uses a textureset
 	bool fileBased;
-	std::vector<char*> filenames;
+	std::vector<const char*> filenames;
 	std::vector<SDL_Surface*> surfaces;
 };

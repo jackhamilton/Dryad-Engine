@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssetLibrary.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CompositeSprite.cpp" />
     <ClCompile Include="GameLoop.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetLibrary.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="CompositeSprite.h" />

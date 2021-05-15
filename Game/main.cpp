@@ -14,6 +14,7 @@
 #include "World.h"
 #include "Line.h"
 #include "Vector.h"
+#include "AssetLibrary.h"
 
 using namespace std;
 
@@ -60,10 +61,9 @@ int main(int argc, char* args[]) {
 	Text engineVersionLabel = Text(engineVersionText, world.getDebugFont(), 18, { 255, 255, 255 }, Point(10, 870));
 	world.addDebugObject(&engineVersionLabel);
 
+	AssetLibrary lib = AssetLibrary();
 	//Spritesheet
-	char* zelda_dir = SDL_GetBasePath();
-	strcat(zelda_dir, "res\\zelda.png");
-    vector<char*> images = { zelda_dir };
+	vector<const char*> images = { lib.getAsset("zelda.png") };
     vector<int> heights = { 130, 130, 130, 130, 130, 130, 130, 130 };
 	vector<bool> looping = { false, false, false, false, true, true, true, true };
     vector<int> framecounts = { 3, 3, 1, 3, 10, 10, 10, 10 };
@@ -74,9 +74,7 @@ int main(int argc, char* args[]) {
 	gameScene.addObject(link);
 
 	//Wall
-	char* wall_dir = SDL_GetBasePath();
-	strcat(wall_dir, "res\\wall.png");
-	Sprite* wallSpr = new Sprite({ wall_dir });
+	Sprite* wallSpr = new Sprite({ lib.getAsset("wall.png") });
 	GameObject* wall = new GameObject(Point(200, 30), wallSpr);
 	wall->enableHitbox();
 	gameScene.addObject(wall);
