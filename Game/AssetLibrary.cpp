@@ -16,19 +16,26 @@ const char* AssetLibrary::getAsset(const char* nameIncludingExtension)
 	return strBuilder;
 }
 
-const char* AssetLibrary::getAsset(const char* name, const char* extension)
+const char* AssetLibrary::getAsset(const char* nameIncludingExtension, const char* subdirectory)
 {
-	int memSize = sizeof(char) * (strlen(name) + strlen(extension) + 1 + strlen(baseLibraryDirectory));
+	if (!subdirectories[subdirectory]) {
+		return nullptr;
+	}
+	int memSize = sizeof(char) * (strlen(nameIncludingExtension) + strlen(baseLibraryDirectory) + strlen(subdirectories[subdirectory]));
 	char* strBuilder = (char*)malloc(memSize);
 	if (strBuilder) {
 		memset(strBuilder, 0, memSize);
-		strcpy(strBuilder, name);
-		strcat(strBuilder, ".");
-		strcat(strBuilder, extension);
-		const char* ptr = getAsset(strBuilder);
-		free(strBuilder);
-		return ptr;
+		strcat(strBuilder, baseLibraryDirectory);
+		strcat(strBuilder, subdirectories[subdirectory]);
+		strcat(strBuilder, nameIncludingExtension);
 	}
-	return nullptr;
+	return strBuilder;
 }
+
+void AssetLibrary::addSubdirectory(const char* relativePath, const char* name)
+{
+	//might potentially need to strcopy the relativePath to avoid loss of reference?
+	subdirectories[name] = relativePath;
+}
+
 
