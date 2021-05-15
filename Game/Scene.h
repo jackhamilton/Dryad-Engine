@@ -33,8 +33,9 @@ public:
 	Renderer* renderer;
 	const char* name;
 private:
-	//set to actual time including delay
+	bool isCurrentScene;
 	int** defaultFps;
+	//set to actual time including delay
 	long double** lastFrameTimeMS;
     vector<GameObject*> objects;
 	function<void(GameObject*, ModifiableProperty<Vector, double>)> movementCallback;

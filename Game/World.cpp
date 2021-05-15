@@ -31,6 +31,9 @@ void World::setScene(const char* name)
 			func();
 		}
 	}
+	if (currentScene) {
+		currentScene->isCurrentScene = false;
+	}
 	currentScene = scenes[name];
 	mouse->sceneMouseClickEvents = &currentScene->sceneMouseClickEvents;
 	mouse->sceneMouseEnteredEvents = &currentScene->sceneMouseEnteredEvents;
@@ -40,6 +43,7 @@ void World::setScene(const char* name)
 	mouse->sceneMouseRightClickEvents = &currentScene->sceneMouseRightClickEvents;
 	mouse->sceneMouseRightClickUpEvents = &currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
+	currentScene->isCurrentScene = true;
 }
 
 string World::getCurrentSceneName()

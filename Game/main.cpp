@@ -97,33 +97,23 @@ int main(int argc, char* args[]) {
 	//Configure inputs
 	input.addKeyboardEvent([]() { gameLoop->stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() { 
-		if (gameWorld->getCurrentSceneName() == "Game") {
-			link->move(Vector(Point(300, 0)));
-			((Spritesheet*)link->getSprite())->setCurrentAnimation(7);
-		}
+		link->move(Vector(Point(300, 0)));
+		((Spritesheet*)link->getSprite())->setCurrentAnimation(7);
 	}, { make_pair(SDLK_RIGHT, SDL_KEYDOWN)});
 	input.addKeyboardEvent([]() {
-		if (gameWorld->getCurrentSceneName() == "Game") {
-			link->move(Vector(Point(-300, 0)));
-			((Spritesheet*)link->getSprite())->setCurrentAnimation(5);
-		}
+		link->move(Vector(Point(-300, 0)));
+		((Spritesheet*)link->getSprite())->setCurrentAnimation(5);
 	}, { make_pair(SDLK_LEFT, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
-		if (gameWorld->getCurrentSceneName() == "Game") {
-			link->move(Vector(Point(0, -300)));
-			((Spritesheet*)link->getSprite())->setCurrentAnimation(6);
-		}
-		}, { make_pair(SDLK_UP, SDL_KEYDOWN) });
+		link->move(Vector(Point(0, -300)));
+		((Spritesheet*)link->getSprite())->setCurrentAnimation(6);
+	}, { make_pair(SDLK_UP, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
-		if (gameWorld->getCurrentSceneName() == "Game") {
-			link->move(Vector(Point(0, 300)));
-			((Spritesheet*)link->getSprite())->setCurrentAnimation(4);
-		}
-		}, { make_pair(SDLK_DOWN, SDL_KEYDOWN) });
+		link->move(Vector(Point(0, 300)));
+		((Spritesheet*)link->getSprite())->setCurrentAnimation(4);
+	}, { make_pair(SDLK_DOWN, SDL_KEYDOWN) });
 	input.addKeyboardEvent([]() {
-		if (gameWorld->getCurrentSceneName() == "Game") {
-			((Spritesheet*)link->getSprite())->setCurrentAnimation(0);
-		}
+		((Spritesheet*)link->getSprite())->setCurrentAnimation(0);
 	}, { make_pair(SDLK_LEFT, SDL_KEYUP),
 		 make_pair(SDLK_RIGHT, SDL_KEYUP),
 		 make_pair(SDLK_DOWN, SDL_KEYUP),

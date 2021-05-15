@@ -76,12 +76,14 @@ void GameObject::addChild(GameObject* obj)
 	children.push_back(obj);
 }
 
+//Only works if in current scene.
 void GameObject::move(ModifiableProperty<Vector, double> vector)
 {
 	function<void(GameObject*, ModifiableProperty<Vector, double>)> cb = *movementCallback;
 	cb(this, vector);
 }
 
+//Only works if in current scene.
 void GameObject::move(Vector vector)
 {
 	function<void(GameObject*, ModifiableProperty<Vector, double>)> cb = *movementCallback;
