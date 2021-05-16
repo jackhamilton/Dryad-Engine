@@ -59,7 +59,7 @@ GameObject::GameObject(Point position, Sprite* sprite)
 
 GameObject::~GameObject()
 {
-	sprite->destroy();
+	delete sprite;
 }
 
 void GameObject::setSprite(Sprite* sprite) {

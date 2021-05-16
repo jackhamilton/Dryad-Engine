@@ -125,8 +125,5 @@ void Scene::moveObject(GameObject* g, ModifiableProperty<Vector, double> vector)
 
 void Scene::destroy()
 {
-    for (Sprite* s: sprites)
-		s->destroy();
-	sprites.clear();
 	renderer->destroy();
 }

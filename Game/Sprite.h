@@ -19,6 +19,7 @@ public:
 	//Initialize using image files
     Sprite(std::vector<const char*> filenames) : Sprite(filenames, 1, false) {};
     Sprite(std::vector<const char*> filenames, int fps, bool loop);
+	~Sprite();
 
 	std::list<SDL_Texture*> images;
 	double renderTimeBuffer;
@@ -31,7 +32,6 @@ public:
 	virtual SDL_Texture* peekCurrentImage();
 	virtual void nextImage();
 	virtual void render(Renderer* renderer, Point locationMod);
-	void destroy();
 	virtual void loadTextures(Renderer* renderer);
 	void tick();
 

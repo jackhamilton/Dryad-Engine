@@ -49,8 +49,8 @@ int main(int argc, char* args[]) {
 	world.addScene(&menu, "Menu");
 	world.setScene("Menu");
 	//TODO: abstract
-	//world.setDisplayFPS(true);
-	//world.setDisplayObjectCount(true);
+	world.setDisplayFPS(true);
+	world.setDisplayObjectCount(true);
 	world.setDisplayHitboxes(true);
 	GameLoop g = GameLoop(fps, &world, &input);
 	gameLoop = &g;

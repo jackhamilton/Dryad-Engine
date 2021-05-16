@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include <stdint.h>
 #include <iostream>
+#include <queue>
 
 Sprite::Sprite()
 {
@@ -25,6 +26,34 @@ Sprite::Sprite(std::vector<const char*> filenames, int fps, bool loop)
 	fileBased = true;
 	Sprite::filenames = filenames;
 	initDefaultParams(fps);
+}
+
+Sprite::~Sprite()
+{
+	int imagesCount = images.size();
+	std::queue<SDL_Texture*> texturesToDestroy;
+	for (SDL_Texture* image : images) {
+		texturesToDestroy.push(image);
+	}
+	while (!texturesToDestroy.empty()) {
+		SDL_Texture* tex = texturesToDestroy.front();
+		texturesToDestroy.pop();
+		if (tex) {
+			SDL_DestroyTexture(tex);
+		}
+	}
+	imagesCount = surfaces.size();
+	std::queue<SDL_Surface*> surfacesToDestroy;
+	for (SDL_Surface* image : surfaces) {
+		surfacesToDestroy.push(image);
+	}
+	while (!surfacesToDestroy.empty()) {
+		SDL_Surface* surf = surfacesToDestroy.front();
+		surfacesToDestroy.pop();
+		if (surf) {
+			SDL_FreeSurface(surf);
+		}
+	}
 }
 
 bool Sprite::isOnFinalFrame()
@@ -126,23 +155,21 @@ void Sprite::loadTextures(Renderer* renderer)
 			for (const char* filename : getFilenames()) {
 				SDL_Surface* tempImage = IMG_Load(filename);
 				images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), tempImage));
-				SDL_FreeSurface(tempImage);
+				if (tempImage) {
+					SDL_FreeSurface(tempImage);
+				}
 			}
 		}
 		else {
 			for (SDL_Surface* surface : surfaces) {
 				images.push_back(SDL_CreateTextureFromSurface(renderer->getSDLRenderer(), surface));
-				SDL_FreeSurface(surface);
+				if (surface) {
+					SDL_FreeSurface(surface);
+				}
 			}
+			surfaces.clear();
 		}
 		std::pair<int, int> cSize = getDimensions();
 		size = { cSize.first, cSize.second };
 	}
-}
-
-void Sprite::destroy()
-{
-    for (std::list<SDL_Texture*>::iterator i = images.begin(); i != images.end(); i++)
-		SDL_DestroyTexture(*i);
-	images.clear();
 }

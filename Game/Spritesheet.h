@@ -18,9 +18,6 @@ public:
 			paused = false;
 		}
 	}
-	void destroy() {
-		Sprite::destroy();
-	}
 	void nextImage();
 	void render(Renderer* renderer, Point locationMod);
 	int getWidth();
