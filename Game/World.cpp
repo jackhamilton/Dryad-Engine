@@ -1,5 +1,6 @@
 #include "World.h"
 #include <stdio.h>
+#include "GameObjectEvent.h"
 
 World::World(Renderer* renderer, Input* input)
 {
@@ -32,6 +33,12 @@ void World::setScene(const char* name)
 		}
 	}
 	if (currentScene) {
+		//technically game objects can be in multiple scenes so I'm keeping this shit around just in case
+		for (GameObject* g : currentScene->objects) {
+			if (!g->eventQueue.empty() && g->eventQueue.front()->type == EventType::DELAY) {
+				((DelayEvent*)g->eventQueue.front())->lastSceneTransitionTime = clock();
+			}
+		}
 		currentScene->isCurrentScene = false;
 	}
 	currentScene = scenes[name];
@@ -44,6 +51,13 @@ void World::setScene(const char* name)
 	mouse->sceneMouseRightClickUpEvents = &currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
 	currentScene->isCurrentScene = true;
+
+	//ditto
+	for (GameObject* g : currentScene->objects) {
+		if (!g->eventQueue.empty() && g->eventQueue.front()->type == EventType::DELAY && ((DelayEvent*)g->eventQueue.front())->lastSceneTransitionTime != 0) {
+			((DelayEvent*)g->eventQueue.front())->sceneTransitionDelayCycles = clock() - ((DelayEvent*)g->eventQueue.front())->lastSceneTransitionTime;
+		}
+	}
 }
 
 string World::getCurrentSceneName()
@@ -92,6 +106,9 @@ void World::render(int frame, int fps)
 			obj->handleEvents();
 		}
 		renderer->renderPresent();
+		clock_t cTime = clock();
+		currentScene->localTime = cTime - lastLocalTime;
+		lastLocalTime = cTime;
 	}
 }
 

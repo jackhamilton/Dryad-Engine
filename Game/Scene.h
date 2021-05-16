@@ -32,6 +32,7 @@ public:
 	vector<pair<Callback, Rectangle>> sceneMouseRightClickUpEvents;
 	Renderer* renderer;
 	const char* name;
+	clock_t localTime;
 private:
 	bool isCurrentScene;
 	int** defaultFps;

@@ -37,9 +37,16 @@ public:
 		GameObjectEvent::type = EventType::DELAY;
 		time = clock();
 		popTime = msTime;
+		started = false;
+		lastSceneTransitionTime = 0;
+		sceneTransitionDelayCycles = 0;
 	}
 private:
+	bool started;
+	clock_t lastSceneTransitionTime;
+	clock_t sceneTransitionDelayCycles;
 	clock_t time;
 	time_t popTime;
 	friend class GameObject;
+	friend class World;
 };

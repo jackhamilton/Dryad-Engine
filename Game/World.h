@@ -35,6 +35,7 @@ private:
 	Renderer* renderer;
 	map<const char*, Scene*> scenes;
 	Scene* currentScene;
+	clock_t lastLocalTime = 0;
 
 	//debug layer
 	long double* lastFrameTimeMS;

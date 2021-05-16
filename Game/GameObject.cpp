@@ -57,6 +57,11 @@ GameObject::GameObject(Point position, Sprite* sprite)
 	setSprite(sprite);
 }
 
+GameObject::~GameObject()
+{
+	sprite->destroy();
+}
+
 void GameObject::setSprite(Sprite* sprite) {
 	hasSprite = true;
 	GameObject::sprite = sprite;
@@ -128,6 +133,9 @@ void GameObject::getMouseEvents(function<void()>* ret)
 
 void GameObject::removeFromParents()
 {
+	for (GameObject* c : children) {
+		c->removeFromParents();
+	}
 	for (function<void(GameObject*)> func : removeCalls) {
 		func(this);
 	}
@@ -184,9 +192,8 @@ void GameObject::handleEvents()
 {
 	if (!eventQueue.empty()) {
 		GameObjectEvent* cEvent = eventQueue.front();
-		while (!eventQueue.empty() && cEvent->completed) {
+		while (!eventQueue.empty() && eventQueue.front()->completed) {
 			eventQueue.pop();
-			cEvent = eventQueue.front();
 		}
 		if (eventQueue.empty()) {
 			return;
@@ -198,7 +205,11 @@ void GameObject::handleEvents()
 		case EventType::DELAY:
 		{
 			DelayEvent* eventAsProper = (DelayEvent*)cEvent;
-			if (clock() >= eventAsProper->time + (eventAsProper->popTime) * (CLOCKS_PER_SEC / 1000)) {
+			if (!eventAsProper->started) {
+				eventAsProper->time = clock();
+				eventAsProper->started = true;
+			}
+			if (clock() >= eventAsProper->time + eventAsProper->sceneTransitionDelayCycles + (eventAsProper->popTime) * (CLOCKS_PER_SEC / 1000)) {
 				eventQueue.pop();
 				handleEvents();
 			}

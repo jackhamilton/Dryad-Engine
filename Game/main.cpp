@@ -49,8 +49,8 @@ int main(int argc, char* args[]) {
 	world.addScene(&menu, "Menu");
 	world.setScene("Menu");
 	//TODO: abstract
-	world.setDisplayFPS(true);
-	world.setDisplayObjectCount(true);
+	//world.setDisplayFPS(true);
+	//world.setDisplayObjectCount(true);
 	world.setDisplayHitboxes(true);
 	GameLoop g = GameLoop(fps, &world, &input);
 	gameLoop = &g;
@@ -119,8 +119,7 @@ int main(int argc, char* args[]) {
 	}, { make_pair(SDLK_LEFT, SDL_KEYUP),
 		 make_pair(SDLK_RIGHT, SDL_KEYUP),
 		 make_pair(SDLK_DOWN, SDL_KEYUP),
-		 make_pair(SDLK_UP, SDL_KEYUP) }); //If all are up, reset animation*/
-	
+		 make_pair(SDLK_UP, SDL_KEYUP) }); //If all are up, reset animation
 	gameLoop->start();
 
 

@@ -23,6 +23,8 @@ public:
 	GameObject(Point location);
 	GameObject(double x, double y, Sprite* sprite) : GameObject(Point(), sprite) {};
 	GameObject(Point position, Sprite* sprite);
+	~GameObject();
+
 	vector<Sprite*> renderQueue;
 
 	void setSize(Size size);
