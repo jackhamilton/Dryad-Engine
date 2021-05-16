@@ -84,10 +84,12 @@ void World::render(int frame, int fps)
 		//Do the same thing but for GameObjects
 		for (GameObject* obj : currentScene->getObjects()) {
 			renderGameObject(obj, Point(0, 0), MSPerFrame);
+			obj->handleEvents();
 		}
 		//And finally for the debug layer
 		for (GameObject* obj : debugObjects) {
 			renderGameObject(obj, Point(0, 0), MSPerFrame);
+			obj->handleEvents();
 		}
 		renderer->renderPresent();
 	}

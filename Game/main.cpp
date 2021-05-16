@@ -15,6 +15,7 @@
 #include "Line.h"
 #include "Vector.h"
 #include "AssetLibrary.h"
+#include "GameObjectEvent.h"
 
 using namespace std;
 
@@ -76,6 +77,7 @@ int main(int argc, char* args[]) {
 	//Wall
 	Sprite* wallSpr = new Sprite({ lib.getAsset("wall.png") });
 	GameObject* wall = new GameObject(Point(200, 30), wallSpr);
+	wall->queueEvents({ new DelayEvent(4000), new DestroyEvent() });
 	wall->enableHitbox();
 	gameScene.addObject(wall);
 

@@ -66,6 +66,8 @@ void Scene::addObject(GameObject* object) {
 	if (object->hasMouseRightClickUpEvent) {
 		sceneMouseRightClickUpEvents.push_back(make_pair(objectMouseEvents[8], objectSizeRectangle));
 	}
+	using namespace placeholders;
+	object->removeCalls.push_back(bind(&Scene::removeObject, this, _1));
 }
 
 void Scene::addSprite(Sprite* sprite) {
@@ -76,6 +78,16 @@ void Scene::addSprite(Sprite* sprite) {
 	//Load the sprite's images with the scene renderer
 	sprite->loadTextures(renderer);
 	sprites.push_back(sprite);
+}
+
+void Scene::removeObject(GameObject* o)
+{
+	for (int i = 0; i < objects.size(); i++) {
+		if (o->id == objects.at(i)->id) {
+			objects.erase(objects.begin() + i);
+			i -= 1;
+		}
+	}
 }
 
 //Speed can be affected by modifiers, including frame speed. Vector is px/sec. Set position for absolute movement.

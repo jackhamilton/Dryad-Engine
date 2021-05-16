@@ -35,6 +35,14 @@ void Spritesheet::getCurrentFrame(int* dim)
 	dim[1] = starty;
 }
 
+bool Spritesheet::isOnFinalFrame()
+{
+	if (currentFrame >= framecounts[currentAnimation] - 1) {
+		return true;
+	}
+	return false;
+}
+
 void Spritesheet::nextImage()
 {
 	if (!paused) {

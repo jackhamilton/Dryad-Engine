@@ -176,5 +176,8 @@
     <ClInclude Include="AssetLibrary.h">
       <Filter>Header Files\engine\data</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectEvent.h">
+      <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -27,6 +27,14 @@ Sprite::Sprite(std::vector<const char*> filenames, int fps, bool loop)
 	initDefaultParams(fps);
 }
 
+bool Sprite::isOnFinalFrame()
+{
+	if (std::distance(currentImage, images.end()) == 0) {
+		return true;
+	}
+	return false;
+}
+
 //Common elements of the two constructors
 void Sprite::initDefaultParams(int fps)
 {

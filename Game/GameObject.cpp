@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Point.h"
 #include "Line.h"
+#include <time.h>
 
 static int cID = 0;
 
@@ -76,6 +77,18 @@ void GameObject::addChild(GameObject* obj)
 	children.push_back(obj);
 }
 
+void GameObject::queueEvent(GameObjectEvent* event)
+{
+	eventQueue.push(event);
+}
+
+void GameObject::queueEvents(vector<GameObjectEvent*> events)
+{
+	for (GameObjectEvent* e : events) {
+		eventQueue.push(e);
+	}
+}
+
 //Only works if in current scene.
 void GameObject::move(ModifiableProperty<Vector, double> vector)
 {
@@ -111,6 +124,13 @@ void GameObject::getMouseEvents(function<void()>* ret)
 	ret[6] = mouseClickUpGraphicEvent;
 	ret[7] = mouseClickUpEvent;
 	ret[8] = mouseRightClickUpEvent;
+}
+
+void GameObject::removeFromParents()
+{
+	for (function<void(GameObject*)> func : removeCalls) {
+		func(this);
+	}
 }
 
 bool GameObject::testInBounds(Point p)
@@ -158,4 +178,38 @@ void GameObject::updateSize()
 {
 	pair<int, int> sizeOfSprite = sprite->getDimensions();
 	size = { sizeOfSprite.first, sizeOfSprite.second };
+}
+
+void GameObject::handleEvents()
+{
+	if (!eventQueue.empty()) {
+		GameObjectEvent* cEvent = eventQueue.front();
+		while (!eventQueue.empty() && cEvent->completed) {
+			eventQueue.pop();
+			cEvent = eventQueue.front();
+		}
+		if (eventQueue.empty()) {
+			return;
+		}
+		switch (cEvent->type) {
+		case EventType::DESTROY:
+			removeFromParents();
+			break;
+		case EventType::DELAY:
+		{
+			DelayEvent* eventAsProper = (DelayEvent*)cEvent;
+			if (clock() >= eventAsProper->time + (eventAsProper->popTime) * (CLOCKS_PER_SEC / 1000)) {
+				eventQueue.pop();
+				handleEvents();
+			}
+		}
+			break;
+		case EventType::WAIT_FOR_ANIMATION_COMPLETION:
+			if (sprite->startedAnimation && (sprite->paused || sprite->isOnFinalFrame())) {
+				eventQueue.pop();
+				handleEvents();
+			}
+			break;
+		}
+	}
 }

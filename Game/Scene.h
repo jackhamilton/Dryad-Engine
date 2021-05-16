@@ -38,6 +38,7 @@ private:
 	//set to actual time including delay
 	long double** lastFrameTimeMS;
     vector<GameObject*> objects;
+	void removeObject(GameObject* o);
 	function<void(GameObject*, ModifiableProperty<Vector, double>)> movementCallback;
 	void moveObject(GameObject* g, ModifiableProperty<Vector, double> vector);
 	friend class World;

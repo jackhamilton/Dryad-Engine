@@ -1,11 +1,13 @@
 #pragma once
 #include <vector>
+#include <queue>
 #include <functional>
 #include "Point.h"
 #include "Sprite.h"
 #include "Size.h"
 #include "Vector.h"
 #include "Hitbox.h"
+#include "GameObjectEvent.h"
 
 class Physics;
 class Hitbox;
@@ -21,22 +23,29 @@ public:
 	GameObject(Point location);
 	GameObject(double x, double y, Sprite* sprite) : GameObject(Point(), sprite) {};
 	GameObject(Point position, Sprite* sprite);
+	vector<Sprite*> renderQueue;
+
 	void setSize(Size size);
 	Size getSize();
 	void setSprite(Sprite* sprite);
 	Sprite* getSprite();
-	vector<Sprite*> renderQueue;
-
 	void addChild(GameObject* obj);
-
+	void queueEvent(GameObjectEvent* event);
+	void queueEvents(vector<GameObjectEvent*> events);
 	void move(ModifiableProperty<Vector, double> vector);
 	void move(Vector vector);
-
 	void setPhysics(Physics* p);
 	Physics* getPhysics();
+	void getMouseEvents(function<void()>* ret);
+	void removeFromParents();
+	//check if a point is inside the object. Size must be set.
+	bool testInBounds(Point p);
+	void enableHitbox();
+	void renderHitbox();
+	//TODO: void enableHitbox(Hitbox h);
+
 	bool operator == (const GameObject& obj) const { return id == obj.id; }
 	bool operator != (const GameObject& obj) const { return id != obj.id; }
-	void getMouseEvents(function<void()>* ret);
 	//TODO: REWORK THIS WHOLE THING'S VISIBLITY USING FRIEND CLASSES (also in input, mouse, scene classes)
 	bool hasMouseMoveEvent;
 	bool hasMouseEnteredEvent;
@@ -47,11 +56,6 @@ public:
 	bool hasMouseClickUpEvent;
 	bool hasMouseClickUpGraphicEvent;
 	bool hasMouseRightClickUpEvent;
-	//check if a point is inside the object. Size must be set.
-	bool testInBounds(Point p);
-	void enableHitbox();
-	void renderHitbox();
-	//TODO: void enableHitbox(Hitbox h);
 protected:
 	//currently, children render on top
 	vector<GameObject*> children;
@@ -65,6 +69,8 @@ protected:
 	function<void()> mouseClickUpGraphicEvent;
 	function<void()> mouseRightClickUpEvent;
 	vector<function<void(Point)>> collisionEvents;
+	queue<GameObjectEvent*> eventQueue;
+	vector<function<void(GameObject*)>> removeCalls;
 	int id;
 	Hitbox* hitbox;
 	bool hitboxEnabled;
@@ -78,6 +84,7 @@ protected:
 	void addCollisionEvent(function<void(Point)> event);
 private:
 	void updateSize();
+	void handleEvents();
 	friend class World;
 	friend class Scene;
 	friend class Hitbox;

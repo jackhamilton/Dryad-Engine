@@ -10,6 +10,7 @@ public:
 	Spritesheet();
     Spritesheet(std::vector<const char*> filename, std::vector<int> framecounts, std::vector<bool> looping, std::vector<int> heights, int width, int fps);
 	void getCurrentFrame(int* dim);
+	bool isOnFinalFrame();
 	void setCurrentAnimation(int currentAnimation) {
 		if (currentAnimation != Spritesheet::currentAnimation) {
 			Spritesheet::currentAnimation = currentAnimation;

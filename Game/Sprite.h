@@ -54,6 +54,7 @@ public:
 	void setPaused(bool pause) {
 		Sprite::paused = pause;
 	}
+	bool isOnFinalFrame();
 protected:
 	void initDefaultParams(int fps);
 	bool paused;
@@ -70,4 +71,5 @@ private:
 	bool fileBased;
 	std::vector<const char*> filenames;
 	std::vector<SDL_Surface*> surfaces;
+	friend class GameObject;
 };

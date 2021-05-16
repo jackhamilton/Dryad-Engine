@@ -162,6 +162,7 @@
     <ClInclude Include="CompositeSprite.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObjectEvent.h" />
     <ClInclude Include="Hitbox.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Line.h" />
