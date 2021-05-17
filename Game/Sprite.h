@@ -3,39 +3,42 @@
 #include <SDL_image.h>
 #include <list>
 #include <vector>
+#include <memory>
+#include <string>
 #include "Size.h"
 #include "Point.h"
 #include "ModifiableProperty.h"
 
 class Renderer;
 
+using namespace std;
 class Sprite {
 public:
 	//Blank constructor
 	Sprite();
 	//Initialize using list of textures
-	Sprite(std::vector<SDL_Surface*> images) : Sprite(images, 1, false) {};
-	Sprite(std::vector<SDL_Surface*> images, int fps, bool loop);
+	Sprite(vector<SDL_Surface*> images) : Sprite(images, 1, false) {};
+	Sprite(vector<SDL_Surface*> images, int fps, bool loop);
 	//Initialize using image files
-    Sprite(std::vector<const char*> filenames) : Sprite(filenames, 1, false) {};
-    Sprite(std::vector<const char*> filenames, int fps, bool loop);
+    Sprite(vector<string> filenames) : Sprite(filenames, 1, false) {};
+    Sprite(vector<string> filenames, int fps, bool loop);
 	~Sprite();
 
-	std::list<SDL_Texture*> images;
+	list<SDL_Texture*> images;
 	double renderTimeBuffer;
 	bool loaded;
 
-    virtual std::pair<int, int> getDimensions();
+    virtual pair<int, int> getDimensions();
 	//Gets current image, advances
 	virtual SDL_Texture* getCurrentImage();
 	//Does not advance, but starts animation if not started
 	virtual SDL_Texture* peekCurrentImage();
 	virtual void nextImage();
-	virtual void render(Renderer* renderer, Point locationMod);
-	virtual void loadTextures(Renderer* renderer);
+	virtual void render(shared_ptr<Renderer> renderer, Point locationMod);
+	virtual void loadTextures(shared_ptr<Renderer> renderer);
 	void tick();
 
-	std::vector<const char*> getFilenames() {
+	vector<string> getFilenames() {
 		return filenames;
 	}
 	void setLocation(Point location) {
@@ -69,7 +72,7 @@ private:
 	double animationSpeedMultiplier;
 	//True if sprite uses files, false if sprite uses a textureset
 	bool fileBased;
-	std::vector<const char*> filenames;
+	std::vector<string> filenames;
 	std::vector<SDL_Surface*> surfaces;
 	friend class GameObject;
 };

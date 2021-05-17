@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <GameObject.h>
+#include <memory>
 #include <Point.h>
 
 struct AABB {
@@ -19,7 +20,7 @@ public:
 	static double dotProduct(Vector A, Vector B);
 
 	//Constructor
-	Physics(GameObject* object);
+	Physics(shared_ptr<GameObject> object);
 
 	//Getters and setters
 	double getRestitution();
@@ -41,6 +42,6 @@ private:
 	Vector velocity;
 	double restitution;
 	double mass;
-	GameObject* object;
+	shared_ptr<GameObject> object;
 	AABB bounds;
 };

@@ -1,47 +1,49 @@
 #pragma once
 #include <map>
 #include <vector>
+#include <memory>
+#include <string>
 #include "Scene.h"
 #include "Mouse.h"
 #include "Input.h"
 #include "Text.h"
+#include "AssetLibrary.h"
 
 using namespace std;
 class World
 {
 public:
-	World(Renderer* renderer, Input* input);
-	void addScene(Scene* s, const char* name);
-	void setScene(const char* name);
+	World(shared_ptr<Renderer> renderer, shared_ptr<Input> input);
+	void addScene(shared_ptr<Scene> s, string name);
+	void setScene(string name);
 	string getCurrentSceneName();
-	Scene* getCurrentScene();
-	void setRenderer(Renderer* renderer);
+	shared_ptr<Scene> getCurrentScene();
+	void setRenderer(shared_ptr<Renderer> renderer);
 	void render(int frame, int fps);
-	void renderGameObject(GameObject* obj, Point positionMod, double MSPerFrame);
-	Renderer* getRenderer();
-	void destroy();
+	void renderGameObject(shared_ptr<GameObject> obj, Point positionMod, double MSPerFrame);
+	shared_ptr<Renderer> getRenderer();
 
 	//debug layer
-	void setDisplayFPS(bool enabled);
-	void setDisplayObjectCount(bool enabled);
+	void setDisplayFPS(bool enabled, shared_ptr<AssetLibrary> assetLibrary);
+	void setDisplayObjectCount(bool enabled, shared_ptr<AssetLibrary> assetLibrary);
 	void setDisplayHitboxes(bool enabled);
-	const char* getDebugFont();
+	string getDebugFont();
 	int getDebugFontSize();
 	//Adds an object to the superimposed debug layer
-	void addDebugObject(GameObject* g);
+	void addDebugObject(shared_ptr<GameObject> g);
 private:
-	Input* input;
-	Mouse* mouse;
-	Renderer* renderer;
-	map<const char*, Scene*> scenes;
-	Scene* currentScene;
+	shared_ptr<Input> input;
+	shared_ptr<Mouse> mouse;
+	shared_ptr<Renderer> renderer;
+	map<string, shared_ptr<Scene>> scenes;
+	shared_ptr<Scene> currentScene;
 	clock_t lastLocalTime = 0;
 
 	//debug layer
-	long double* lastFrameTimeMS;
-	const char* debugFont = "OpenSans-Regular.ttf";
+	shared_ptr<long double> lastFrameTimeMS;
+	string debugFont = "OpenSans-Regular";
 	int debugFontSize = 14;
-	int* defaultFps;
+	shared_ptr<long double> defaultFps;
 	int cFPS;
 	int potentialFPS;
 	bool displayFPS;
@@ -51,9 +53,10 @@ private:
 	void refreshFPS();
 	void refreshObjectCount();
 
-	Text* fpsIndicator;
-	Text* objectCountIndicator;
-	vector<GameObject*> debugObjects;
+	shared_ptr<Text> fpsIndicator;
+	shared_ptr<Text> objectCountIndicator;
+	shared_ptr<AssetLibrary> assetLibrary;
+	vector<shared_ptr<GameObject>> debugObjects;
 
 	friend class GameLoop;
 };

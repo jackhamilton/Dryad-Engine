@@ -13,14 +13,15 @@ typedef std::function<void()> Callback;
 //Mapping for linker
 class GameLoop;
 
+using namespace std;
 class Input {
 public:
-	Input(Mouse* mouse);
-	void addKeyboardEvent(std::function<void()> func, std::vector<std::pair<SDL_Keycode, SDL_EventType>> keys);
+	Input(shared_ptr<Mouse> mouse);
+	void addKeyboardEvent(function<void()> func,vector<pair<SDL_Keycode, SDL_EventType>> keys);
 	void handleInput(GameLoop* gameLoop);
-	Mouse* getMouse();
+	shared_ptr<Mouse> getMouse();
 private:
-	Mouse* mouse;
+	shared_ptr<Mouse> mouse;
 	Point lButtonDown;
 	bool isLButtonDown;
 	Point rButtonDown;
@@ -28,7 +29,7 @@ private:
 	// Saves the state(true=pressed; false=released) of each SDL_Key
 	std::map<SDL_Keycode, bool> keyboard; 
 
-	std::map<std::vector<std::pair<SDL_Keycode, SDL_EventType>>, bool> keyUpExecuted;
+	std::map<vector<pair<SDL_Keycode, SDL_EventType>>, bool> keyUpExecuted;
 	//a map of all keyboard events and functions to call
-	std::map<std::vector<std::pair<SDL_Keycode, SDL_EventType>>, Callback> keyboardEventMap;
+	std::map<vector<pair<SDL_Keycode, SDL_EventType>>, Callback> keyboardEventMap;
 };

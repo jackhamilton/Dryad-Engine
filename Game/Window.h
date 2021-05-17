@@ -1,9 +1,12 @@
 #pragma once
 #include <SDL.h>
 #include <stdio.h>
+#include <memory>
+#include <string>
 #include <list>
 
-enum Resolution {
+using namespace std;
+enum class Resolution {
 	//This is most of the standard screen resolutions for various aspect ratios. 
 	//xxs = extra extra small, ml means medium large (smaller than large), etc.
 	/*
@@ -20,7 +23,9 @@ enum Resolution {
 
 	s16_10, m16_10, sl16_10, l16_10, xl16_10,
 
-	s16_9, m16_9, sl16_9, ml16_9, l16_9, xl16_9, xxl16_9
+	s16_9, m16_9, sl16_9, ml16_9, l16_9, xl16_9, xxl16_9,
+
+	NONE
 
 };
 
@@ -29,13 +34,14 @@ class Sprite;
 
 class Window {
 public:
+	~Window();
 	int screenWidth;
 	int screenHeight;
 	//Resolution on default constructor overrides width and height, 
 	//there because it has to be and constructors cant be overloaded
-	Window(const char *title, int width, int height, Resolution res);
-	Window(const char *title, Resolution resolution) : Window(title, 0, 0, resolution) {}
-	Window() : Window("", 640, 480, (Resolution)NULL) {};
+	Window(string, int width, int height, Resolution res);
+	Window(string title, Resolution resolution) : Window(title, 0, 0, resolution) {}
+	Window() : Window("", 640, 480, Resolution::NONE) {};
 	void changeWindowResolution(Resolution res);
 	void changeWindowResolution(int width, int height);
 	void changeWindowResolution(Resolution res, int width, int height);
@@ -43,12 +49,11 @@ public:
 	SDL_Window* getSDLWindow() {
 		return window;
 	}
-	void destroy();
-    Renderer* getRenderer() {
+	shared_ptr<Renderer> getRenderer() {
         return renderer;
     }
 private:
 	SDL_Window* window;
-    Renderer* renderer;
-	void calculateResolution(Resolution res, int &width, int &height);
+	shared_ptr<Renderer> renderer;
+	pair<int, int> calculateResolution(Resolution res);
 };

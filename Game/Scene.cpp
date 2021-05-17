@@ -8,28 +8,34 @@
 Scene::Scene()
 {
 	using namespace placeholders;
-	Scene::movementCallback = bind(&Scene::moveObject, this, _1, _2);
+	sceneMouseMovementEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
+	sceneMouseEnteredEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
+	sceneMouseExitedEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
+	sceneMouseClickEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
+	sceneMouseRightClickEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
+	sceneMouseClickUpEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
+	sceneMouseRightClickUpEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
 }
 
-std::vector<GameObject*> Scene::getObjects()
+std::vector<shared_ptr<GameObject>> Scene::getObjects()
 {
 	return objects;
 }
 
-void Scene::addObject(GameObject* object) {
+void Scene::addObject(shared_ptr<GameObject> object) {
 	if (!renderer) {
 		printf("ERROR: Scene has no renderer. Cannot load sprite textures.");
 		return;
 	}
 	//Load the sprite's images with the scene renderer
 	if (object->hasSprite) {
-		for (Sprite* s : object->renderQueue) {
-			s->loadTextures(renderer);
+		for (weak_ptr<Sprite> s : object->renderQueue) {
+			if (!s.expired()) {
+				s.lock()->loadTextures(renderer);
+			}
 		}
 		Scene::objects.push_back(object);
 	}
-
-	object->movementCallback = &movementCallback;
 
 	function<void()> objectMouseEvents[9];
 	object->getMouseEvents(objectMouseEvents);
@@ -40,37 +46,37 @@ void Scene::addObject(GameObject* object) {
 	objectSizeRectangle.width = object->getSize().width;
 	objectSizeRectangle.height = object->getSize().height;
 	if (object->hasMouseMoveEvent) {
-		sceneMouseMovementEvents.push_back(make_pair(objectMouseEvents[0], objectSizeRectangle));
+		sceneMouseMovementEvents->push_back(make_pair(objectMouseEvents[0], objectSizeRectangle));
 	}
 	if (object->hasMouseEnteredEvent) {
-		sceneMouseEnteredEvents.push_back(make_pair(objectMouseEvents[1], objectSizeRectangle));
+		sceneMouseEnteredEvents->push_back(make_pair(objectMouseEvents[1], objectSizeRectangle));
 	}
 	if (object->hasMouseExitedEvent) {
-		sceneMouseExitedEvents.push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
+		sceneMouseExitedEvents->push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
 	}
 	if (object->hasMouseClickGraphicEvent) {
-		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
+		sceneMouseClickEvents->push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
 	}
 	if (object->hasMouseClickEvent) {
-		sceneMouseClickEvents.push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
+		sceneMouseClickEvents->push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
 	}
 	if (object->hasMouseRightClickEvent) {
-		sceneMouseRightClickEvents.push_back(make_pair(objectMouseEvents[5], objectSizeRectangle));
+		sceneMouseRightClickEvents->push_back(make_pair(objectMouseEvents[5], objectSizeRectangle));
 	}
 	if (object->hasMouseClickUpGraphicEvent) {
-		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[6], objectSizeRectangle));
+		sceneMouseClickUpEvents->push_back(make_pair(objectMouseEvents[6], objectSizeRectangle));
 	}
 	if (object->hasMouseClickUpEvent) {
-		sceneMouseClickUpEvents.push_back(make_pair(objectMouseEvents[7], objectSizeRectangle));
+		sceneMouseClickUpEvents->push_back(make_pair(objectMouseEvents[7], objectSizeRectangle));
 	}
 	if (object->hasMouseRightClickUpEvent) {
-		sceneMouseRightClickUpEvents.push_back(make_pair(objectMouseEvents[8], objectSizeRectangle));
+		sceneMouseRightClickUpEvents->push_back(make_pair(objectMouseEvents[8], objectSizeRectangle));
 	}
 	using namespace placeholders;
 	object->removeCalls.push_back(bind(&Scene::removeObject, this, _1));
 }
 
-void Scene::addSprite(Sprite* sprite) {
+void Scene::addSprite(shared_ptr<Sprite> sprite) {
 	if (!renderer) {
 		printf("ERROR: Scene has no renderer. Cannot load sprite textures.");
 		return;
@@ -88,42 +94,4 @@ void Scene::removeObject(GameObject* o)
 			i -= 1;
 		}
 	}
-}
-
-//Speed can be affected by modifiers, including frame speed. Vector is px/sec. Set position for absolute movement.
-void Scene::moveObject(GameObject* g, ModifiableProperty<Vector, double> vector)
-{
-	if (isCurrentScene) {
-		std::vector<Hitbox*> hitboxes;
-		for (GameObject* o : objects) {
-			if (g->id != o->id && o->hitboxEnabled && o->hitbox) {
-				hitboxes.push_back(o->hitbox);
-			}
-		}
-		double fpsSpeedFactor;
-		if (lastFrameTimeMS) {
-			fpsSpeedFactor = **lastFrameTimeMS / 1000;
-		}
-		else if (defaultFps) {
-			fpsSpeedFactor = 1.0 / (double)(**defaultFps);
-		}
-		else {
-			fpsSpeedFactor = 1.0 / 60.0;
-		}
-		vector.addModifier(fpsSpeedFactor);
-		pair<Vector, Collision> vecPair = g->hitbox->getMaximumClearDistanceForVectorFromGameObject(hitboxes, vector.getValue());
-		if (vecPair.second.collided) {
-			for (function<void(Point)> func : g->collisionEvents) {
-				func(vecPair.second.p);
-			}
-		}
-		Vector v = vecPair.first;
-		Point adjustedPosition = g->position + v.getCartesian();
-		g->setPosition(adjustedPosition);
-	}
-}
-
-void Scene::destroy()
-{
-	renderer->destroy();
 }

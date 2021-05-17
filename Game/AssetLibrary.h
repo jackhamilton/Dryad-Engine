@@ -1,21 +1,29 @@
 #pragma once
 #include <SDL.h>
-#include <string.h>
+#include <string>
+#include <vector>
+#include <memory>
 #include <map>
+#include <SDL_ttf.h>
 
+using namespace std;
 class AssetLibrary
 {
 public:
 	AssetLibrary() : AssetLibrary("res\\") {};
 	//relative to build base directory. Starts with a \\ appended.
-	AssetLibrary(const char* directoryPath);
-	const char* getAsset(const char* nameIncludingExtension);
+	AssetLibrary(string directoryPath);
+	string getAsset(string nameIncludingExtension);
 	//must add subdirectories through the add function first
-	const char* getAsset(const char* nameIncludingExtension, const char* subdirectory);
+	string getAsset(string nameIncludingExtension, string subdirectory);
 	//name parameter is what you'll fetch it with when retrieving assets
-	void addSubdirectory(const char* relativePath, const char* name);
+	void addSubdirectory(string relativePath, string name);
+	void openFont(string nameWithExtension, int size);
 private:
-	const char* baseLibraryDirectory;
-	std::map<const char*, const char*> subdirectories;
+	string baseLibraryDirectory;
+	map<string, string> subdirectories;
+	map<string, pair<TTF_Font*, int>> fonts;
+	friend class Text;
+	friend class Button;
 };
 

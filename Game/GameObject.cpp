@@ -17,9 +17,11 @@ void GameObject::setSize(Size size) {
 
 Size GameObject::getSize()
 {
-	if (size.width == 0 && size.height == 0) {
-		pair<int, int> sizes = getSprite()->getDimensions();
-		size = { sizes.first, sizes.second };
+	if (size.width <= 0 && size.height <= 0) {
+		if (!getSprite().expired()) {
+			pair<int, int> sizes = getSprite().lock()->getDimensions();
+			size = { sizes.first, sizes.second };
+		}
 	}
 	return size;
 }
@@ -30,6 +32,18 @@ void GameObject::setPosition(Point pos)
 }
 
 GameObject::GameObject(Point position) {
+	hasSprite = false;
+	hasMouseMoveEvent = false;
+	hasMouseEnteredEvent = false;
+	hasMouseExitedEvent = false;
+	hasMouseClickEvent = false;
+	hasMouseClickGraphicEvent = false;
+	hasMouseRightClickEvent = false;
+	hasMouseClickUpEvent = false;
+	hasMouseClickUpGraphicEvent = false;
+	hasMouseRightClickUpEvent = false;
+	hitboxRendered = false;
+	hitboxEnabled = false;
 	if (cID == NULL) {
 		id = 0;
 		cID = 1;
@@ -39,12 +53,22 @@ GameObject::GameObject(Point position) {
 		cID++;
 	}
 	GameObject::position = position;
-	hasSprite = false;
 }
 
-GameObject::GameObject(Point position, Sprite* sprite)
+GameObject::GameObject(Point position, shared_ptr<Sprite> sprite)
 {
 	hasSprite = true;
+	hasMouseMoveEvent = false;
+	hasMouseEnteredEvent = false;
+	hasMouseExitedEvent = false;
+	hasMouseClickEvent = false;
+	hasMouseClickGraphicEvent = false;
+	hasMouseRightClickEvent = false;
+	hasMouseClickUpEvent = false;
+	hasMouseClickUpGraphicEvent = false;
+	hasMouseRightClickUpEvent = false;
+	hitboxRendered = false;
+	hitboxEnabled = false;
 	if (cID == NULL) {
 		id = 0;
 		cID = 1;
@@ -57,13 +81,15 @@ GameObject::GameObject(Point position, Sprite* sprite)
 	setSprite(sprite);
 }
 
-GameObject::~GameObject()
-{
-	delete sprite;
+void GameObject::setSprite(shared_ptr<Sprite> sprite) {
+	setSprite(sprite, false);
 }
 
-void GameObject::setSprite(Sprite* sprite) {
+void GameObject::setSprite(shared_ptr<Sprite> sprite, bool deallocateOld) {
 	hasSprite = true;
+	if (deallocateOld) {
+		GameObject::sprite.reset();
+	}
 	GameObject::sprite = sprite;
 	if (!sprite->loaded) {
 		addSpriteToSceneRenderQueue(sprite);
@@ -73,23 +99,23 @@ void GameObject::setSprite(Sprite* sprite) {
 	}
 }
 
-Sprite* GameObject::getSprite() {
-	return GameObject::sprite;
+weak_ptr<Sprite> GameObject::getSprite() {
+	return weak_ptr<Sprite>(GameObject::sprite);
 }
 
-void GameObject::addChild(GameObject* obj)
+void GameObject::addChild(shared_ptr<GameObject> obj)
 {
 	children.push_back(obj);
 }
 
-void GameObject::queueEvent(GameObjectEvent* event)
+void GameObject::queueEvent(shared_ptr<GameObjectEvent> event)
 {
 	eventQueue.push(event);
 }
 
-void GameObject::queueEvents(vector<GameObjectEvent*> events)
+void GameObject::queueEvents(vector<shared_ptr<GameObjectEvent>> events)
 {
-	for (GameObjectEvent* e : events) {
+	for (shared_ptr<GameObjectEvent> e : events) {
 		eventQueue.push(e);
 	}
 }
@@ -97,23 +123,54 @@ void GameObject::queueEvents(vector<GameObjectEvent*> events)
 //Only works if in current scene.
 void GameObject::move(ModifiableProperty<Vector, double> vector)
 {
-	function<void(GameObject*, ModifiableProperty<Vector, double>)> cb = *movementCallback;
-	cb(this, vector);
+	moveObject(vector);
 }
 
 //Only works if in current scene.
 void GameObject::move(Vector vector)
 {
-	function<void(GameObject*, ModifiableProperty<Vector, double>)> cb = *movementCallback;
-	cb(this, ModifiableProperty<Vector, double>(vector));
+	moveObject(ModifiableProperty<Vector, double>(vector));
 }
 
-void GameObject::setPhysics(Physics * p)
+//Speed can be affected by modifiers, including frame speed. Vector is px/sec. Set position for absolute movement.
+void GameObject::moveObject(ModifiableProperty<Vector, double> vector)
+{
+	if (sceneActive) {
+		std::vector<shared_ptr<Hitbox>> hitboxes;
+		for (shared_ptr<GameObject> o : *objects) {
+			if (id != o->id && o->hitboxEnabled && o->hitbox) {
+				hitboxes.push_back(o->hitbox);
+			}
+		}
+		double fpsSpeedFactor;
+		if (!lastFrameTimeMS.expired() && *lastFrameTimeMS.lock()) {
+			fpsSpeedFactor = (long double)(*lastFrameTimeMS.lock()) / 1000.0;
+		}
+		else if (!defaultFps.expired() && *defaultFps.lock()) {
+			fpsSpeedFactor = 1.0 / (long double)(*defaultFps.lock());
+		}
+		else {
+			fpsSpeedFactor = 1.0 / 60.0;
+		}
+		vector.addModifier(fpsSpeedFactor);
+		pair<Vector, Collision> vecPair = hitbox->getMaximumClearDistanceForVectorFromGameObject(hitboxes, vector.getValue());
+		if (vecPair.second.collided) {
+			for (function<void(Point)> func : collisionEvents) {
+				func(vecPair.second.p);
+			}
+		}
+		Vector v = vecPair.first;
+		Point adjustedPosition = position + v.getCartesian();
+		setPosition(adjustedPosition);
+	}
+}
+
+void GameObject::setPhysics(shared_ptr<Physics> p)
 {
 	physics = p;
 }
 
-Physics* GameObject::getPhysics()
+shared_ptr<Physics> GameObject::getPhysics()
 {
 	return physics;
 }
@@ -133,7 +190,7 @@ void GameObject::getMouseEvents(function<void()>* ret)
 
 void GameObject::removeFromParents()
 {
-	for (GameObject* c : children) {
+	for (shared_ptr<GameObject> c : children) {
 		c->removeFromParents();
 	}
 	for (function<void(GameObject*)> func : removeCalls) {
@@ -157,7 +214,7 @@ void GameObject::enableHitbox()
 		r.y = 0;
 		r.width = objSize.width;
 		r.height = objSize.height;
-		hitbox = new Hitbox(r, &position);
+		hitbox = make_shared<Hitbox>(Hitbox(r, &position));
 	}
 }
 
@@ -165,7 +222,7 @@ void GameObject::renderHitbox() {
 	if (hitbox && !hitboxRendered) {
 		vector<Point> corners = hitbox->getCorners();
 		for (int i = 0; i < 4; i++) {
-			Line* l = new Line({ 255, 0, 0 }, corners.at(i), corners.at(i == 3 ? 0 : i+1));
+			auto l = shared_ptr<Line>(new Line({ 255, 0, 0 }, corners.at(i), corners.at(i == 3 ? 0 : i+1)));
 			addChild(l);
 		}
 		hitboxRendered = true;
@@ -177,9 +234,9 @@ void GameObject::addCollisionEvent(function<void(Point)> event)
 	collisionEvents.push_back(event);
 }
 
-void GameObject::addSpriteToSceneRenderQueue(Sprite* s)
+void GameObject::addSpriteToSceneRenderQueue(shared_ptr<Sprite> s)
 {
-	renderQueue.push_back(s);
+	renderQueue.push_back(weak_ptr<Sprite>(s));
 }
 
 void GameObject::updateSize()
@@ -188,10 +245,10 @@ void GameObject::updateSize()
 	size = { sizeOfSprite.first, sizeOfSprite.second };
 }
 
-void GameObject::handleEvents()
+void GameObject::handleEvents(clock_t ticksSinceLast)
 {
 	if (!eventQueue.empty()) {
-		GameObjectEvent* cEvent = eventQueue.front();
+		shared_ptr<GameObjectEvent> cEvent = eventQueue.front();
 		while (!eventQueue.empty() && eventQueue.front()->completed) {
 			eventQueue.pop();
 		}
@@ -204,21 +261,23 @@ void GameObject::handleEvents()
 			break;
 		case EventType::DELAY:
 		{
-			DelayEvent* eventAsProper = (DelayEvent*)cEvent;
+			shared_ptr<DelayEvent> eventAsProper = static_pointer_cast<DelayEvent>(cEvent);
 			if (!eventAsProper->started) {
-				eventAsProper->time = clock();
 				eventAsProper->started = true;
 			}
-			if (clock() >= eventAsProper->time + eventAsProper->sceneTransitionDelayCycles + (eventAsProper->popTime) * (CLOCKS_PER_SEC / 1000)) {
+			if (eventAsProper->popTime <= eventAsProper->time) {
 				eventQueue.pop();
-				handleEvents();
+				handleEvents(ticksSinceLast);
+			}
+			else {
+				eventAsProper->time += (ticksSinceLast / (CLOCKS_PER_SEC / 1000));
 			}
 		}
 			break;
 		case EventType::WAIT_FOR_ANIMATION_COMPLETION:
 			if (sprite->startedAnimation && (sprite->paused || sprite->isOnFinalFrame())) {
 				eventQueue.pop();
-				handleEvents();
+				handleEvents(ticksSinceLast);
 			}
 			break;
 		}

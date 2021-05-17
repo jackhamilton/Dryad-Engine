@@ -24,18 +24,18 @@ bool Hitbox::testCollision(Hitbox h)
 	return true;
 	if (h.usesCircleHitbox) {
 		if (usesCircleHitbox) {
-			return testCircleCollision(this, &h);
+			//return testCircleCollision(make_shared<Hitbox>(this), make_shared<Hitbox>(h));
 		}
 		else {
-			return testHybridCollision(&h, this);
+			//return testHybridCollision(make_shared<Hitbox>(h), make_shared<Hitbox>(this));
 		}
 	}
 	else {
 		if (usesCircleHitbox) {
-			return testHybridCollision(this, &h);
+			//return testHybridCollision(make_shared<Hitbox>(this), make_shared<Hitbox>(h));
 		}
 		else {
-			return testFixedRectangleCollision(this, &h);
+			//return testFixedRectangleCollision(make_shared<Hitbox>(this), make_shared<Hitbox>(h));
 		}
 	}
 }
@@ -51,26 +51,27 @@ Point Hitbox::getCenter()
 }
 
 //Assumes vector calculated from object origin. Hitbox array is for all other gameobjects
-std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<Hitbox*> objects, Vector vector)
+std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObject(vector<shared_ptr<Hitbox>> objects, Vector vector)
 {
 	bool clear = true;
-	Point colPoint;
 	Vector minimumLineGlobal(Point(650000, 650000));
-	for (Hitbox* o : objects) {
+	Point collPoint;
+	for (shared_ptr<Hitbox> o : objects) {
 		Vector vecCopy = Vector(Point(vector.x, vector.y));
 		Point myCenter = getCenter() + *parentPosition;
 		double x = myCenter.x;
 		double y = myCenter.y;
-		Hitbox* targetHitbox = o;
+		shared_ptr<Hitbox> targetHitbox = o;
 		Point center = targetHitbox->getCenter() + *targetHitbox->parentPosition;
 		bool objectClear = true;
 		if (usesCircleHitbox and targetHitbox->usesCircleHitbox) {
 			//both circles
 			vecCopy += hitboxCircle.r;
-			Point nearestCollision;
-			objectClear = lineCircle(x, y, x + vecCopy.x, y + vecCopy.y, center.x, center.y, targetHitbox->hitboxCircle.r, &nearestCollision);
+			shared_ptr<Point> collision = make_shared<Point>();
+			objectClear = lineCircle(x, y, x + vecCopy.x, y + vecCopy.y, center.x, center.y, targetHitbox->hitboxCircle.r, collision);
 			if (!objectClear) {
-				Vector ret = Vector(x, y, nearestCollision.x, nearestCollision.y);
+				Vector ret = Vector(x, y, collision->x, collision->y);
+				collPoint = *collision;
 				ret -= (double)(hitboxCircle.r);
 				clear = false;
 				if (ret < minimumLineGlobal) {
@@ -87,11 +88,12 @@ std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObj
 				std::vector<Point> targetCorners = targetHitbox->getCorners();
 				Point c1 = targetCorners.at(0) + *targetHitbox->parentPosition;
 				Point c2 = targetCorners.at(2) + *targetHitbox->parentPosition;
-				Point collision;
-				bool collided = lineRect(pt.x, pt.y, pt.x + vecCopy.x, pt.y + vecCopy.y, c1.x, c1.y, c2.x, c2.y, &collision);
+				shared_ptr<Point> collision = make_shared<Point>();
+				bool collided = lineRect(pt.x, pt.y, pt.x + vecCopy.x, pt.y + vecCopy.y, c1.x, c1.y, c2.x, c2.y, collision);
 				if (collided) {
 					collisionRegistered = true;
-					Vector collVector = Vector(pt.x, pt.y, collision.x, collision.y);
+					collPoint = *collision;
+					Vector collVector = Vector(pt.x, pt.y, collision->x, collision->y);
 					if (collVector < minimumLine) {
 						minimumLine = collVector;
 					}
@@ -115,12 +117,13 @@ std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObj
 				bool collisionRegistered = false;
 				for (Point p1 : origins) {
 					Point pt = p1 + *parentPosition;
-					Point collision;
 					Circle c1 = targetHitbox->hitboxCircle;
-					bool collided = lineCircle(pt.x, pt.y, pt.x + vecCopy.x, pt.y + vecCopy.y, center.x, center.y, c1.r, &collision);
+					shared_ptr<Point> collision = make_shared<Point>();
+					bool collided = lineCircle(pt.x, pt.y, pt.x + vecCopy.x, pt.y + vecCopy.y, center.x, center.y, c1.r, collision);
 					if (collided) {
 						collisionRegistered = true;
-						Vector collVector = Vector(pt.x, pt.y, collision.x, collision.y);
+						collPoint = *collision;
+						Vector collVector = Vector(pt.x, pt.y, collision->x, collision->y);
 						if (collVector < minimumLine) {
 							minimumLine = collVector;
 						}
@@ -142,9 +145,11 @@ std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObj
 				std::vector<Point> targetCorners = targetHitbox->getCorners();
 				Point c1 = targetCorners.at(0) + *targetHitbox->parentPosition;
 				Point c2 = targetCorners.at(2) + *targetHitbox->parentPosition;
-				objectClear = lineRect(myCenter.x, myCenter.x, myCenter.x + vecCopy.x, myCenter.y + vecCopy.y, c1.x, c1.y, c2.x, c2.y, &nearestCollision);
+				shared_ptr<Point> collision = make_shared<Point>();
+				objectClear = lineRect(myCenter.x, myCenter.x, myCenter.x + vecCopy.x, myCenter.y + vecCopy.y, c1.x, c1.y, c2.x, c2.y, collision);
 				if (!objectClear) {
-					Vector ret = Vector(x, y, nearestCollision.x, nearestCollision.y);
+					collPoint = *collision;
+					Vector ret = Vector(x, y, collision->x, collision->y);
 					ret -= (double)(hitboxCircle.r);
 					clear = false;
 					if (ret < minimumLineGlobal) {
@@ -155,14 +160,14 @@ std::pair<Vector, Collision> Hitbox::getMaximumClearDistanceForVectorFromGameObj
 		}
 	}
 	if (clear) {
-		Collision c = { false, colPoint };
+		Collision c = { false, collPoint };
 		return make_pair(vector, c);
 	}
 	else if (minimumLineGlobal.x < 640000 && minimumLineGlobal.y < 640000) {
-		Collision c = { true, colPoint };
+		Collision c = { true, collPoint };
 		return make_pair(minimumLineGlobal, c);
 	}
-	Collision c = { true, colPoint };
+	Collision c = { true, collPoint };
 	return make_pair(Vector(Point(0, 0)), c);
 }
 
@@ -250,7 +255,7 @@ vector<Point> Hitbox::getEquallySpacedPointsAlongLine(Point origin, Vector a, in
 	return points;
 }
 
-bool Hitbox::testCircleCollision(Hitbox* h1, Hitbox* h2)
+bool Hitbox::testCircleCollision(shared_ptr<Hitbox> h1, shared_ptr<Hitbox> h2)
 {
 	Circle c1 = h1->hitboxCircle;
 	Circle c2 = h2->hitboxCircle;
@@ -258,14 +263,14 @@ bool Hitbox::testCircleCollision(Hitbox* h1, Hitbox* h2)
 }
 
 //circle first
-bool Hitbox::testHybridCollision(Hitbox* h1, Hitbox* h2)
+bool Hitbox::testHybridCollision(shared_ptr<Hitbox> h1, shared_ptr<Hitbox> h2)
 {
 	Circle c = h1->hitboxCircle;
 	Rectangle r = h2->hitboxRect;
 	return false;
 }
 
-bool Hitbox::testFixedRectangleCollision(Hitbox* h1, Hitbox* h2)
+bool Hitbox::testFixedRectangleCollision(shared_ptr<Hitbox> h1, shared_ptr<Hitbox> h2)
 {
 	Rectangle r1 = h1->hitboxRect;
 	Rectangle r2 = h2->hitboxRect;
@@ -274,27 +279,27 @@ bool Hitbox::testFixedRectangleCollision(Hitbox* h1, Hitbox* h2)
 	return true;
 }
 
-bool Hitbox::lineRect(double x1, double y1, double x2, double y2, double rx, double ry, double rx2, double ry2, Point* nearestCollision) {
+bool Hitbox::lineRect(double x1, double y1, double x2, double y2, double rx, double ry, double rx2, double ry2, shared_ptr<Point> nearestCollision) {
 
 	// check if the line has hit any of the rectangle's sides
 	// uses the Line/Line function below
-	Point collision = Point(-650000, -650000);
-	bool left = lineLine(x1, y1, x2, y2, rx, ry, rx, ry2, &collision);
-	Point collision2 = Point(-650000, -650000);
-	bool right = lineLine(x1, y1, x2, y2, rx2, ry, rx2, ry2, &collision2);
-	Point collision3 = Point(-650000, -650000);
-	bool top = lineLine(x1, y1, x2, y2, rx, ry, rx2, ry, &collision3);
-	Point collision4 = Point(-650000, -650000);
-	bool bottom = lineLine(x1, y1, x2, y2, rx, ry2, rx2, ry2, &collision4);
-	Point points [4] = { collision, collision2, collision3, collision4 };
+	shared_ptr<Point> collision = make_shared<Point>();
+	bool left = lineLine(x1, y1, x2, y2, rx, ry, rx, ry2, collision);
+	shared_ptr<Point> collision2 = make_shared<Point>();
+	bool right = lineLine(x1, y1, x2, y2, rx2, ry, rx2, ry2, collision2);
+	shared_ptr<Point> collision3 = make_shared<Point>();
+	bool top = lineLine(x1, y1, x2, y2, rx, ry, rx2, ry, collision3);
+	shared_ptr<Point> collision4 = make_shared<Point>();
+	bool bottom = lineLine(x1, y1, x2, y2, rx, ry2, rx2, ry2, collision4);
+	shared_ptr<Point> points [4] = { collision, collision2, collision3, collision4 };
 	Point nearestCollisionLocal = Point(650000, 650000);
 	double nearestCollisionDist = 650000;
-	for (Point p : points) {
-		if (p.x != -650000 and p.y != -650000) {
-			if (p.distance(Point(x1, y1)) < nearestCollisionDist) {
+	for (shared_ptr<Point> p : points) {
+		if (p->x != -650000 and p->y != -650000) {
+			if (p->distance(Point(x1, y1)) < nearestCollisionDist) {
 				nearestCollisionLocal.x = x1;
 				nearestCollisionLocal.y = y1;
-				nearestCollisionDist = p.distance(Point(x1, y1));
+				nearestCollisionDist = p->distance(Point(x1, y1));
 			}
 		}
 	}
@@ -312,7 +317,7 @@ bool Hitbox::lineRect(double x1, double y1, double x2, double y2, double rx, dou
 	return false;
 }
 
-bool Hitbox::lineLine(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, Point* collision) {
+bool Hitbox::lineLine(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, shared_ptr<Point> collision) {
 
 	// calculate the direction of the lines
 	double uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
@@ -333,7 +338,7 @@ bool Hitbox::lineLine(double x1, double y1, double x2, double y2, double x3, dou
 }
 
 // LINE/CIRCLE
-bool Hitbox::lineCircle(double x1, double y1, double x2, double y2, double cx, double cy, double r, Point* nearestCollision) {
+bool Hitbox::lineCircle(double x1, double y1, double x2, double y2, double cx, double cy, double r, shared_ptr<Point> nearestCollision) {
 	/*
 	// is either end INSIDE the circle?
 	// if so, return true immediately

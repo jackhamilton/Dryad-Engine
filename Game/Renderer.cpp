@@ -16,6 +16,16 @@ SDL_Renderer* Renderer::getSDLRenderer()
 	return renderer;
 }
 
+void Renderer::render(shared_ptr<SDL_Texture> texture, SDL_Rect dstrect)
+{
+	SDL_RenderCopy(renderer, texture.get(), NULL, &dstrect);
+}
+
+void Renderer::render(shared_ptr<SDL_Texture> texture, SDL_Rect srcrect, SDL_Rect dstrect)
+{
+	SDL_RenderCopy(renderer, texture.get(), &srcrect, &dstrect);
+}
+
 void Renderer::render(SDL_Texture* texture, SDL_Rect dstrect)
 {
 	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
@@ -35,8 +45,7 @@ void Renderer::renderBackground()
 	SDL_RenderClear(renderer);
 }
 
-void Renderer::destroy()
+Renderer::~Renderer()
 {
-	//TODO: this was causing issues, so I commented it out, but it isn't destroyed
-	//SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(renderer);
 }

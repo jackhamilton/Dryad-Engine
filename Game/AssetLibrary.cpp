@@ -1,41 +1,39 @@
 #include "AssetLibrary.h"
 
-AssetLibrary::AssetLibrary(const char* directoryPath){
-	baseLibraryDirectory = strcat(SDL_GetBasePath(), directoryPath);
+AssetLibrary::AssetLibrary(string directoryPath){
+	baseLibraryDirectory = string(SDL_GetBasePath()) + directoryPath;
 }
 
-const char* AssetLibrary::getAsset(const char* nameIncludingExtension)
+string AssetLibrary::getAsset(string nameIncludingExtension)
 {
-	int memSize = sizeof(char) * (strlen(nameIncludingExtension) + strlen(baseLibraryDirectory));
-	char* strBuilder = (char*)malloc(memSize);
-	if (strBuilder) {
-		memset(strBuilder, 0, memSize);
-		strcat(strBuilder, baseLibraryDirectory);
-		strcat(strBuilder, nameIncludingExtension);
-	}
-	return strBuilder;
+	return baseLibraryDirectory + nameIncludingExtension;
 }
 
-const char* AssetLibrary::getAsset(const char* nameIncludingExtension, const char* subdirectory)
+string AssetLibrary::getAsset(string nameIncludingExtension, string subdirectory)
 {
-	if (!subdirectories[subdirectory]) {
-		return nullptr;
+	if (subdirectories[subdirectory] == "") {
+		return "";
 	}
-	int memSize = sizeof(char) * (strlen(nameIncludingExtension) + strlen(baseLibraryDirectory) + strlen(subdirectories[subdirectory]));
-	char* strBuilder = (char*)malloc(memSize);
-	if (strBuilder) {
-		memset(strBuilder, 0, memSize);
-		strcat(strBuilder, baseLibraryDirectory);
-		strcat(strBuilder, subdirectories[subdirectory]);
-		strcat(strBuilder, nameIncludingExtension);
-	}
-	return strBuilder;
+	return baseLibraryDirectory + subdirectories[subdirectory] + nameIncludingExtension;
 }
 
-void AssetLibrary::addSubdirectory(const char* relativePath, const char* name)
+void AssetLibrary::addSubdirectory(string relativePath, string name)
 {
 	//might potentially need to strcopy the relativePath to avoid loss of reference?
-	subdirectories[name] = relativePath;
+	subdirectories[name] = relativePath + "\\";
 }
 
-
+void AssetLibrary::openFont(string name, int size)
+{
+	string fontName = baseLibraryDirectory + "fonts\\" + name + ".ttf";
+	if (!TTF_WasInit()) {
+		TTF_Init();
+	}
+	TTF_Font* fontTTF;
+	//TODO: I do not properly close these
+	if (!(fontTTF = TTF_OpenFont(fontName.c_str(), size))) { //this opens a font style and sets a size
+		string text = TTF_GetError();
+		printf(text.c_str());
+	}
+	fonts[name] = make_pair(fontTTF, size);
+}

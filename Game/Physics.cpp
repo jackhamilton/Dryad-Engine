@@ -5,6 +5,7 @@
 
 //TODO: Movement adjusted for FPS
 //TODO: Spherical physics bodies
+//TODO: convert to SHARED_PTR
 
 bool Physics::testAABBCollision(AABB a, AABB b)
 {
@@ -108,14 +109,14 @@ double Physics::dotProduct(Vector A, Vector B)
 	return product;
 }
 
-Physics::Physics(GameObject* object) {
+Physics::Physics(shared_ptr<GameObject> object) {
 	velocity = { 0, 0 };
 	positionFixed = false;
 	restitution = 1;
 	mass = 1;
 	Physics::object = object;
 	Point pos = object->getPosition();
-	std::pair<int, int> dim = object->getSprite()->getDimensions();
+	std::pair<int, int> dim = object->getSprite().lock()->getDimensions();
 	bounds = {
 		Vector(Point(pos.x, pos.y)),
 		Vector(Point(dim.first + pos.x, dim.second + pos.y))
@@ -150,7 +151,7 @@ void Physics::setBounds(AABB b)
 void Physics::computeBounds()
 {
 	Point pos = object->getPosition();
-	std::pair<int, int> dim = object->getSprite()->getDimensions();
+	std::pair<int, int> dim = object->getSprite().lock()->getDimensions();
 	bounds = {
 		Vector(Point(pos.x, pos.y)),
 		Vector(Point(dim.first + pos.x, dim.second + pos.y))

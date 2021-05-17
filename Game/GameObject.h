@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include <queue>
 #include <functional>
 #include "Point.h"
@@ -21,23 +22,23 @@ public:
 	GameObject() : GameObject(0, 0) {};
 	GameObject(double x, double y) : GameObject(Point(x, y)) {};
 	GameObject(Point location);
-	GameObject(double x, double y, Sprite* sprite) : GameObject(Point(), sprite) {};
-	GameObject(Point position, Sprite* sprite);
-	~GameObject();
+	GameObject(double x, double y, shared_ptr<Sprite> sprite) : GameObject(Point(), sprite) {};
+	GameObject(Point position, shared_ptr<Sprite> sprite);
 
-	vector<Sprite*> renderQueue;
+	vector<weak_ptr<Sprite>> renderQueue;
 
 	void setSize(Size size);
 	Size getSize();
-	void setSprite(Sprite* sprite);
-	Sprite* getSprite();
-	void addChild(GameObject* obj);
-	void queueEvent(GameObjectEvent* event);
-	void queueEvents(vector<GameObjectEvent*> events);
+	void setSprite(shared_ptr<Sprite> sprite);
+	void setSprite(shared_ptr<Sprite> sprite, bool deallocateOld);
+	weak_ptr<Sprite> getSprite();
+	void addChild(shared_ptr<GameObject> obj);
+	void queueEvent(shared_ptr<GameObjectEvent> event);
+	void queueEvents(vector<shared_ptr<GameObjectEvent>> events);
 	void move(ModifiableProperty<Vector, double> vector);
 	void move(Vector vector);
-	void setPhysics(Physics* p);
-	Physics* getPhysics();
+	void setPhysics(shared_ptr<Physics> p);
+	shared_ptr<Physics> getPhysics();
 	void getMouseEvents(function<void()>* ret);
 	void removeFromParents();
 	//check if a point is inside the object. Size must be set.
@@ -60,7 +61,7 @@ public:
 	bool hasMouseRightClickUpEvent;
 protected:
 	//currently, children render on top
-	vector<GameObject*> children;
+	vector<shared_ptr<GameObject>> children;
 	function<void()> mouseMoveEvent;
 	function<void()> mouseEnteredEvent;
 	function<void()> mouseExitedEvent;
@@ -71,22 +72,27 @@ protected:
 	function<void()> mouseClickUpGraphicEvent;
 	function<void()> mouseRightClickUpEvent;
 	vector<function<void(Point)>> collisionEvents;
-	queue<GameObjectEvent*> eventQueue;
+	queue<shared_ptr<GameObjectEvent>> eventQueue;
 	vector<function<void(GameObject*)>> removeCalls;
 	int id;
-	Hitbox* hitbox;
+	shared_ptr<Hitbox> hitbox;
 	bool hitboxEnabled;
 	bool hitboxRendered;
 	Point position;
 	Size size;
-	Sprite* sprite;
-	Physics* physics;
-	function<void(GameObject*, ModifiableProperty<Vector, double>)>* movementCallback;
-	void addSpriteToSceneRenderQueue(Sprite* s);
+	shared_ptr<Sprite> sprite;
+	shared_ptr<Physics> physics;
+	void addSpriteToSceneRenderQueue(shared_ptr<Sprite> s);
 	void addCollisionEvent(function<void(Point)> event);
 private:
+	bool sceneActive = false;
+	vector<shared_ptr<GameObject>>* objects;
+	weak_ptr<long double> defaultFps;
+	//set to actual time including delay
+	weak_ptr<long double> lastFrameTimeMS;
 	void updateSize();
-	void handleEvents();
+	void moveObject(ModifiableProperty<Vector, double> vector);
+	void handleEvents(clock_t ticksSinceLast);
 	friend class World;
 	friend class Scene;
 	friend class Hitbox;

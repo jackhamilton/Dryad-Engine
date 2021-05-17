@@ -2,7 +2,7 @@
 #include "Input.h"
 #include <time.h>
 
-GameLoop::GameLoop(int fps, World* world, Input* input)
+GameLoop::GameLoop(int fps, shared_ptr<World> world, shared_ptr<Input> input)
 {
 	GameLoop::world = world;
 	running = false;
@@ -11,8 +11,8 @@ GameLoop::GameLoop(int fps, World* world, Input* input)
 	//calculate the time per frame
 	GameLoop::frameTimeMS = (1 / ((double)fps)) * 1000;
 	GameLoop::input = input;
-	world->lastFrameTimeMS = &lastFrameTimeMS;
-	world->defaultFps = &(GameLoop::fps);
+	world->lastFrameTimeMS = make_shared<long double>(lastFrameTimeMS);
+	world->defaultFps = make_shared<long double>(GameLoop::fps);
 }
 
 void GameLoop::start()
@@ -74,16 +74,11 @@ void GameLoop::stop()
 	running = false;
 }
 
-void GameLoop::setInput(Input* input) {
+void GameLoop::setInput(shared_ptr<Input> input) {
 	GameLoop::input = input;
 }
 
-void GameLoop::setWorld(World* world)
+void GameLoop::setWorld(shared_ptr<World> world)
 {
 	GameLoop::world = world;
-}
-
-void GameLoop::destroy()
-{
-	delete input;
 }

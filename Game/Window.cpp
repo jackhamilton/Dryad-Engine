@@ -1,36 +1,50 @@
 #include "Window.h"
 #include "Renderer.h"
+#include "SDL_ttf.h"
+#include "SDL_image.h"
 
 using namespace std;
 
 
-void Window::calculateResolution(Resolution res, int &width, int &height) {
+pair<int, int> Window::calculateResolution(Resolution res) {
+	int width, height;
 	switch (res) {
-	case xxs4_3: width = 640, height = 480; break;
-	case xs4_3: width = 800, height = 600; break;
-	case s4_3: width = 1024, height = 768; break;
-	case m4_3: width = 1280, height = 960; break;
-	case sl4_3: width = 1440, height = 1080; break;
-	case ml4_3: width = 1600, height = 1200; break;
-	case l4_3: width = 1920, height = 1440; break;
-	case s16_10: width = 1280, height = 800; break;
-	case m16_10: width = 1440, height = 900; break;
-	case sl16_10: width = 1680, height = 1050; break;
-	case l16_10: width = 1920, height = 1440; break;
-	case xl16_10: width = 2560, height = 1600; break;
-	case s16_9: width = 1024, height = 567; break;
-	case m16_9: width = 1280, height = 720; break;
-	case sl16_9: width = 1336, height = 768; break;
-	case ml16_9: width = 1600, height = 900; break;
-	case l16_9: width = 1920, height = 1080; break;
-	case xl16_9: width = 2560, height = 1440; break;
-	case xxl16_9: width = 3480, height = 2160; break;
+	case Resolution::xxs4_3: width = 640, height = 480; break;
+	case Resolution::xs4_3: width = 800, height = 600; break;
+	case Resolution::s4_3: width = 1024, height = 768; break;
+	case Resolution::m4_3: width = 1280, height = 960; break;
+	case Resolution::sl4_3: width = 1440, height = 1080; break;
+	case Resolution::ml4_3: width = 1600, height = 1200; break;
+	case Resolution::l4_3: width = 1920, height = 1440; break;
+	case Resolution::s16_10: width = 1280, height = 800; break;
+	case Resolution::m16_10: width = 1440, height = 900; break;
+	case Resolution::sl16_10: width = 1680, height = 1050; break;
+	case Resolution::l16_10: width = 1920, height = 1440; break;
+	case Resolution::xl16_10: width = 2560, height = 1600; break;
+	case Resolution::s16_9: width = 1024, height = 567; break;
+	case Resolution::m16_9: width = 1280, height = 720; break;
+	case Resolution::sl16_9: width = 1336, height = 768; break;
+	case Resolution::ml16_9: width = 1600, height = 900; break;
+	case Resolution::l16_9: width = 1920, height = 1080; break;
+	case Resolution::xl16_9: width = 2560, height = 1440; break;
+	case Resolution::xxl16_9: width = 3480, height = 2160; break;
 	}
+	return make_pair(width, height);
 }
 
-Window::Window(const char *title, int width, int height, Resolution res) {
-	if (res) {
-		calculateResolution(res, width, height);
+Window::~Window()
+{
+	SDL_DestroyWindow(window);
+	IMG_Quit();
+	TTF_Quit();
+	SDL_Quit();
+}
+
+Window::Window(string title, int width, int height, Resolution res) {
+	if (res != Resolution::NONE) {
+		auto resolution = calculateResolution(res);
+		width = resolution.first;
+		height = resolution.second;
 	}
 	screenWidth = width;
 	screenHeight = height;
@@ -41,8 +55,8 @@ Window::Window(const char *title, int width, int height, Resolution res) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError()); 
 	}
 	else {
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
-        renderer = new Renderer(window);
+		window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
+        renderer = shared_ptr<Renderer>(new Renderer(window));
 		if (window == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		}
@@ -74,8 +88,10 @@ enum Resolution {
 
 void Window::changeWindowResolution(Resolution res, int width, int height)
 {
-	if (res != NULL) {
-		calculateResolution(res, width, height);
+	if (res != Resolution::NONE) {
+		auto resolution = calculateResolution(res);
+		width = resolution.first;
+		height = resolution.second;
 	}
 	SDL_SetWindowSize(window, width, height);
 	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -86,8 +102,3 @@ void Window::setFullscreen(bool fullscreen)
 	SDL_SetWindowFullscreen(window, fullscreen);
 }
 
-void Window::destroy() {
-    delete renderer;
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-}

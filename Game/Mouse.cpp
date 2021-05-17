@@ -1,5 +1,9 @@
 #include "Mouse.h"
 
+Mouse::Mouse()
+{
+}
+
 void Mouse::addMouseMovementEvent(function<void(Point)> event) {
 	mouseMovementEvents.push_back(event);
 }

@@ -2,61 +2,61 @@
 #include <stdio.h>
 #include "GameObjectEvent.h"
 
-World::World(Renderer* renderer, Input* input)
+World::World(shared_ptr<Renderer> renderer, shared_ptr<Input> input)
 {
 	World::renderer = renderer;
 	World::input = input;
 	World::mouse = input->getMouse();
 }
 
-void World::addScene(Scene* s, const char* name)
+void World::addScene(shared_ptr<Scene> s, string name)
 {
 	s->renderer = renderer;
 	s->name = name;
-	s->lastFrameTimeMS = &lastFrameTimeMS;
-	s->defaultFps = &defaultFps;
+	s->lastFrameTimeMS = make_shared<shared_ptr<long double>>(lastFrameTimeMS);
+	s->defaultFps = make_shared<shared_ptr<long double>>(defaultFps);
 	scenes[name] = s;
 	if (!currentScene) {
 		setScene(name);
 	}
 }
 
-void World::setScene(const char* name)
+void World::setScene(string name)
 {
+	if (currentScene) {
+		for (shared_ptr<GameObject> o : currentScene->objects) {
+			o->sceneActive = false;
+		}
+	}
 	if (mouse->sceneMouseExitedEvents) {
 		vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseExitedEvents;
 		for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
 		{
 			pair<function<void()>, Rectangle> pair = *it;
 			function<void()> func = pair.first;
-			func();
+			if (func) {
+				func();
+			}
 		}
 	}
 	if (currentScene) {
-		//technically game objects can be in multiple scenes so I'm keeping this shit around just in case
-		for (GameObject* g : currentScene->objects) {
-			if (!g->eventQueue.empty() && g->eventQueue.front()->type == EventType::DELAY) {
-				((DelayEvent*)g->eventQueue.front())->lastSceneTransitionTime = clock();
-			}
-		}
 		currentScene->isCurrentScene = false;
 	}
 	currentScene = scenes[name];
-	mouse->sceneMouseClickEvents = &currentScene->sceneMouseClickEvents;
-	mouse->sceneMouseEnteredEvents = &currentScene->sceneMouseEnteredEvents;
-	mouse->sceneMouseExitedEvents = &currentScene->sceneMouseExitedEvents;
-	mouse->sceneMouseClickUpEvents = &currentScene->sceneMouseClickUpEvents;
-	mouse->sceneMouseMovementEvents = &currentScene->sceneMouseMovementEvents;
-	mouse->sceneMouseRightClickEvents = &currentScene->sceneMouseRightClickEvents;
-	mouse->sceneMouseRightClickUpEvents = &currentScene->sceneMouseRightClickUpEvents;
+	mouse->sceneMouseClickEvents = currentScene->sceneMouseClickEvents;
+	mouse->sceneMouseEnteredEvents = currentScene->sceneMouseEnteredEvents;
+	mouse->sceneMouseExitedEvents = currentScene->sceneMouseExitedEvents;
+	mouse->sceneMouseClickUpEvents = currentScene->sceneMouseClickUpEvents;
+	mouse->sceneMouseMovementEvents = currentScene->sceneMouseMovementEvents;
+	mouse->sceneMouseRightClickEvents = currentScene->sceneMouseRightClickEvents;
+	mouse->sceneMouseRightClickUpEvents = currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
 	currentScene->isCurrentScene = true;
-
-	//ditto
-	for (GameObject* g : currentScene->objects) {
-		if (!g->eventQueue.empty() && g->eventQueue.front()->type == EventType::DELAY && ((DelayEvent*)g->eventQueue.front())->lastSceneTransitionTime != 0) {
-			((DelayEvent*)g->eventQueue.front())->sceneTransitionDelayCycles = clock() - ((DelayEvent*)g->eventQueue.front())->lastSceneTransitionTime;
-		}
+	for (shared_ptr<GameObject> o : currentScene->objects) {
+		o->sceneActive = true;
+		o->objects = &(currentScene->objects);
+		o->defaultFps = weak_ptr<long double>(defaultFps);
+		o->lastFrameTimeMS = weak_ptr<long double>(defaultFps);
 	}
 }
 
@@ -65,12 +65,12 @@ string World::getCurrentSceneName()
 	return currentScene->name;
 }
 
-Scene* World::getCurrentScene()
+shared_ptr<Scene> World::getCurrentScene()
 {
 	return currentScene;
 }
 
-void World::setRenderer(Renderer* renderer)
+void World::setRenderer(shared_ptr<Renderer> renderer)
 {
 	World::renderer = renderer;
 }
@@ -86,7 +86,7 @@ void World::render(int frame, int fps)
 		}
 
 		double MSPerFrame = (1 / (double)fps) * 1000;
-		for (Sprite* cSprite : currentScene->sprites) {
+		for (shared_ptr<Sprite> cSprite : currentScene->sprites) {
 			if (!cSprite->loaded) {
 				cSprite->loadTextures(renderer);
 			}
@@ -96,23 +96,24 @@ void World::render(int frame, int fps)
 			cSprite->tick();
 		}
 		//Do the same thing but for GameObjects
-		for (GameObject* obj : currentScene->getObjects()) {
+		for (shared_ptr<GameObject> obj : currentScene->getObjects()) {
 			renderGameObject(obj, Point(0, 0), MSPerFrame);
-			obj->handleEvents();
+			obj->handleEvents(currentScene->localTime - currentScene->lastTickTime);
 		}
 		//And finally for the debug layer
-		for (GameObject* obj : debugObjects) {
+		for (shared_ptr<GameObject> obj : debugObjects) {
 			renderGameObject(obj, Point(0, 0), MSPerFrame);
-			obj->handleEvents();
+			obj->handleEvents(currentScene->localTime - currentScene->lastTickTime);
 		}
 		renderer->renderPresent();
 		clock_t cTime = clock();
-		currentScene->localTime = cTime - lastLocalTime;
+		currentScene->lastTickTime = currentScene->localTime;
+		currentScene->localTime += cTime - (lastLocalTime > 0 ? lastLocalTime : cTime);
 		lastLocalTime = cTime;
 	}
 }
 
-void World::renderGameObject(GameObject* obj, Point positionMod, double MSPerFrame) {
+void World::renderGameObject(shared_ptr<GameObject> obj, Point positionMod, double MSPerFrame) {
 	if (obj->hitboxEnabled && !obj->hitbox) {
 		obj->enableHitbox();
 	}
@@ -120,40 +121,37 @@ void World::renderGameObject(GameObject* obj, Point positionMod, double MSPerFra
 		obj->renderHitbox();
 	}
 	if (obj->hasSprite) {
-		Sprite* cSprite = obj->getSprite();
-		if (!cSprite->loaded) {
-			cSprite->loadTextures(renderer);
-			obj->updateSize();
+		if (!obj->getSprite().expired()) {
+			auto cSprite = obj->getSprite().lock();
+			if (!cSprite->loaded) {
+				cSprite->loadTextures(renderer);
+				obj->updateSize();
+			}
+			cSprite->renderTimeBuffer += MSPerFrame;
+			cSprite->render(renderer, obj->getPosition() + cSprite->getLocation() + positionMod);
+			cSprite->tick();
 		}
-		cSprite->renderTimeBuffer += MSPerFrame;
-		cSprite->render(renderer, obj->getPosition() + cSprite->getLocation() + positionMod);
-		cSprite->tick();
 	}
-	for (GameObject* objC : obj->children) {
+	for (shared_ptr<GameObject> objC : obj->children) {
 		renderGameObject(objC, obj->getPosition() + positionMod, MSPerFrame);
 	}
 }
 
-Renderer* World::getRenderer()
+shared_ptr<Renderer> World::getRenderer()
 {
 	return renderer;
 }
 
-void World::destroy()
-{
-	for (map<const char*, Scene*>::iterator it = scenes.begin(); it != scenes.end(); ++it) {
-		it->second->destroy();
-	}
-}
-
-void World::setDisplayFPS(bool enabled)
+void World::setDisplayFPS(bool enabled, shared_ptr<AssetLibrary> assetLibrary)
 {
 	World::displayFPS = enabled;
+	World::assetLibrary = assetLibrary;
 }
 
-void World::setDisplayObjectCount(bool enabled)
+void World::setDisplayObjectCount(bool enabled, shared_ptr<AssetLibrary> assetLibrary)
 {
 	World::displayObjectCount = enabled;
+	World::assetLibrary = assetLibrary;
 }
 
 void World::setDisplayHitboxes(bool enabled)
@@ -165,15 +163,15 @@ void World::refreshFPS()
 {
 	if (displayFPS) {
 		if (!fpsIndicator) {
-			char buffer[40];
-			sprintf(buffer, "FPS  %d : %d", cFPS, potentialFPS);
-			fpsIndicator = new Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6));
+			string buffer;
+			buffer += "FPS  " + to_string(cFPS) + " : " + (potentialFPS > 0 ? to_string(potentialFPS) : ">5000");
+			fpsIndicator = make_shared<Text>(Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6), assetLibrary));
 			debugObjects.push_back(fpsIndicator);
 		}
 		else {
-			char buffer[40];
-			sprintf(buffer, "FPS  %d : %d", cFPS, potentialFPS);
-			fpsIndicator->setText(buffer);
+			string buffer;
+			buffer += "FPS  " + to_string(cFPS) + " : " + (potentialFPS > 0 ? to_string(potentialFPS) : ">5000");
+			fpsIndicator->setText(buffer, assetLibrary);
 		}
 	}
 }
@@ -182,27 +180,27 @@ void World::refreshObjectCount()
 {
 	if (displayObjectCount) {
 		if (!objectCountIndicator) {
-			char buffer[40];
+			string buffer;
 			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjects().size());
-			sprintf(buffer, "OBJ  %d", objC);
-			objectCountIndicator = new Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6*2 + debugFontSize));
+			buffer += "OBJ  " + to_string(objC);
+			objectCountIndicator = make_shared<Text>(Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6*2 + debugFontSize), assetLibrary));
 			debugObjects.push_back(objectCountIndicator);
 		}
 		else {
-			char buffer[40];
+			string buffer;
 			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjects().size());
-			sprintf(buffer, "OBJ  %d", objC);
-			objectCountIndicator->setText(buffer);
+			buffer += "OBJ  " + to_string(objC);
+			objectCountIndicator->setText(buffer, assetLibrary);
 		}
 	}
 }
 
-void World::addDebugObject(GameObject* g)
+void World::addDebugObject(shared_ptr<GameObject> g)
 {
 	debugObjects.push_back(g);
 }
 
-const char* World::getDebugFont()
+string World::getDebugFont()
 {
 	return debugFont;
 }

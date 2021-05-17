@@ -3,7 +3,7 @@
 Line::Line(SDL_Color color, Point positionA, Point positionB)
 {
     SDL_Surface* surface = drawLine(positionA, positionB, color);
-	Sprite* s = new Sprite({ surface });
+	shared_ptr<Sprite> s = shared_ptr<Sprite>(new Sprite({ surface }));
 	setSprite(s);
 }
 
@@ -18,12 +18,7 @@ SDL_Surface* Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
     int width = a.x > b.x ? a.x : b.x;
     int height = a.y > b.y ? a.y : b.y;
     SDL_Surface* surface;
-    if (SDL_BYTEORDER == SDL_BIG_ENDIAN) { 
-        surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width + 4, height + 4, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-    }
-    else {
-        surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width + 4, height + 4, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-    }
+    surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width + 4, height + 4, 32, SDL_PIXELFORMAT_ABGR32);
     SDL_LockSurface(surface);
     int x1 = a.x, x2 = b.x;
     int y1 = a.y, y2 = b.y;

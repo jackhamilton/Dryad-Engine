@@ -7,7 +7,7 @@
 #include "Rectangle.h"
 
 using namespace std;
-Input::Input(Mouse* mouse)
+Input::Input(shared_ptr<Mouse> mouse)
 {
 	Input::mouse = mouse;
 	isLButtonDown = false;
@@ -233,7 +233,7 @@ void Input::handleInput(GameLoop* gameLoop)
 	}
 }
 
-Mouse* Input::getMouse()
+shared_ptr<Mouse> Input::getMouse()
 {
 	return mouse;
 }

@@ -1,5 +1,7 @@
 #pragma once
 #include <list>
+#include <memory>
+#include <string>
 #include <vector>
 #include <functional>
 #include "Renderer.h"
@@ -16,31 +18,30 @@ using namespace std;
 class Scene {
 public:
 	Scene();
-    vector<GameObject*> getObjects();
+    vector<shared_ptr<GameObject>> getObjects();
 	void destroy();
-	vector<Sprite*> sprites;
-	void addObject(GameObject* object);
-	void addSprite(Sprite* sprite);
+	vector<shared_ptr<Sprite>> sprites;
+	void addObject(shared_ptr<GameObject> object);
+	void addSprite(shared_ptr<Sprite> sprite);
 
 	//Engine objects - do not modify without very good reason
-	vector<pair<Callback, Rectangle>> sceneMouseMovementEvents;
-	vector<pair<Callback, Rectangle>> sceneMouseEnteredEvents;
-	vector<pair<Callback, Rectangle>> sceneMouseExitedEvents;
-	vector<pair<Callback, Rectangle>> sceneMouseClickEvents;
-	vector<pair<Callback, Rectangle>> sceneMouseRightClickEvents;
-	vector<pair<Callback, Rectangle>> sceneMouseClickUpEvents;
-	vector<pair<Callback, Rectangle>> sceneMouseRightClickUpEvents;
-	Renderer* renderer;
-	const char* name;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseMovementEvents;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseEnteredEvents;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseExitedEvents;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseClickEvents;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseRightClickEvents;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseClickUpEvents;
+	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseRightClickUpEvents;
+	shared_ptr<Renderer> renderer;
+	string name;
 	clock_t localTime;
+	clock_t lastTickTime;
 private:
 	bool isCurrentScene;
-	int** defaultFps;
+	shared_ptr<shared_ptr<long double>> defaultFps;
 	//set to actual time including delay
-	long double** lastFrameTimeMS;
-    vector<GameObject*> objects;
+	shared_ptr<shared_ptr<long double>> lastFrameTimeMS;
+    vector<shared_ptr<GameObject>> objects;
 	void removeObject(GameObject* o);
-	function<void(GameObject*, ModifiableProperty<Vector, double>)> movementCallback;
-	void moveObject(GameObject* g, ModifiableProperty<Vector, double> vector);
 	friend class World;
 };

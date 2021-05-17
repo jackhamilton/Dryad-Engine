@@ -3,6 +3,7 @@
 
 Spritesheet::Spritesheet() : Sprite()
 {
+	loaded = false;
 	paused = true;
 	Spritesheet::heights = {};
 	Spritesheet::width = 0;
@@ -12,8 +13,9 @@ Spritesheet::Spritesheet() : Sprite()
 }
 
 //framecounts is not zero indexed, just the number of frames
-Spritesheet::Spritesheet(std::vector<const char*> filename, std::vector<int> framecounts, std::vector<bool> looping, std::vector<int> heights, int width, int fps): Sprite(filename)
+Spritesheet::Spritesheet(vector<string> filename, vector<int> framecounts, vector<bool> looping, vector<int> heights, int width, int fps) : Sprite(filename)
 {
+	loaded = false;
     Spritesheet::heights = heights;
 	Spritesheet::width = width;
 	currentFrame = 0;
@@ -25,14 +27,14 @@ Spritesheet::Spritesheet(std::vector<const char*> filename, std::vector<int> fra
 }
 
 //gives x and y
-void Spritesheet::getCurrentFrame(int* dim)
+void Spritesheet::getCurrentFrame(shared_ptr<int> dimX, shared_ptr<int> dimY)
 {
-	dim[0] = width * currentFrame; //startx
+	*dimX = width * currentFrame; //startx
 	int starty = 0;
 	for (int x = 0; x < currentAnimation; x++) {
 		starty += heights[x];
 	}
-	dim[1] = starty;
+	*dimY = starty;
 }
 
 bool Spritesheet::isOnFinalFrame()
@@ -73,12 +75,13 @@ std::pair<int, int> Spritesheet::getDimensions()
 	return std::pair<int, int>(getWidth(), getHeight());
 }
 
-void Spritesheet::render(Renderer* renderer, Point locationMod)
+void Spritesheet::render(shared_ptr<Renderer> renderer, Point locationMod)
 {
-	int* box = new int[2];
-	getCurrentFrame(box);
+	shared_ptr<int> boxX = make_shared<int>();
+	shared_ptr<int> boxY = make_shared<int>();
+	getCurrentFrame(boxX, boxY);
 	Point location = getLocation();
 	SDL_Rect dsrect = { (int)location.x + (int)locationMod.x, (int)location.y + (int)locationMod.y, getWidth(), getHeight() };
-	renderer->render(getCurrentImage(),
-		{ box[0], box[1], getWidth(), getHeight() }, dsrect);
+	SDL_Rect srcrect = { *boxX, *boxY, getWidth(), getHeight() };
+	renderer->render(getCurrentImage(), srcrect, dsrect);
 }
