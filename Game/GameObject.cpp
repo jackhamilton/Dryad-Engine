@@ -137,9 +137,12 @@ void GameObject::moveObject(ModifiableProperty<Vector, double> vector)
 {
 	if (sceneActive) {
 		std::vector<shared_ptr<Hitbox>> hitboxes;
-		for (shared_ptr<GameObject> o : *objects) {
-			if (id != o->id && o->hitboxEnabled && o->hitbox) {
-				hitboxes.push_back(o->hitbox);
+		auto it = objects->begin();
+		for (; it != objects->end(); it++) {
+			for (int i = 0; i < it->second.size(); i++) {
+				if (id != it->second.at(i)->id && it->second.at(i)->hitboxEnabled && it->second.at(i)->hitbox) {
+					hitboxes.push_back(it->second.at(i)->hitbox);
+				}
 			}
 		}
 		double fpsSpeedFactor;

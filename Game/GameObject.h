@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <queue>
+#include <map>
 #include <functional>
 #include "Point.h"
 #include "Sprite.h"
@@ -86,7 +87,7 @@ protected:
 	void addCollisionEvent(function<void(Point)> event);
 private:
 	bool sceneActive = false;
-	vector<shared_ptr<GameObject>>* objects;
+	map<string, vector<shared_ptr<GameObject>>>* objects;
 	weak_ptr<long double> defaultFps;
 	//set to actual time including delay
 	weak_ptr<long double> lastFrameTimeMS;

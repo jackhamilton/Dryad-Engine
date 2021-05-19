@@ -1,6 +1,7 @@
 #include "World.h"
 #include <stdio.h>
 #include "GameObjectEvent.h"
+#include <vector>
 
 World::World(shared_ptr<Renderer> renderer, shared_ptr<Input> input)
 {
@@ -24,8 +25,10 @@ void World::addScene(shared_ptr<Scene> s, string name)
 void World::setScene(string name)
 {
 	if (currentScene) {
-		for (shared_ptr<GameObject> o : currentScene->objects) {
-			o->sceneActive = false;
+		for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
+			for (shared_ptr<GameObject> o : oVec) {
+				o->sceneActive = false;
+			}
 		}
 	}
 	if (mouse->sceneMouseExitedEvents) {
@@ -52,11 +55,13 @@ void World::setScene(string name)
 	mouse->sceneMouseRightClickUpEvents = currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
 	currentScene->isCurrentScene = true;
-	for (shared_ptr<GameObject> o : currentScene->objects) {
-		o->sceneActive = true;
-		o->objects = &(currentScene->objects);
-		o->defaultFps = weak_ptr<long double>(defaultFps);
-		o->lastFrameTimeMS = weak_ptr<long double>(defaultFps);
+	for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
+		for (shared_ptr<GameObject> o : oVec) {
+			o->sceneActive = true;
+			o->objects = &(currentScene->objects);
+			o->defaultFps = weak_ptr<long double>(defaultFps);
+			o->lastFrameTimeMS = weak_ptr<long double>(defaultFps);
+		}
 	}
 }
 
@@ -96,9 +101,11 @@ void World::render(int frame, int fps)
 			cSprite->tick();
 		}
 		//Do the same thing but for GameObjects
-		for (shared_ptr<GameObject> obj : currentScene->getObjects()) {
-			renderGameObject(obj, Point(0, 0), MSPerFrame);
-			obj->handleEvents(currentScene->localTime - currentScene->lastTickTime);
+		for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
+			for (shared_ptr<GameObject> obj : oVec) {
+				renderGameObject(obj, Point(0, 0), MSPerFrame);
+				obj->handleEvents(currentScene->localTime - currentScene->lastTickTime);
+			}
 		}
 		//And finally for the debug layer
 		for (shared_ptr<GameObject> obj : debugObjects) {
@@ -181,14 +188,14 @@ void World::refreshObjectCount()
 	if (displayObjectCount) {
 		if (!objectCountIndicator) {
 			string buffer;
-			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjects().size());
+			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjectsCount());
 			buffer += "OBJ  " + to_string(objC);
 			objectCountIndicator = make_shared<Text>(Text(buffer, debugFont, debugFontSize, { 255, 255, 255 }, Point(8, 6*2 + debugFontSize), assetLibrary));
 			debugObjects.push_back(objectCountIndicator);
 		}
 		else {
 			string buffer;
-			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjects().size());
+			int objC = (int)(currentScene->sprites.size()) + (int)(currentScene->getObjectsCount());
 			buffer += "OBJ  " + to_string(objC);
 			objectCountIndicator->setText(buffer, assetLibrary);
 		}

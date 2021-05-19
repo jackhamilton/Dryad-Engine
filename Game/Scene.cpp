@@ -17,12 +17,32 @@ Scene::Scene()
 	sceneMouseRightClickUpEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
 }
 
-std::vector<shared_ptr<GameObject>> Scene::getObjects()
+std::vector<vector<shared_ptr<GameObject>>> Scene::getObjects()
 {
-	return objects;
+	vector<vector<shared_ptr<GameObject>>> objs;
+	auto it = objects.begin();
+	for (; it != objects.end(); it++) {
+		objs.push_back(it->second);
+	}
+	return objs;
 }
 
+int Scene::getObjectsCount()
+{
+	int total = 0;
+	auto it = objects.begin();
+	for (; it != objects.end(); it++) {
+		total += it->second.size();
+	}
+	return total;
+}
+
+
 void Scene::addObject(shared_ptr<GameObject> object) {
+	addObject(object, "default");
+}
+
+void Scene::addObject(shared_ptr<GameObject> object, string scene) {
 	if (!renderer) {
 		printf("ERROR: Scene has no renderer. Cannot load sprite textures.");
 		return;
@@ -34,7 +54,7 @@ void Scene::addObject(shared_ptr<GameObject> object) {
 				s.lock()->loadTextures(renderer);
 			}
 		}
-		Scene::objects.push_back(object);
+		Scene::objects[scene].push_back(object);
 	}
 
 	function<void()> objectMouseEvents[9];
@@ -88,10 +108,13 @@ void Scene::addSprite(shared_ptr<Sprite> sprite) {
 
 void Scene::removeObject(GameObject* o)
 {
-	for (int i = 0; i < objects.size(); i++) {
-		if (o->id == objects.at(i)->id) {
-			objects.erase(objects.begin() + i);
-			i -= 1;
+	auto it = objects.begin();
+	for (; it != objects.end(); it++) {
+		for (int i = 0; i < objects.size(); i++) {
+			if (o->id == it->second.at(i)->id) {
+				it->second.erase(it->second.begin() + i);
+				i -= 1;
+			}
 		}
 	}
 }
