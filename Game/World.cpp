@@ -55,6 +55,7 @@ void World::setScene(string name)
 	mouse->sceneMouseRightClickUpEvents = currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
 	currentScene->isCurrentScene = true;
+	camera = currentScene->camera;
 	for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
 		for (shared_ptr<GameObject> o : oVec) {
 			o->sceneActive = true;
@@ -83,6 +84,10 @@ void World::setRenderer(shared_ptr<Renderer> renderer)
 void World::render(int frame, int fps)
 {
 	if (currentScene) {
+		Point cameraPositionModifier = Point(0, 0);
+		if (camera) {
+			cameraPositionModifier = camera->getPositionMod();
+		}
 		renderer->renderBackground();
 		if (frame % 10 == 0) {
 			if (displayObjectCount) {
@@ -97,13 +102,18 @@ void World::render(int frame, int fps)
 			}
 			cSprite->renderTimeBuffer += MSPerFrame;
 			Point location = cSprite->getLocation();
-			cSprite->render(renderer, location);
+			cSprite->render(renderer, location + cameraPositionModifier);
 			cSprite->tick();
 		}
 		//Do the same thing but for GameObjects
 		for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
 			for (shared_ptr<GameObject> obj : oVec) {
-				renderGameObject(obj, Point(0, 0), MSPerFrame);
+				if (obj->isUIElement) {
+					renderGameObject(obj, Point(0, 0), MSPerFrame);
+				}
+				else {
+					renderGameObject(obj, cameraPositionModifier, MSPerFrame);
+				}
 				obj->handleEvents(currentScene->localTime - currentScene->lastTickTime);
 			}
 		}

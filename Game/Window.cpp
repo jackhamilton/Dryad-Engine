@@ -41,10 +41,11 @@ Window::~Window()
 }
 
 Window::Window(string title, int width, int height, Resolution res) {
+	resolution = res;
 	if (res != Resolution::NONE) {
-		auto resolution = calculateResolution(res);
-		width = resolution.first;
-		height = resolution.second;
+		auto resolutionDim = calculateResolution(res);
+		width = resolutionDim.first;
+		height = resolutionDim.second;
 	}
 	screenWidth = width;
 	screenHeight = height;
@@ -88,6 +89,7 @@ enum Resolution {
 
 void Window::changeWindowResolution(Resolution res, int width, int height)
 {
+	resolution = res;
 	if (res != Resolution::NONE) {
 		auto resolution = calculateResolution(res);
 		width = resolution.first;
@@ -95,6 +97,11 @@ void Window::changeWindowResolution(Resolution res, int width, int height)
 	}
 	SDL_SetWindowSize(window, width, height);
 	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+}
+
+Resolution* Window::getResolution()
+{
+	return &resolution;
 }
 
 void Window::setFullscreen(bool fullscreen)

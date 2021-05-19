@@ -85,6 +85,10 @@ protected:
 	shared_ptr<Physics> physics;
 	void addSpriteToSceneRenderQueue(shared_ptr<Sprite> s);
 	void addCollisionEvent(function<void(Point)> event);
+	void setIsUIElement(bool isUIElement) {
+		GameObject::isUIElement = isUIElement;
+	}
+	bool isUIElement = false;
 private:
 	bool sceneActive = false;
 	map<string, vector<shared_ptr<GameObject>>>* objects;

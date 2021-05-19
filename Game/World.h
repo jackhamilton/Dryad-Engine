@@ -7,6 +7,7 @@
 #include "Mouse.h"
 #include "Input.h"
 #include "Text.h"
+#include "Camera.h"
 #include "AssetLibrary.h"
 
 using namespace std;
@@ -32,6 +33,7 @@ public:
 	//Adds an object to the superimposed debug layer
 	void addDebugObject(shared_ptr<GameObject> g);
 private:
+	shared_ptr<Camera> camera;
 	shared_ptr<Input> input;
 	shared_ptr<Mouse> mouse;
 	shared_ptr<Renderer> renderer;

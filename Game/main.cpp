@@ -28,9 +28,10 @@ static shared_ptr<GameObject> link;
 static shared_ptr<World> gameWorld;
 static shared_ptr<Input> input;
 static shared_ptr<Window> window;
+static shared_ptr<Camera> gameSceneCamera;
 
 static int fps = 60;
-static float version = 0.3f;
+static float version = 0.4f;
 static Vector v = Vector(Point(50, 50));
 
 void startGame() {
@@ -39,6 +40,15 @@ void startGame() {
 
 void backToMenu() {
 	gameWorld->setScene("Menu");
+}
+
+void toggleCameraTracking() {
+	if (gameSceneCamera->getIsTracking()) {
+		gameSceneCamera->stopTracking();
+	}
+	else {
+		gameSceneCamera->setTrackObject(link);
+	}
 }
 
 int main(int argc, char* args[]) {
@@ -98,6 +108,16 @@ int main(int argc, char* args[]) {
 	buttonTestBack->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 }, libPtr);
 	buttonTestBack->createClickTexture({ 0, 0, 0 }, { 150, 150, 150 }, libPtr);
 	gameScene->addObject(buttonTestBack);
+
+	//Camera
+	gameSceneCamera = shared_ptr<Camera>(new Camera(window->getResolution()));
+	//gameSceneCamera->setTrackObject(link);
+	gameScene->setCamera(gameSceneCamera);
+
+	shared_ptr<Button> buttonToggleFollow = make_shared<Button>(Button(&toggleCameraTracking, "Toggle Camera Tracking", "Bebas", 24, { 255, 255, 255 }, libPtr, { 30, 30, 30 }, Point(1300, 580), { 200, 100 }));
+	buttonToggleFollow->createHoverTexture({ 255, 255, 255 }, { 80, 80, 80 }, libPtr);
+	buttonToggleFollow->createClickTexture({ 0, 0, 0 }, { 150, 150, 150 }, libPtr);
+	gameScene->addObject(buttonToggleFollow);
 
 	//Title
 	shared_ptr<Text> titleLabel = make_shared<Text>(Text("Engine Test Sandbox", "OpenSans-Bold", 48, { 255, 255, 255 }, Point(560, 250), libPtr));

@@ -45,6 +45,7 @@ public:
 	void changeWindowResolution(Resolution res);
 	void changeWindowResolution(int width, int height);
 	void changeWindowResolution(Resolution res, int width, int height);
+	Resolution* getResolution();
 	void setFullscreen(bool fullscreen);
 	SDL_Window* getSDLWindow() {
 		return window;
@@ -52,8 +53,9 @@ public:
 	shared_ptr<Renderer> getRenderer() {
         return renderer;
     }
+	static pair<int, int> calculateResolution(Resolution res);
 private:
+	Resolution resolution;
 	SDL_Window* window;
 	shared_ptr<Renderer> renderer;
-	pair<int, int> calculateResolution(Resolution res);
 };

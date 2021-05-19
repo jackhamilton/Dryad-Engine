@@ -7,6 +7,7 @@
 #include <map>
 #include "Renderer.h"
 #include "Point.h"
+#include "Camera.h"
 #include "GameObject.h"
 #include "Sprite.h"
 #include "Rectangle.h"
@@ -25,6 +26,9 @@ public:
 	void addObject(shared_ptr<GameObject> object);
 	void addSprite(shared_ptr<Sprite> sprite);
 	int getObjectsCount();
+	void setCamera(shared_ptr<Camera> camera) {
+		Scene::camera = camera;
+	}
 
 	//Engine objects - do not modify without very good reason
 	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseMovementEvents;
@@ -39,6 +43,7 @@ public:
 	clock_t localTime;
 	clock_t lastTickTime;
 private:
+	shared_ptr<Camera> camera;
 	bool isCurrentScene;
 	shared_ptr<shared_ptr<long double>> defaultFps;
 	//set to actual time including delay

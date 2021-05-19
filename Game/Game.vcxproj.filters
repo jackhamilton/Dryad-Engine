@@ -105,6 +105,9 @@
     <ClCompile Include="AssetLibrary.cpp">
       <Filter>Source Files\engine\data</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\engine\world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="GameObjectEvent.h">
       <Filter>Header Files\engine\control</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\engine\world</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

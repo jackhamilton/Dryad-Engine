@@ -17,6 +17,7 @@ Button::Button(function<void()> onClick, string text, string font, int fontSize,
 	Button::hasTextureData = true;
 	hasHoverTexture = false;
 	hasClickTexture = false;
+	isUIElement = true;
 }
 
 Button::Button(function<void()> onClick, shared_ptr<Sprite> sprite, Point position, Size size) : GameObject(position)
@@ -30,6 +31,7 @@ Button::Button(function<void()> onClick, shared_ptr<Sprite> sprite, Point positi
 	Button::hasTextureData = false;
 	hasHoverTexture = false;
 	hasClickTexture = false;
+	isUIElement = true;
 }
 
 void Button::setHoverTexture(shared_ptr<Sprite> sprite) {
