@@ -91,10 +91,7 @@ void GameObject::setSprite(shared_ptr<Sprite> sprite, bool deallocateOld) {
 		GameObject::sprite.reset();
 	}
 	GameObject::sprite = sprite;
-	if (!sprite->loaded) {
-		addSpriteToSceneRenderQueue(sprite);
-	}
-	else {
+	if (sprite->loaded) {
 		updateSize();
 	}
 }
@@ -235,11 +232,6 @@ void GameObject::renderHitbox() {
 void GameObject::addCollisionEvent(function<void(Point)> event)
 {
 	collisionEvents.push_back(event);
-}
-
-void GameObject::addSpriteToSceneRenderQueue(shared_ptr<Sprite> s)
-{
-	renderQueue.push_back(weak_ptr<Sprite>(s));
 }
 
 void GameObject::updateSize()

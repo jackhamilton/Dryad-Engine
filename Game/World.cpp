@@ -28,6 +28,9 @@ void World::setScene(string name)
 		for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
 			for (shared_ptr<GameObject> o : oVec) {
 				o->sceneActive = false;
+				if (o->onExitingScene) {
+					o->onExitingScene();
+				}
 			}
 		}
 	}
@@ -44,6 +47,7 @@ void World::setScene(string name)
 	}
 	if (currentScene) {
 		currentScene->isCurrentScene = false;
+		currentScene->input = nullptr;
 	}
 	currentScene = scenes[name];
 	mouse->sceneMouseClickEvents = currentScene->sceneMouseClickEvents;
@@ -55,10 +59,14 @@ void World::setScene(string name)
 	mouse->sceneMouseRightClickUpEvents = currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
 	currentScene->isCurrentScene = true;
+	currentScene->input = input;
 	camera = currentScene->camera;
 	for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
 		for (shared_ptr<GameObject> o : oVec) {
 			o->sceneActive = true;
+			if (o->onEnteringScene) {
+				o->onEnteringScene();
+			}
 			o->objects = &(currentScene->objects);
 			o->defaultFps = weak_ptr<long double>(defaultFps);
 			o->lastFrameTimeMS = weak_ptr<long double>(defaultFps);

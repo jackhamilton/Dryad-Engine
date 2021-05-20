@@ -24,6 +24,7 @@ private:
 	map<string, string> subdirectories;
 	map<string, pair<TTF_Font*, int>> fonts;
 	friend class Text;
+	friend class TextField;
 	friend class Button;
 };
 

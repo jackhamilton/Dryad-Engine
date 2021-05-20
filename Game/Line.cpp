@@ -2,12 +2,13 @@
 
 Line::Line(SDL_Color color, Point positionA, Point positionB)
 {
-    SDL_Surface* surface = drawLine(positionA, positionB, color);
-	shared_ptr<Sprite> s = shared_ptr<Sprite>(new Sprite({ surface }));
+    pair<SDL_Surface*, Point> surface = drawLine(positionA, positionB, color);
+    position = surface.second;
+	shared_ptr<Sprite> s = shared_ptr<Sprite>(new Sprite({ surface.first }));
 	setSprite(s);
 }
 
-SDL_Surface* Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
+pair<SDL_Surface*, Point> Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
     Point a, b;
     int minX = positionA.x < positionB.x ? positionA.x : positionB.x;
     int minY = positionA.y < positionB.y ? positionA.y : positionB.y;
@@ -18,7 +19,7 @@ SDL_Surface* Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
     int width = a.x > b.x ? a.x : b.x;
     int height = a.y > b.y ? a.y : b.y;
     SDL_Surface* surface;
-    surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width + 4, height + 4, 32, SDL_PIXELFORMAT_ABGR32);
+    surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width + 1, height + 1, 32, SDL_PIXELFORMAT_ABGR32);
     SDL_LockSurface(surface);
     int x1 = a.x, x2 = b.x;
     int y1 = a.y, y2 = b.y;
@@ -64,8 +65,7 @@ SDL_Surface* Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
         }
     }
     SDL_UnlockSurface(surface);
-    position = Point(minX, minY);
-    return surface;
+    return make_pair(surface, Point(minX, minY));
 }
 
 void Line::set_pixel(SDL_Surface* surface, int x, int y, Uint32 color)

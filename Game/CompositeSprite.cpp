@@ -1,4 +1,6 @@
 #include "CompositeSprite.h"
+
+#include <queue>
 using namespace std;
 
 CompositeSprite::CompositeSprite(int fps)
@@ -7,11 +9,12 @@ CompositeSprite::CompositeSprite(int fps)
 	centerAll = false;
 }
 
-void CompositeSprite::addSpriteFromSurfaces(vector<SDL_Surface*> surfaces, Point offset)
+void CompositeSprite::addSpriteFromSurfaces(vector<SDL_Surface*> surfaces, Point offset, int clip)
 {
 	if (imageSurfaceStack.size() == 0 ||
 		(imageSurfaceStack.size() > 0 && surfaces.size() == imageSurfaceStack.front().size())) {
 		imageSurfaceStack.push_back(surfaces);
+		surfaceOffsets.push_back(make_pair(offset, clip));
 		loaded = false;
 	}
 	else {
@@ -21,14 +24,15 @@ void CompositeSprite::addSpriteFromSurfaces(vector<SDL_Surface*> surfaces, Point
 
 void CompositeSprite::addSpriteFromSurfaces(vector<SDL_Surface*> surfaces)
 {
-	addSpriteFromSurfaces(surfaces, { 0,0 });
+	addSpriteFromSurfaces(surfaces, { 0, 0 }, 0);
 }
 
-void CompositeSprite::addSpriteFromFiles(vector<string> files, Point offset)
+void CompositeSprite::addSpriteFromFiles(vector<string> files, Point offset, int clip)
 {
 	if (imageFileStack.size() == 0 ||
 		(imageFileStack.size() > 0 && files.size() == imageFileStack.front().size())) {
 		imageFileStack.push_back(files);
+		fileOffsets.push_back(make_pair(offset, clip));
 		loaded = false;
 	}
 	else {
@@ -38,14 +42,14 @@ void CompositeSprite::addSpriteFromFiles(vector<string> files, Point offset)
 
 void CompositeSprite::addSpriteFromFiles(vector<string> files)
 {
-	addSpriteFromFiles(files, { 0,0 });
+	addSpriteFromFiles(files, { 0,0 }, 0);
 }
 
 void CompositeSprite::loadTextures(shared_ptr<Renderer> renderer)
 {
 	if (!loaded) {
 		Sprite::loaded = true;
-		vector<Point> offsets;
+		vector<pair<Point, int>> offsets;
 		int iterator = 0;
 		//DESTROYS imageFileStack and fileOffsets
 		for (vector<string> list : imageFileStack) {
@@ -60,7 +64,7 @@ void CompositeSprite::loadTextures(shared_ptr<Renderer> renderer)
 			fileOffsets.erase(fileOffsets.begin());
 		}
 		imageFileStack.clear();
-		for (Point surfaceOffset : surfaceOffsets) {
+		for (pair<Point, int> surfaceOffset : surfaceOffsets) {
 			offsets.push_back(surfaceOffset);
 		}
 		if (imageSurfaceStack.size() > 0) {
@@ -75,6 +79,7 @@ void CompositeSprite::loadTextures(shared_ptr<Renderer> renderer)
 				list<SDL_Surface*>::iterator iterator = blitTogether.begin();
 				SDL_Surface* dest = *iterator;
 				iterator++;
+				offsets.erase(offsets.begin());
 				while (iterator != blitTogether.end()) {
 					if (centerAll) {
 						SDL_Rect dstrect = SDL_Rect();
@@ -88,14 +93,30 @@ void CompositeSprite::loadTextures(shared_ptr<Renderer> renderer)
 						SDL_BlitSurface((*iterator), NULL, dest, &dstrect);
 					}
 					else {
-						Point cOffset = offsets.front();
+						Point cOffset = offsets.front().first;
+						int clip = offsets.front().second;
 						offsets.erase(offsets.begin());
 						SDL_Rect dstrect = SDL_Rect();
 						dstrect.x = cOffset.x;
 						dstrect.y = cOffset.y;
-						dstrect.w = (*iterator)->w;
-						dstrect.h = (*iterator)->h;
-						SDL_BlitSurface((*iterator), NULL, dest, &dstrect);
+						if (cOffset.x + (*iterator)->w + clip > dest->w) {
+							dstrect.w = cOffset.x > dest->w ? 0 : dest->w - cOffset.x - clip;
+						}
+						else {
+							dstrect.w = (*iterator)->w;
+						}
+						if (cOffset.y + (*iterator)->h + clip > dest->h) {
+							dstrect.h = cOffset.y > dest->h ? 0 : dest->h - cOffset.y - clip;
+						}
+						else {
+							dstrect.h = (*iterator)->h;
+						}
+						SDL_Rect srcrect = SDL_Rect();
+						srcrect.x = 0;
+						srcrect.y = 0;
+						srcrect.w = dstrect.w;
+						srcrect.h = dstrect.h;
+						SDL_BlitSurface((*iterator), &srcrect, dest, &dstrect);
 					}
 					iterator++;
 				}
@@ -106,9 +127,49 @@ void CompositeSprite::loadTextures(shared_ptr<Renderer> renderer)
 				i++;
 			}
 		}
-		std::pair<int, int> cSize = getDimensions();
-		size = { cSize.first, cSize.second };
+		imageSurfaceStack.clear();
+		imageFileStack.clear();
+		surfaceOffsets.clear();
+		fileOffsets.clear();
+		if (size.width == 0 && size.height == 0) {
+			std::pair<int, int> cSize = getDimensions();
+			size = { cSize.first, cSize.second };
+		}
+		currentImage = images.begin();
 	}
+}
+
+void CompositeSprite::reloadTopTextureFromStack() {
+	imageSurfaceStack.clear();
+	imageFileStack.clear();
+	surfaceOffsets.clear();
+	fileOffsets.clear();
+	SDL_Texture* tex = images.back();
+	if (tex) {
+		SDL_DestroyTexture(tex);
+		images.pop_back();
+	}
+	loaded = false;
+}
+
+void CompositeSprite::reloadAllTextures() {
+	imageSurfaceStack.clear();
+	imageFileStack.clear();
+	surfaceOffsets.clear();
+	fileOffsets.clear();
+	std::queue<SDL_Texture*> texturesToDestroy;
+	for (SDL_Texture* image : images) {
+		texturesToDestroy.push(image);
+	}
+	while (!texturesToDestroy.empty()) {
+		SDL_Texture* tex = texturesToDestroy.front();
+		texturesToDestroy.pop();
+		if (tex) {
+			SDL_DestroyTexture(tex);
+		}
+	}
+	images.clear();
+	loaded = false;
 }
 
 void CompositeSprite::setCenterAll(bool centered) {

@@ -16,6 +16,7 @@
 #include "World.h"
 #include "Line.h"
 #include "Vector.h"
+#include "TextField.h"
 #include "AssetLibrary.h"
 #include "GameObjectEvent.h"
 
@@ -111,7 +112,7 @@ int main(int argc, char* args[]) {
 
 	//Camera
 	gameSceneCamera = shared_ptr<Camera>(new Camera(window->getResolution()));
-	//gameSceneCamera->setTrackObject(link);
+	gameSceneCamera->setTrackObject(link);
 	gameScene->setCamera(gameSceneCamera);
 
 	shared_ptr<Button> buttonToggleFollow = make_shared<Button>(Button(&toggleCameraTracking, "Toggle Camera Tracking", "Bebas", 24, { 255, 255, 255 }, libPtr, { 30, 30, 30 }, Point(1300, 580), { 200, 100 }));
@@ -125,6 +126,10 @@ int main(int argc, char* args[]) {
 
 	auto l = make_shared<Line>(Line({ 255, 255, 255 }, Point(700, 350), Point(900, 350)));
 	menu->addObject(l);
+
+	//TextField testing
+	shared_ptr<TextField> testTextField = shared_ptr<TextField>(new TextField("Engine Test Sandbox", "OpenSans-Regular", 14, { 150, 150, 100, 30 }, libPtr));
+	menu->addObject(testTextField);
 
 	//Configure inputs
 	input->addKeyboardEvent([]() { gameLoop->stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });

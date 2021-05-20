@@ -47,6 +47,10 @@ public:
 	void enableHitbox();
 	void renderHitbox();
 	//TODO: void enableHitbox(Hitbox h);
+	//camera tracking affects object?
+	void setIsUIElement(bool isUIElement) {
+		GameObject::isUIElement = isUIElement;
+	}
 
 	bool operator == (const GameObject& obj) const { return id == obj.id; }
 	bool operator != (const GameObject& obj) const { return id != obj.id; }
@@ -61,8 +65,11 @@ public:
 	bool hasMouseClickUpGraphicEvent;
 	bool hasMouseRightClickUpEvent;
 protected:
+	function<void()> onEnteringScene;
+	function<void()> onExitingScene;
 	//currently, children render on top
 	vector<shared_ptr<GameObject>> children;
+	//TODO: these do not work on moving gameobjects due to passing a rectangle as callback. Change to GameObject* or Rectangle*.
 	function<void()> mouseMoveEvent;
 	function<void()> mouseEnteredEvent;
 	function<void()> mouseExitedEvent;
@@ -83,12 +90,10 @@ protected:
 	Size size;
 	shared_ptr<Sprite> sprite;
 	shared_ptr<Physics> physics;
-	void addSpriteToSceneRenderQueue(shared_ptr<Sprite> s);
 	void addCollisionEvent(function<void(Point)> event);
-	void setIsUIElement(bool isUIElement) {
-		GameObject::isUIElement = isUIElement;
-	}
+	//camera tracking
 	bool isUIElement = false;
+	bool isTextField = false;
 private:
 	bool sceneActive = false;
 	map<string, vector<shared_ptr<GameObject>>>* objects;

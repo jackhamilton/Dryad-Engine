@@ -144,6 +144,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextField.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="TextField.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="ModifiableProperty.h" />
     <ClInclude Include="Mouse.h" />

@@ -172,5 +172,8 @@ void Sprite::loadTextures(shared_ptr<Renderer> renderer)
 		}
 		pair<int, int> cSize = getDimensions();
 		size = { cSize.first, cSize.second };
+		if (startedAnimation && images.size() > 0) {
+			currentImage = images.begin();
+		}
 	}
 }

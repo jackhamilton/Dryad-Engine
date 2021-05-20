@@ -26,6 +26,7 @@ Text::Text(string text, string font, int fontSize, SDL_Color textColor, Point po
 	Text::fontSize = fontSize;
 	Text::textColor = textColor;
 	Text::position = position;
+	isUIElement = true;
 }
 
 void Text::setText(string text, shared_ptr<AssetLibrary> assetLibrary)

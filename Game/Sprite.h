@@ -60,12 +60,12 @@ public:
 	bool isOnFinalFrame();
 protected:
 	void initDefaultParams(int fps);
+	std::list<SDL_Texture*>::iterator currentImage;
 	bool paused;
 	Point location;
 	Size size;
 	int fps;
 private:
-	std::list<SDL_Texture*>::iterator currentImage;
 	bool startedAnimation;
 	bool loopAnimation;
 	ModifiableProperty<double, double> animationSpeed;

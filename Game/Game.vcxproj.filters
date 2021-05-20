@@ -108,6 +108,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\engine\world</Filter>
     </ClCompile>
+    <ClCompile Include="TextField.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="TextField.h">
+      <Filter>Header Files\engine\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

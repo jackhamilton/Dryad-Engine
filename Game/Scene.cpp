@@ -2,8 +2,10 @@
 #include "Scene.h"
 #include "Point.h"
 #include "Spritesheet.h"
+#include "TextField.h"
 #include "Button.h"
 #include "Hitbox.h"
+#include <memory>
 
 Scene::Scene()
 {
@@ -27,6 +29,19 @@ std::vector<vector<shared_ptr<GameObject>>> Scene::getObjects()
 	return objs;
 }
 
+std::vector<shared_ptr<GameObject>> Scene::getObjectsFlat()
+{
+	vector<shared_ptr<GameObject>> objs;
+	auto it = objects.begin();
+	for (; it != objects.end(); it++) {
+		for (shared_ptr<GameObject> o : it->second) {
+			objs.push_back(o);
+		}
+	}
+	return objs;
+}
+
+
 int Scene::getObjectsCount()
 {
 	int total = 0;
@@ -42,7 +57,7 @@ void Scene::addObject(shared_ptr<GameObject> object) {
 	addObject(object, "default");
 }
 
-void Scene::addObject(shared_ptr<GameObject> object, string scene) {
+void Scene::addObject(shared_ptr<GameObject> object, string layer) {
 	if (!renderer) {
 		printf("ERROR: Scene has no renderer. Cannot load sprite textures.");
 		return;
@@ -54,11 +69,17 @@ void Scene::addObject(shared_ptr<GameObject> object, string scene) {
 				s.lock()->loadTextures(renderer);
 			}
 		}
-		Scene::objects[scene].push_back(object);
+		Scene::objects[layer].push_back(object);
 	}
 
 	function<void()> objectMouseEvents[9];
 	object->getMouseEvents(objectMouseEvents);
+
+	if (object->isTextField) {
+		using namespace placeholders;
+		static_pointer_cast<TextField>(object)->deactivateOtherCallback = bind(&Scene::deactivateUniqueElements, this, _1);
+		static_pointer_cast<TextField>(object)->activateFieldCallback = bind(&Scene::activateTextField, this, _1);
+	}
 
 	Rectangle objectSizeRectangle;
 	objectSizeRectangle.x = object->getPosition().x;
@@ -117,4 +138,20 @@ void Scene::removeObject(GameObject* o)
 			}
 		}
 	}
+}
+
+void Scene::deactivateUniqueElements(GameObject* sender)
+{
+	if (sender->isTextField) {
+		for (shared_ptr<GameObject> g : getObjectsFlat()) {
+			if (g->isTextField) {
+				auto tf = static_pointer_cast<TextField>(g);
+				tf->deactivate();
+			}
+		}
+	}
+}
+
+void Scene::activateTextField(TextField* object) {
+	input->activeField = object;
 }
