@@ -111,34 +111,41 @@ void Input::handleInput(GameLoop* gameLoop)
 				for (; it != objects->end(); it++) {
 					auto it2 = it->second.begin();
 					for (; it2 != it->second.end(); it2++) {
-						shared_ptr<GameObject> o = *it2;
-						bool invalidate = false;
-						for (Rectangle r : invalidRects) {
-							if (r.isInside(activePoint)) {
-								invalidate = true;
-							}
+						vector<shared_ptr<GameObject>> objectAndChildren;
+						objectAndChildren.push_back(*it2);
+						for (shared_ptr<GameObject> g : (*it2)->getChildrenFlat()) {
+							objectAndChildren.push_back(g);
 						}
-						if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
-							if (o->hasMouseMoveEvent) {
-								o->mouseMoveEvent();
-							}
-							if (o->hasMouseEnteredEvent) {
-								o->mouseEnteredEvent();
-							}
-						} else if (o->hasMouseExitedEvent && o->getActiveRectangle().isInside(mouse->position)) {
-							//invalidation has to be recalculated based on previous mouse position.
-							//this one doesn't matter if it's in an invalid rect. We only have to know if prev position was valid.
-							invalidate = false;
+						for (shared_ptr<GameObject> o : objectAndChildren) {
+							bool invalidate = false;
 							for (Rectangle r : invalidRects) {
-								if (r.isInside(mouse->position)) {
+								if (r.isInside(activePoint)) {
 									invalidate = true;
 								}
 							}
-							if (!invalidate) {
-								o->mouseExitedEvent();
+							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+								if (o->hasMouseMoveEvent) {
+									o->mouseMoveEvent();
+								}
+								if (o->hasMouseEnteredEvent) {
+									o->mouseEnteredEvent();
+								}
 							}
+							else if (o->hasMouseExitedEvent && o->getActiveRectangle().isInside(mouse->position)) {
+								//invalidation has to be recalculated based on previous mouse position.
+								//this one doesn't matter if it's in an invalid rect. We only have to know if prev position was valid.
+								invalidate = false;
+								for (Rectangle r : invalidRects) {
+									if (r.isInside(mouse->position)) {
+										invalidate = true;
+									}
+								}
+								if (!invalidate) {
+									o->mouseExitedEvent();
+								}
+							}
+							invalidRects.push_back(o->getActiveRectangle());
 						}
-						invalidRects.push_back(o->getActiveRectangle());
 					}
 				}
 			}
@@ -176,22 +183,28 @@ void Input::handleInput(GameLoop* gameLoop)
 					for (; it != objects->end(); it++) {
 						auto it2 = it->second.begin();
 						for (; it2 != it->second.end(); it2++) {
-							shared_ptr<GameObject> o = *it2;
-							bool invalidate = false;
-							for (Rectangle r : invalidRects) {
-								if (r.isInside(activePoint)) {
-									invalidate = true;
-								}
+							vector<shared_ptr<GameObject>> objectAndChildren;
+							objectAndChildren.push_back(*it2);
+							for (shared_ptr<GameObject> g : (*it2)->getChildrenFlat()) {
+								objectAndChildren.push_back(g);
 							}
-							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
-								if (o->hasMouseClickEvent) {
-									o->mouseClickEvent();
+							for (shared_ptr<GameObject> o : objectAndChildren) {
+								bool invalidate = false;
+								for (Rectangle r : invalidRects) {
+									if (r.isInside(activePoint)) {
+										invalidate = true;
+									}
 								}
-								else if (o->hasMouseClickGraphicEvent) {
-									o->mouseClickGraphicEvent();
+								if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+									if (o->hasMouseClickEvent) {
+										o->mouseClickEvent();
+									}
+									else if (o->hasMouseClickGraphicEvent) {
+										o->mouseClickGraphicEvent();
+									}
 								}
+								invalidRects.push_back(o->getActiveRectangle());
 							}
-							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}
@@ -213,19 +226,25 @@ void Input::handleInput(GameLoop* gameLoop)
 					for (; it != objects->end(); it++) {
 						auto it2 = it->second.begin();
 						for (; it2 != it->second.end(); it2++) {
-							shared_ptr<GameObject> o = *it2;
-							bool invalidate = false;
-							for (Rectangle r : invalidRects) {
-								if (r.isInside(activePoint)) {
-									invalidate = true;
-								}
+							vector<shared_ptr<GameObject>> objectAndChildren;
+							objectAndChildren.push_back(*it2);
+							for (shared_ptr<GameObject> g : (*it2)->getChildrenFlat()) {
+								objectAndChildren.push_back(g);
 							}
-							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
-								if (o->hasMouseRightClickEvent) {
-									o->mouseRightClickEvent();
+							for (shared_ptr<GameObject> o : objectAndChildren) {
+								bool invalidate = false;
+								for (Rectangle r : invalidRects) {
+									if (r.isInside(activePoint)) {
+										invalidate = true;
+									}
 								}
+								if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+									if (o->hasMouseRightClickEvent) {
+										o->mouseRightClickEvent();
+									}
+								}
+								invalidRects.push_back(o->getActiveRectangle());
 							}
-							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}
@@ -260,22 +279,28 @@ void Input::handleInput(GameLoop* gameLoop)
 					for (; it != objects->end(); it++) {
 						auto it2 = it->second.begin();
 						for (; it2 != it->second.end(); it2++) {
-							shared_ptr<GameObject> o = *it2;
-							bool invalidate = false;
-							for (Rectangle r : invalidRects) {
-								if (r.isInside(activePoint)) {
-									invalidate = true;
-								}
+							vector<shared_ptr<GameObject>> objectAndChildren;
+							objectAndChildren.push_back(*it2);
+							for (shared_ptr<GameObject> g : (*it2)->getChildrenFlat()) {
+								objectAndChildren.push_back(g);
 							}
-							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
-								if (o->hasMouseClickUpEvent) {
-									o->mouseClickUpEvent();
+							for (shared_ptr<GameObject> o : objectAndChildren) {
+								bool invalidate = false;
+								for (Rectangle r : invalidRects) {
+									if (r.isInside(activePoint)) {
+										invalidate = true;
+									}
 								}
-								else if (o->hasMouseClickUpGraphicEvent) {
-									o->mouseClickUpGraphicEvent();
+								if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+									if (o->hasMouseClickUpEvent) {
+										o->mouseClickUpEvent();
+									}
+									else if (o->hasMouseClickUpGraphicEvent) {
+										o->mouseClickUpGraphicEvent();
+									}
 								}
+								invalidRects.push_back(o->getActiveRectangle());
 							}
-							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}
@@ -297,19 +322,25 @@ void Input::handleInput(GameLoop* gameLoop)
 					for (; it != objects->end(); it++) {
 						auto it2 = it->second.begin();
 						for (; it2 != it->second.end(); it2++) {
-							shared_ptr<GameObject> o = *it2;
-							bool invalidate = false;
-							for (Rectangle r : invalidRects) {
-								if (r.isInside(activePoint)) {
-									invalidate = true;
-								}
+							vector<shared_ptr<GameObject>> objectAndChildren;
+							objectAndChildren.push_back(*it2);
+							for (shared_ptr<GameObject> g : (*it2)->getChildrenFlat()) {
+								objectAndChildren.push_back(g);
 							}
-							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
-								if (o->hasMouseRightClickUpEvent) {
-									o->mouseRightClickUpEvent();
+							for (shared_ptr<GameObject> o : objectAndChildren) {
+								bool invalidate = false;
+								for (Rectangle r : invalidRects) {
+									if (r.isInside(activePoint)) {
+										invalidate = true;
+									}
 								}
+								if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+									if (o->hasMouseRightClickUpEvent) {
+										o->mouseRightClickUpEvent();
+									}
+								}
+								invalidRects.push_back(o->getActiveRectangle());
 							}
-							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}

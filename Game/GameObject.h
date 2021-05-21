@@ -34,6 +34,7 @@ public:
 	void setSprite(shared_ptr<Sprite> sprite, bool deallocateOld);
 	weak_ptr<Sprite> getSprite();
 	void addChild(shared_ptr<GameObject> obj);
+	vector<shared_ptr<GameObject>> getChildrenFlat();
 	void queueEvent(shared_ptr<GameObjectEvent> event);
 	void queueEvents(vector<shared_ptr<GameObjectEvent>> events);
 	void move(ModifiableProperty<Vector, double> vector);

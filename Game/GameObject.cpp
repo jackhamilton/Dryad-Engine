@@ -117,6 +117,26 @@ void GameObject::queueEvents(vector<shared_ptr<GameObjectEvent>> events)
 	}
 }
 
+//Gets all children and children of children recursive as a flat array
+vector<shared_ptr<GameObject>> GameObject::getChildrenFlat()
+{
+	vector<shared_ptr<GameObject>> childrenFlat;
+	//vector<shared_ptr<GameObject>> childChildren;
+	for (shared_ptr<GameObject> o : children) {
+		childrenFlat.push_back(o);
+		for (shared_ptr<GameObject> ob : o->getChildrenFlat()) {
+			childrenFlat.push_back(ob);
+			//childChildren.push_back(ob);
+		}
+	}
+	/*
+	for (shared_ptr<GameObject> o : childChildren) {
+		childrenFlat.push_back(o);
+	}
+	*/
+	return childrenFlat;
+}
+
 //Only works if in current scene.
 void GameObject::move(ModifiableProperty<Vector, double> vector)
 {
