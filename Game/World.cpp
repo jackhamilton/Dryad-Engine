@@ -24,6 +24,7 @@ void World::addScene(shared_ptr<Scene> s, string name)
 
 void World::setScene(string name)
 {
+	//Exit current scene
 	if (currentScene) {
 		for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
 			for (shared_ptr<GameObject> o : oVec) {
@@ -33,31 +34,24 @@ void World::setScene(string name)
 				}
 			}
 		}
-	}
-	if (mouse->sceneMouseExitedEvents) {
-		vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseExitedEvents;
-		for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-		{
-			pair<function<void()>, Rectangle> pair = *it;
-			function<void()> func = pair.first;
-			if (func) {
-				func();
+		for (vector<shared_ptr<GameObject>> oVec : currentScene->getObjects()) {
+			for (shared_ptr<GameObject> o : oVec) {
+				o->sceneActive = true;
+				if (o->hasMouseExitedEvent) {
+					o->mouseExitedEvent();
+				}
+				if (o->mouseExitedEvent) {
+					o->mouseExitedEvent();
+				}
 			}
 		}
-	}
-	if (currentScene) {
 		currentScene->isCurrentScene = false;
 		currentScene->input = nullptr;
 	}
+	//Initialize new scene
 	currentScene = scenes[name];
-	mouse->sceneMouseClickEvents = currentScene->sceneMouseClickEvents;
-	mouse->sceneMouseEnteredEvents = currentScene->sceneMouseEnteredEvents;
-	mouse->sceneMouseExitedEvents = currentScene->sceneMouseExitedEvents;
-	mouse->sceneMouseClickUpEvents = currentScene->sceneMouseClickUpEvents;
-	mouse->sceneMouseMovementEvents = currentScene->sceneMouseMovementEvents;
-	mouse->sceneMouseRightClickEvents = currentScene->sceneMouseRightClickEvents;
-	mouse->sceneMouseRightClickUpEvents = currentScene->sceneMouseRightClickUpEvents;
 	mouse->activeScene = true;
+	mouse->sceneObjectSet = &(currentScene->objects);
 	currentScene->isCurrentScene = true;
 	currentScene->input = input;
 	camera = currentScene->camera;

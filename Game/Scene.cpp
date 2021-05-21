@@ -10,21 +10,16 @@
 Scene::Scene()
 {
 	using namespace placeholders;
-	sceneMouseMovementEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
-	sceneMouseEnteredEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
-	sceneMouseExitedEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
-	sceneMouseClickEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
-	sceneMouseRightClickEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
-	sceneMouseClickUpEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
-	sceneMouseRightClickUpEvents = make_shared<vector<pair<Callback, Rectangle>>>(vector<pair<Callback, Rectangle>>());
 }
 
 std::vector<vector<shared_ptr<GameObject>>> Scene::getObjects()
 {
 	vector<vector<shared_ptr<GameObject>>> objs;
-	auto it = objects.begin();
-	for (; it != objects.end(); it++) {
-		objs.push_back(it->second);
+	if (objects.size() > 0) {
+		auto it = objects.begin();
+		for (; it != objects.end(); it++) {
+			objs.push_back(it->second);
+		}
 	}
 	return objs;
 }
@@ -81,38 +76,6 @@ void Scene::addObject(shared_ptr<GameObject> object, string layer) {
 		static_pointer_cast<TextField>(object)->activateFieldCallback = bind(&Scene::activateTextField, this, _1);
 	}
 
-	Rectangle objectSizeRectangle;
-	objectSizeRectangle.x = object->getPosition().x;
-	objectSizeRectangle.y = object->getPosition().y;
-	objectSizeRectangle.width = object->getSize().width;
-	objectSizeRectangle.height = object->getSize().height;
-	if (object->hasMouseMoveEvent) {
-		sceneMouseMovementEvents->push_back(make_pair(objectMouseEvents[0], objectSizeRectangle));
-	}
-	if (object->hasMouseEnteredEvent) {
-		sceneMouseEnteredEvents->push_back(make_pair(objectMouseEvents[1], objectSizeRectangle));
-	}
-	if (object->hasMouseExitedEvent) {
-		sceneMouseExitedEvents->push_back(make_pair(objectMouseEvents[2], objectSizeRectangle));
-	}
-	if (object->hasMouseClickGraphicEvent) {
-		sceneMouseClickEvents->push_back(make_pair(objectMouseEvents[3], objectSizeRectangle));
-	}
-	if (object->hasMouseClickEvent) {
-		sceneMouseClickEvents->push_back(make_pair(objectMouseEvents[4], objectSizeRectangle));
-	}
-	if (object->hasMouseRightClickEvent) {
-		sceneMouseRightClickEvents->push_back(make_pair(objectMouseEvents[5], objectSizeRectangle));
-	}
-	if (object->hasMouseClickUpGraphicEvent) {
-		sceneMouseClickUpEvents->push_back(make_pair(objectMouseEvents[6], objectSizeRectangle));
-	}
-	if (object->hasMouseClickUpEvent) {
-		sceneMouseClickUpEvents->push_back(make_pair(objectMouseEvents[7], objectSizeRectangle));
-	}
-	if (object->hasMouseRightClickUpEvent) {
-		sceneMouseRightClickUpEvents->push_back(make_pair(objectMouseEvents[8], objectSizeRectangle));
-	}
 	using namespace placeholders;
 	object->removeCalls.push_back(bind(&Scene::removeObject, this, _1));
 }

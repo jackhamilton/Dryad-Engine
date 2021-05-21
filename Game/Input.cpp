@@ -97,68 +97,65 @@ void Input::handleInput(GameLoop* gameLoop)
 			break;
 
 		case SDL_MOUSEMOTION:
+		{
 			int x, y;
 			SDL_GetMouseState(&x, &y);
+			Point activePoint = Point(x, y);
 			for (function<void(Point)> func : mouse->mouseMovementEvents) {
-				//Will have to create point every time. Perhaps change to int pair? would be very marginally more efficient
-				func(Point(x, y));
+				func(activePoint);
 			}
-			if (mouse->activeScene) {
-				vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseMovementEvents;
-				for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-				{
-					pair<function<void()>, Rectangle> pair = *it;
-					function<void()> func = pair.first;
-					Rectangle activeRect = pair.second;
-					if (x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) {
-						func();
-					}
-				}
-				vec = *mouse->sceneMouseEnteredEvents;
-				for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-				{
-					pair<function<void()>, Rectangle> pair = *it;
-					function<void()> func = pair.first;
-					Rectangle activeRect = pair.second;
-					if ((x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) and
-						!(mouse->position.x > activeRect.x and mouse->position.x < activeRect.x + activeRect.width and mouse->position.y > activeRect.y and mouse->position.y < activeRect.y + activeRect.height)) {
-						func();
-					}
-				}
-				vec = *mouse->sceneMouseExitedEvents;
-				for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-				{
-					pair<function<void()>, Rectangle> pair = *it;
-					function<void()> func = pair.first;
-					Rectangle activeRect = pair.second;
-					if (!(x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) and
-						(mouse->position.x > activeRect.x and mouse->position.x < activeRect.x + activeRect.width and mouse->position.y > activeRect.y and mouse->position.y < activeRect.y + activeRect.height)) {
-						func();
+			if (mouse->activeScene && mouse->sceneObjectSet) {
+				auto objects = mouse->sceneObjectSet;
+				auto it = objects->begin();
+				vector<Rectangle> invalidRects;
+				for (; it != objects->end(); it++) {
+					auto it2 = it->second.begin();
+					for (; it2 != it->second.end(); it2++) {
+						shared_ptr<GameObject> o = *it2;
+						bool invalidate = false;
+						for (Rectangle r : invalidRects) {
+							if (r.isInside(activePoint)) {
+								invalidate = true;
+							}
+						}
+						if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+							if (o->hasMouseMoveEvent) {
+								o->mouseMoveEvent();
+							}
+							if (o->hasMouseEnteredEvent) {
+								o->mouseEnteredEvent();
+							}
+						} else if (o->hasMouseExitedEvent && o->getActiveRectangle().isInside(mouse->position)) {
+							//invalidation has to be recalculated based on previous mouse position.
+							//this one doesn't matter if it's in an invalid rect. We only have to know if prev position was valid.
+							invalidate = false;
+							for (Rectangle r : invalidRects) {
+								if (r.isInside(mouse->position)) {
+									invalidate = true;
+								}
+							}
+							if (!invalidate) {
+								o->mouseExitedEvent();
+							}
+						}
+						invalidRects.push_back(o->getActiveRectangle());
 					}
 				}
 			}
 			mouse->position.x = x;
 			mouse->position.y = y;
-			break;
+		}
+		break;
 		case SDL_MOUSEBUTTONDOWN:
+		{
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				int x, y;
 				SDL_GetMouseState(&x, &y);
+				Point activePoint = Point(x, y);
 				for (function<void(Point)> func : mouse->mouseClickEvents) {
 					func(Point(x, y));
 				}
-				if (mouse->activeScene) {
-					vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseClickEvents;
-					for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-					{
-						pair<function<void()>, Rectangle> pair = *it;
-						function<void()> func = pair.first;
-						Rectangle activeRect = pair.second;
-						if (x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) {
-							func();
-						}
-					}
-				}
+				bool fieldLocksInput = false;
 				if (activeField) {
 					Rectangle bounds = activeField->placement;
 					bounds.x = activeField->getPosition().x;
@@ -169,6 +166,33 @@ void Input::handleInput(GameLoop* gameLoop)
 					else {
 						//This click activated the field, or was on an active field
 						activeField->updatePlacementPosition(Point(x, y));
+						fieldLocksInput = true;
+					}
+				}
+				if (!fieldLocksInput && mouse->activeScene && mouse->sceneObjectSet) {
+					auto objects = mouse->sceneObjectSet;
+					auto it = objects->begin();
+					vector<Rectangle> invalidRects;
+					for (; it != objects->end(); it++) {
+						auto it2 = it->second.begin();
+						for (; it2 != it->second.end(); it2++) {
+							shared_ptr<GameObject> o = *it2;
+							bool invalidate = false;
+							for (Rectangle r : invalidRects) {
+								if (r.isInside(activePoint)) {
+									invalidate = true;
+								}
+							}
+							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+								if (o->hasMouseClickEvent) {
+									o->mouseClickEvent();
+								}
+								else if (o->hasMouseClickGraphicEvent) {
+									o->mouseClickGraphicEvent();
+								}
+							}
+							invalidRects.push_back(o->getActiveRectangle());
+						}
 					}
 				}
 				isLButtonDown = true;
@@ -178,18 +202,30 @@ void Input::handleInput(GameLoop* gameLoop)
 			else if (event.button.button == SDL_BUTTON_RIGHT) {
 				int x, y;
 				SDL_GetMouseState(&x, &y);
+				Point activePoint = Point(x, y);
 				for (function<void(Point)> func : mouse->mouseRightClickEvents) {
 					func(Point(x, y));
 				}
-				if (mouse->activeScene) {
-					vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseRightClickEvents;
-					for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-					{
-						pair<function<void()>, Rectangle> pair = *it;
-						function<void()> func = pair.first;
-						Rectangle activeRect = pair.second;
-						if (x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) {
-							func();
+				if (mouse->activeScene && mouse->sceneObjectSet) {
+					auto objects = mouse->sceneObjectSet;
+					auto it = objects->begin();
+					vector<Rectangle> invalidRects;
+					for (; it != objects->end(); it++) {
+						auto it2 = it->second.begin();
+						for (; it2 != it->second.end(); it2++) {
+							shared_ptr<GameObject> o = *it2;
+							bool invalidate = false;
+							for (Rectangle r : invalidRects) {
+								if (r.isInside(activePoint)) {
+									invalidate = true;
+								}
+							}
+							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+								if (o->hasMouseRightClickEvent) {
+									o->mouseRightClickEvent();
+								}
+							}
+							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}
@@ -197,55 +233,92 @@ void Input::handleInput(GameLoop* gameLoop)
 				rButtonDown.x = x;
 				rButtonDown.y = y;
 			}
-			break;
+		}
+		break;
 		case SDL_MOUSEBUTTONUP:
+		{
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				int x, y;
 				SDL_GetMouseState(&x, &y);
-				Input::isLButtonDown = false;
+				Point activePoint = Point(x, y);
 				for (function<void(Point, Point)> func : mouse->mouseClickUpEvents) {
 					func(Input::lButtonDown, Point(x, y));
 				}
-				if (mouse->activeScene) {
-					vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseClickUpEvents;
-					for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-					{
-						pair<function<void()>, Rectangle> pair = *it;
-						function<void()> func = pair.first;
-						Rectangle activeRect = pair.second;
-						if ((x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) and
-							(lButtonDown.x > activeRect.x and lButtonDown.x < activeRect.x + activeRect.width and lButtonDown.y > activeRect.y and lButtonDown.y < activeRect.y + activeRect.height)) {
-							func();
+				bool fieldLocksInput = false;
+				if (activeField) {
+					Rectangle bounds = activeField->placement;
+					bounds.x = activeField->getPosition().x;
+					bounds.x = activeField->getPosition().y;
+					if ((x > bounds.x and x < bounds.x + bounds.width and y > bounds.y and y < bounds.y + bounds.height)) {
+						fieldLocksInput = true;
+					}
+				}
+				if (!fieldLocksInput && mouse->activeScene && mouse->sceneObjectSet) {
+					auto objects = mouse->sceneObjectSet;
+					auto it = objects->begin();
+					vector<Rectangle> invalidRects;
+					for (; it != objects->end(); it++) {
+						auto it2 = it->second.begin();
+						for (; it2 != it->second.end(); it2++) {
+							shared_ptr<GameObject> o = *it2;
+							bool invalidate = false;
+							for (Rectangle r : invalidRects) {
+								if (r.isInside(activePoint)) {
+									invalidate = true;
+								}
+							}
+							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+								if (o->hasMouseClickUpEvent) {
+									o->mouseClickUpEvent();
+								}
+								else if (o->hasMouseClickUpGraphicEvent) {
+									o->mouseClickUpGraphicEvent();
+								}
+							}
+							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}
+				Input::isLButtonDown = false;
 				Input::lButtonDown.x = 0;
 				Input::lButtonDown.y = 0;
 			}
 			else if (event.button.button == SDL_BUTTON_RIGHT) {
 				int x, y;
 				SDL_GetMouseState(&x, &y);
-				Input::isRButtonDown = false;
+				Point activePoint = Point(x, y);
 				for (function<void(Point, Point)> func : mouse->mouseRightClickUpEvents) {
 					func(Input::rButtonDown, Point(x, y));
 				}
-				if (mouse->activeScene) {
-					vector<pair<function<void()>, Rectangle>> vec = *mouse->sceneMouseRightClickUpEvents;
-					for (vector<pair<function<void()>, Rectangle>>::iterator it = vec.begin(); it != vec.end(); it++)
-					{
-						pair<function<void()>, Rectangle> pair = *it;
-						function<void()> func = pair.first;
-						Rectangle activeRect = pair.second;
-						if ((x > activeRect.x and x < activeRect.x + activeRect.width and y > activeRect.y and y < activeRect.y + activeRect.height) and
-							(lButtonDown.x > activeRect.x and lButtonDown.x < activeRect.x + activeRect.width and lButtonDown.y > activeRect.y and lButtonDown.y < activeRect.y + activeRect.height)) {
-							func();
+				if (mouse->activeScene && mouse->sceneObjectSet) {
+					auto objects = mouse->sceneObjectSet;
+					auto it = objects->begin();
+					vector<Rectangle> invalidRects;
+					for (; it != objects->end(); it++) {
+						auto it2 = it->second.begin();
+						for (; it2 != it->second.end(); it2++) {
+							shared_ptr<GameObject> o = *it2;
+							bool invalidate = false;
+							for (Rectangle r : invalidRects) {
+								if (r.isInside(activePoint)) {
+									invalidate = true;
+								}
+							}
+							if (!invalidate && o->getActiveRectangle().isInside(activePoint)) {
+								if (o->hasMouseRightClickUpEvent) {
+									o->mouseRightClickUpEvent();
+								}
+							}
+							invalidRects.push_back(o->getActiveRectangle());
 						}
 					}
 				}
+				Input::isRButtonDown = false;
 				Input::rButtonDown.x = 0;
 				Input::rButtonDown.y = 0;
 			}
-			break;
+		}
+		break;
 		case SDL_QUIT:
 			gameLoop->stop();
 			break;

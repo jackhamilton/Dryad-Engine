@@ -34,14 +34,6 @@ public:
 		Scene::camera = camera;
 	}
 
-	//Engine objects - do not modify without very good reason
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseMovementEvents;
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseEnteredEvents;
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseExitedEvents;
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseClickEvents;
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseRightClickEvents;
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseClickUpEvents;
-	shared_ptr<vector<pair<Callback, Rectangle>>> sceneMouseRightClickUpEvents;
 	shared_ptr<Renderer> renderer;
 	string name;
 	clock_t localTime;

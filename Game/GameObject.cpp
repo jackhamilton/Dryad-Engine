@@ -229,6 +229,11 @@ void GameObject::renderHitbox() {
 	}
 }
 
+Rectangle GameObject::getActiveRectangle()
+{
+	return {(int)position.x, (int)position.y, size.width, size.height};
+}
+
 void GameObject::addCollisionEvent(function<void(Point)> event)
 {
 	collisionEvents.push_back(event);

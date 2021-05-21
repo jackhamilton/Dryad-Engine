@@ -46,6 +46,7 @@ public:
 	bool testInBounds(Point p);
 	void enableHitbox();
 	void renderHitbox();
+	Rectangle getActiveRectangle();
 	//TODO: void enableHitbox(Hitbox h);
 	//camera tracking affects object?
 	void setIsUIElement(bool isUIElement) {
@@ -105,5 +106,6 @@ private:
 	void handleEvents(clock_t ticksSinceLast);
 	friend class World;
 	friend class Scene;
+	friend class Input;
 	friend class Hitbox;
 };
