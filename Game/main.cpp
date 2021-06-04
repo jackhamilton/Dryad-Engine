@@ -16,6 +16,7 @@
 #include "World.h"
 #include "Line.h"
 #include "Vector.h"
+#include "UIBlock.h"
 #include "TextField.h"
 #include "AssetLibrary.h"
 #include "GameObjectEvent.h"
@@ -54,7 +55,9 @@ void toggleCameraTracking() {
 
 int main(int argc, char* args[]) {
 	//----------SETUP------------
-    window = shared_ptr<Window>(new Window("Dryad", Resolution::ml16_9));
+	Resolution r = Resolution::ml16_9;
+    window = shared_ptr<Window>(new Window("Dryad", r));
+	pair<int, int> windowDim = Window::calculateResolution(r);
 	mouse = make_shared<Mouse>();
 	input = make_shared<Input>(mouse);
     gameWorld = make_shared<World>(World(window->getRenderer(), input));
@@ -130,6 +133,11 @@ int main(int argc, char* args[]) {
 	//TextField testing
 	shared_ptr<TextField> testTextField = shared_ptr<TextField>(new TextField("Engine Test Sandbox", "OpenSans-Regular", 14, { 150, 150, 100, 30 }, libPtr));
 	menu->addObject(testTextField);
+
+	int addX = windowDim.first / 3, addY = windowDim.second / 3;
+	Rectangle addRect = { addX, addY, addX, addY };
+	shared_ptr<UIBlock> addPopup = shared_ptr<UIBlock>(new UIBlock(addRect, { 100, 100, 100 }));
+	menu->addObject(addPopup);
 
 	//Configure inputs
 	input->addKeyboardEvent([]() { gameLoop->stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });

@@ -32,6 +32,7 @@ void Input::handleInput(GameLoop* gameLoop)
 		SDL_StopTextInput();
 		textInputActive = false;
 	}
+	lockSceneObjects = true;
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{	
@@ -144,7 +145,9 @@ void Input::handleInput(GameLoop* gameLoop)
 									o->mouseExitedEvent();
 								}
 							}
-							invalidRects.push_back(o->getActiveRectangle());
+							if (o->hasSprite) {
+								invalidRects.push_back(o->getActiveRectangle());
+							}
 						}
 					}
 				}
@@ -203,7 +206,9 @@ void Input::handleInput(GameLoop* gameLoop)
 										o->mouseClickGraphicEvent();
 									}
 								}
-								invalidRects.push_back(o->getActiveRectangle());
+								if (o->hasSprite) {
+									invalidRects.push_back(o->getActiveRectangle());
+								}
 							}
 						}
 					}
@@ -243,7 +248,9 @@ void Input::handleInput(GameLoop* gameLoop)
 										o->mouseRightClickEvent();
 									}
 								}
-								invalidRects.push_back(o->getActiveRectangle());
+								if (o->hasSprite) {
+									invalidRects.push_back(o->getActiveRectangle());
+								}
 							}
 						}
 					}
@@ -299,7 +306,9 @@ void Input::handleInput(GameLoop* gameLoop)
 										o->mouseClickUpGraphicEvent();
 									}
 								}
-								invalidRects.push_back(o->getActiveRectangle());
+								if (o->hasSprite) {
+									invalidRects.push_back(o->getActiveRectangle());
+								}
 							}
 						}
 					}
@@ -339,7 +348,9 @@ void Input::handleInput(GameLoop* gameLoop)
 										o->mouseRightClickUpEvent();
 									}
 								}
-								invalidRects.push_back(o->getActiveRectangle());
+								if (o->hasSprite) {
+									invalidRects.push_back(o->getActiveRectangle());
+								}
 							}
 						}
 					}
@@ -355,6 +366,7 @@ void Input::handleInput(GameLoop* gameLoop)
 			break;
 		}
 	}
+	lockSceneObjects = false;
 	//React to KeyDown events
 	for (auto const& x : keyboardEventMap)
 	{

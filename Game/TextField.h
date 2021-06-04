@@ -13,6 +13,8 @@ public:
 	string getText() {
 		return currentText;
 	}
+	void setEnabled(bool enabled);
+	void setText(string text);
 private:
 	void activate();
 	void refreshTextures();
@@ -27,6 +29,7 @@ private:
 	int xPlacementOffset = 0;
 	shared_ptr<CompositeSprite> cSpritePointer;
 	bool selected = false;
+	bool enabled = true;
 	function<void(TextField*)> deactivateOtherCallback;
 	function<void(TextField*)> activateFieldCallback;
 	shared_ptr<AssetLibrary> assetLib;

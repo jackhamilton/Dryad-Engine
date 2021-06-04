@@ -29,6 +29,7 @@ private:
 	bool isRButtonDown;
 	TextField* activeField = nullptr;
 	bool textInputActive = false;
+	bool lockSceneObjects = false;
 
 	// Saves the state(true=pressed; false=released) of each SDL_Key
 	std::map<SDL_Keycode, bool> keyboard; 

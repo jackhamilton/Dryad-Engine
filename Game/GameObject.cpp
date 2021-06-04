@@ -18,7 +18,7 @@ void GameObject::setSize(Size size) {
 Size GameObject::getSize()
 {
 	if (size.width <= 0 && size.height <= 0) {
-		if (!getSprite().expired()) {
+		if (hasSprite && !getSprite().expired()) {
 			pair<int, int> sizes = getSprite().lock()->getDimensions();
 			size = { sizes.first, sizes.second };
 		}

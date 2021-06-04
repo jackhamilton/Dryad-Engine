@@ -111,6 +111,15 @@
     <ClCompile Include="TextField.cpp">
       <Filter>Source Files\engine\ui</Filter>
     </ClCompile>
+    <ClCompile Include="UIBlock.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="HorizontalStackFrame.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="VerticalStackFrame.cpp">
+      <Filter>Source Files\engine\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -189,6 +198,18 @@
       <Filter>Header Files\engine\world</Filter>
     </ClInclude>
     <ClInclude Include="TextField.h">
+      <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBlock.h">
+      <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="VerticalStackFrame.h">
+      <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="HorizontalStackFrame.h">
+      <Filter>Header Files\engine\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="StackFrame.h">
       <Filter>Header Files\engine\ui</Filter>
     </ClInclude>
   </ItemGroup>

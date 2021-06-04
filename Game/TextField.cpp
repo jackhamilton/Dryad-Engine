@@ -21,8 +21,22 @@ TextField::TextField(string text, string font, int fontSize, Rectangle position,
 	onExitingScene = bind(&TextField::deactivate, this);
 }
 
+void TextField::setEnabled(bool enabled)
+{
+	if (TextField::enabled && selected && !enabled) {
+		deactivate();
+	}
+	TextField::enabled = enabled;
+}
+
+void TextField::setText(string text)
+{
+	currentText = text;
+	refreshTextures();
+}
+
 void TextField::activate() {
-	if (!selected) {
+	if (!selected && enabled) {
 		if (deactivateOtherCallback) {
 			deactivateOtherCallback(this);
 		}

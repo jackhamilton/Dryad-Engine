@@ -9,7 +9,6 @@ Button::Button(function<void()> onClick, string text, string font, int fontSize,
 	Button::font = font;
 	Button::fontSize = fontSize;
 	shared_ptr<Sprite> bg = createTexture(textColor, backgroundColor, assetLibrary);
-	hasSprite = true;
 	setSprite(bg);
 	buttonStates[0] = bg;
 	mouseClickUpEvent = onClick;
@@ -23,7 +22,6 @@ Button::Button(function<void()> onClick, string text, string font, int fontSize,
 Button::Button(function<void()> onClick, shared_ptr<Sprite> sprite, Point position, Size size) : GameObject(position)
 {
 	setSize(size);
-	hasSprite = true;
 	setSprite(sprite);
 	buttonStates[0] = sprite;
 	mouseClickUpEvent = onClick;

@@ -17,7 +17,7 @@ class Hitbox;
 using namespace std;
 class GameObject {
 public:
-	bool hasSprite;
+	bool hasSprite = false;
 	Point getPosition();
 	void setPosition(Point pos);
 	GameObject() : GameObject(0, 0) {};
@@ -96,6 +96,8 @@ protected:
 	//camera tracking
 	bool isUIElement = false;
 	bool isTextField = false;
+	bool isVerticalStackFrame = false;
+	bool isHorizontalStackFrame = false;
 private:
 	bool sceneActive = false;
 	map<string, vector<shared_ptr<GameObject>>>* objects;
@@ -109,4 +111,7 @@ private:
 	friend class Scene;
 	friend class Input;
 	friend class Hitbox;
+	friend class HorizontalStackFrame;
+	friend class VerticalStackFrame;
+	friend class UIBlock;
 };

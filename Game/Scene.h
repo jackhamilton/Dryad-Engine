@@ -44,12 +44,15 @@ private:
 	//Sets the active text field pointer within the input class
 	void activateTextField(TextField* object);
 	void removeObject(GameObject* o);
+	void handleObjectModificationQueue();
 	shared_ptr<Camera> camera;
 	bool isCurrentScene;
 	shared_ptr<Input> input;
 	shared_ptr<shared_ptr<long double>> defaultFps;
 	//set to actual time including delay
 	shared_ptr<shared_ptr<long double>> lastFrameTimeMS;
+	vector<GameObject*> postInputLoopObjectRemovalQueue;
+	vector<pair<shared_ptr<GameObject>, string>> postInputLoopObjectAddQueue;
     map<string, vector<shared_ptr<GameObject>>> objects;
 	friend class World;
 };

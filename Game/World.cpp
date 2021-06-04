@@ -86,6 +86,7 @@ void World::setRenderer(shared_ptr<Renderer> renderer)
 void World::render(int frame, int fps)
 {
 	if (currentScene) {
+		currentScene->handleObjectModificationQueue();
 		Point cameraPositionModifier = Point(0, 0);
 		if (camera) {
 			cameraPositionModifier = camera->getPositionMod();

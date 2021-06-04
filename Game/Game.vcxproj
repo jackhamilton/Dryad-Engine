@@ -141,10 +141,12 @@
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Hitbox.cpp" />
+    <ClCompile Include="HorizontalStackFrame.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextField.cpp" />
+    <ClCompile Include="UIBlock.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
@@ -153,6 +155,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Spritesheet.cpp" />
+    <ClCompile Include="VerticalStackFrame.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="World.cpp" />
@@ -167,10 +170,13 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectEvent.h" />
     <ClInclude Include="Hitbox.h" />
+    <ClInclude Include="HorizontalStackFrame.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Line.h" />
+    <ClInclude Include="StackFrame.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="TextField.h" />
+    <ClInclude Include="UIBlock.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="ModifiableProperty.h" />
     <ClInclude Include="Mouse.h" />
@@ -181,6 +187,7 @@
     <ClInclude Include="Size.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Spritesheet.h" />
+    <ClInclude Include="VerticalStackFrame.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="World.h" />
