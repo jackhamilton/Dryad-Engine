@@ -125,17 +125,19 @@ void World::render(int frame, int fps)
 		//Then draw debug lighting rectangles
 		if (camera) {
 			Light l;
-			Point cameraPos = camera->getOrigin();
-			l.p = cameraPos + input->getMouse()->position;
+			l.p = input->getMouse()->position;
 			Rectangle renderBox;
-			renderBox.x = cameraPos.x;
-			renderBox.y = cameraPos.y;
+			renderBox.x = 0;
+			renderBox.y = 0;
 			pair<int, int> dim = Window::calculateResolution(camera->resolution);
 			renderBox.width = dim.first;
 			renderBox.height = dim.second;
-			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox);
+			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox, cameraPositionModifier);
 			for (Polygon p : masks) {
 				if (p.shape.size() == 3) {
+					//p.shape.at(0) -= cameraPositionModifier;
+					//p.shape.at(1) -= cameraPositionModifier;
+					//p.shape.at(2) -= cameraPositionModifier;
 					renderer->drawFilledTriangle(p, { 255, 0, 0 });
 				}
 				else {
@@ -152,7 +154,7 @@ void World::render(int frame, int fps)
 			pair<int, int> dim = Window::calculateResolution(renderer->res);
 			renderBox.width = dim.first;
 			renderBox.height = dim.second;
-			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox);
+			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox, cameraPositionModifier);
 			for (Polygon p : masks) {
 				if (p.shape.size() == 3) {
 					renderer->drawFilledTriangle(p, { 255, 0, 0 });

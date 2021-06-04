@@ -110,7 +110,7 @@ private:
 	weak_ptr<long double> defaultFps;
 	//set to actual time including delay
 	weak_ptr<long double> lastFrameTimeMS;
-	Polygon getLightingMask();
+	Polygon getLightingMask(Point cameraPMod);
 	void updateSize();
 	void moveObject(ModifiableProperty<Vector, double> vector);
 	void handleEvents(clock_t ticksSinceLast);

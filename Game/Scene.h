@@ -52,7 +52,7 @@ private:
 	bool onSameLine(Point* p1, shared_ptr<Point> p2, vector<LineData>* testArray);
 	int nearestLine(Point p1, vector<LineData>* testArray);
 	Point nearestPoint(Point p, vector<LineData>* testArray);
-	vector<Polygon> generateSceneLightingMasks(Light l, Rectangle renderZone);
+	vector<Polygon> generateSceneLightingMasks(Light l, Rectangle renderZone, Point cameraPMod);
 	shared_ptr<Camera> camera;
 	bool isCurrentScene;
 	shared_ptr<Input> input;

@@ -135,7 +135,7 @@ void Scene::deactivateUniqueElements(GameObject* sender)
 	}
 }
 
-vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone)
+vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone, Point cameraPMod)
 {
 	double precision = 1; //720*4n raytraces per tick
 	//TODO does not do lighting for object children - add??
@@ -144,7 +144,7 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone)
 	vector<shared_ptr<GameObject>> objToMask = getObjectsFlat();
 	for (shared_ptr<GameObject> obj : objToMask) {
 		if (!obj->isUIElement && obj->blocksLighting) {
-			Polygon objLightingMask = obj->getLightingMask();
+			Polygon objLightingMask = obj->getLightingMask(cameraPMod);
 			bool add = false;
 			for (Point p : objLightingMask.shape) {
 				if (renderZone.isInside(p)) {

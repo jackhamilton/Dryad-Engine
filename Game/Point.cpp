@@ -4,6 +4,18 @@
 Point::Point(double xPos, double yPos) {
 	Point::x = xPos, Point::y = yPos;
 }
+Point& Point::operator+=(const Point& b)
+{
+	x += b.x;
+	y += b.y;
+	return *this;
+}
+Point& Point::operator-=(const Point& b)
+{
+	x -= b.x;
+	y -= b.y;
+	return *this;
+}
 double Point::distance(Point p)
 {
 	return sqrt(pow(p.x - x, 2) + pow(p.y - y, 2) * 1.0);

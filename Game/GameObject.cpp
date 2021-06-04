@@ -304,12 +304,12 @@ void GameObject::handleEvents(clock_t ticksSinceLast)
 	}
 }
 
-Polygon GameObject::getLightingMask() {
+Polygon GameObject::getLightingMask(Point cameraPMod) {
 	vector<Point> points;
-	points.push_back(position);
-	points.push_back(Point(position.x, position.y + size.height));
-	points.push_back(Point(position.x + size.width, position.y + size.height));
-	points.push_back(Point(position.x + size.width, position.y));
+	points.push_back(position + cameraPMod);
+	points.push_back(Point(position.x, position.y + size.height) + cameraPMod);
+	points.push_back(Point(position.x + size.width, position.y + size.height) + cameraPMod);
+	points.push_back(Point(position.x + size.width, position.y) + cameraPMod);
 	Polygon p;
 	p.shape = points;
 	return p;
