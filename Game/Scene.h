@@ -50,7 +50,8 @@ private:
 	void handleObjectModificationQueue();
 	bool raytrace(shared_ptr<Point> result, Point* origin, PolarVector* projection, vector<LineData>* testArray);
 	bool onSameLine(Point* p1, shared_ptr<Point> p2, vector<LineData>* testArray);
-	Point refinePoint(Point p, vector<LineData>* testArray, int snapDistance);
+	int nearestLine(Point p1, vector<LineData>* testArray);
+	Point nearestPoint(Point p, vector<LineData>* testArray);
 	vector<Polygon> generateSceneLightingMasks(Light l, Rectangle renderZone);
 	shared_ptr<Camera> camera;
 	bool isCurrentScene;

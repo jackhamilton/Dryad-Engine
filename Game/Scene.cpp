@@ -188,34 +188,70 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone)
 			if (collided) {
 				if (testingBegun) {
 					if (!onSameLine(&prevTestedPt, result, &collidableLines)) {
-						bool refinePt = false;
-						double snapDistance = 2*(1 + ((origin.distance(*result) / 30))*(precision));
-						if (prevTestedPt.distance(*result) < snapDistance) {
-							//probably a large jump
-							refinePt = true;
+						bool becameNearer = false;
+						if (result->distance(origin) <= prevTestedPt.distance(origin)) {
+							becameNearer = true;
+						}
+						Point closePoint, farPoint;
+						LineData farLine;
+						if (becameNearer) {
+							//farther can be anything, nearer will always be a point
+							closePoint = nearestPoint(*result, &collidableLines);
+							farLine = collidableLines.at(nearestLine(prevTestedPt, &collidableLines));
+						}
+						else {
+							closePoint = nearestPoint(prevTestedPt, &collidableLines);
+							farLine = collidableLines.at(nearestLine(*result, &collidableLines));
+						}
+						if ((farLine.x1 == closePoint.x && farLine.y1 == closePoint.y)
+							|| (farLine.x2 == closePoint.x && farLine.y2 == closePoint.y)) {
+							farPoint = closePoint;
+						}
+						else {
+							Vector lineExtensionDown = Vector(farLine.x2, farLine.y2, farLine.x1, farLine.y1);
+							lineExtensionDown += 5000;
+							Vector lineExtensionUp = Vector(farLine.x1, farLine.y1, farLine.x2, farLine.y2);
+							lineExtensionUp += 5000;
+							farLine.x1 += lineExtensionDown.x;
+							farLine.y1 += lineExtensionDown.y;
+							farLine.x2 += lineExtensionUp.x;
+							farLine.y2 += lineExtensionUp.y;
+
+							Vector projection = Vector(origin.x, origin.y, closePoint.x, closePoint.y);
+							projection += 10000;
+							shared_ptr<Point> coll = make_shared<Point>();
+							if (Hitbox::lineLine(origin.x, origin.y, origin.x + projection.x, origin.y + projection.y,
+								farLine.x1, farLine.y1, farLine.x2, farLine.y2, coll)) {
+								farPoint = *coll;
+							}
+							else {
+								printf("Error raytracing line jump's farther point\n");
+							}
 						}
 						if (!firstJump) {
 							//form triangle: origin, prevFinePt, prevTestedPt
 							Polygon poly;
 							poly.shape.push_back(origin);
-							if (!refinePt) {
-								poly.shape.push_back(prevFinePt);
+							poly.shape.push_back(prevFinePt);
+							if (becameNearer) {
+								poly.shape.push_back(farPoint);
+								prevFinePt = closePoint;
 							}
 							else {
-								poly.shape.push_back(refinePoint(prevFinePt, &collidableLines, snapDistance));
+								poly.shape.push_back(closePoint);
+								prevFinePt = farPoint;
 							}
-							poly.shape.push_back(prevTestedPt);
 							sceneLightingMasks.push_back(poly);
-							if (!refinePt) {
-								prevFinePt = *result;
-							}
-							else {
-								prevFinePt = refinePoint(*result, &collidableLines, snapDistance);
-							}
 						}
 						else {
-							prevFinePt = *result;
-							firstTriangleVertex = prevTestedPt;
+							if (becameNearer) {
+								firstTriangleVertex = farPoint;
+								prevFinePt = closePoint;
+							}
+							else {
+								firstTriangleVertex = closePoint;
+								prevFinePt = farPoint;
+							}
 							firstJump = false;
 						}
 					}
@@ -231,8 +267,8 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone)
 		if (!firstJump) {
 			Polygon poly;
 			poly.shape.push_back(origin);
-			poly.shape.push_back(refinePoint(prevFinePt, &collidableLines, 25));
-			poly.shape.push_back(refinePoint(firstTriangleVertex, &collidableLines, 25));
+			poly.shape.push_back(prevFinePt);
+			poly.shape.push_back(firstTriangleVertex);
 			sceneLightingMasks.push_back(poly);
 		}
 	}
@@ -258,7 +294,7 @@ bool Scene::raytrace(shared_ptr<Point> result, Point* origin, PolarVector* proje
 	return true;
 }
 
-Point Scene::refinePoint(Point p, vector<LineData>* testArray, int snapDistance) {
+Point Scene::nearestPoint(Point p, vector<LineData>* testArray) {
 	Point bestMatch;
 	double dist = 100000.0;
 	for (const LineData& l : *testArray) {
@@ -275,32 +311,15 @@ Point Scene::refinePoint(Point p, vector<LineData>* testArray, int snapDistance)
 			dist = tDist;
 		}
 	}
-	if (dist > snapDistance) {
-		return p;
-	}
 	return bestMatch;
 }
 
 bool Scene::onSameLine(Point* p1, shared_ptr<Point> p2, vector<LineData>* testArray) {
 	//TODO
 	//find closest line to each point
-	double minDist = 10000;
 	int lineIndex1 = 5000, lineIndex2 = 5000;
-	for (int x = 0; x < testArray->size(); x++) {
-		double distance = testArray->at(x).distToPoint(*p1);
-		if (distance < minDist) {
-			lineIndex1 = x;
-			minDist = distance;
-		}
-	}
-	double minDist2 = 10000;
-	for (int x = 0; x < testArray->size(); x++) {
-		double distance = testArray->at(x).distToPoint(*p2);
-		if (distance < minDist2) {
-			lineIndex2 = x;
-			minDist2 = distance;
-		}
-	}
+	lineIndex1 = nearestLine(*p1, testArray);
+	lineIndex2 = nearestLine(*p2, testArray);
 	if (lineIndex1 != 5000 && lineIndex2 != 5000) {
 		return lineIndex1 == lineIndex2;
 	}
@@ -308,6 +327,23 @@ bool Scene::onSameLine(Point* p1, shared_ptr<Point> p2, vector<LineData>* testAr
 		printf("Error computing line distances");
 		return false;
 	}
+}
+
+int Scene::nearestLine(Point p1, vector<LineData>* testArray) {
+	double minDist = 10000;
+	int lineIndex = 5000;
+	for (int x = 0; x < testArray->size(); x++) {
+		double distance = testArray->at(x).distToPoint(p1);
+		if (distance < minDist) {
+			lineIndex = x;
+			minDist = distance;
+		}
+	}
+	if (lineIndex == 5000) {
+		printf("Error computing line distances");
+		return 0;
+	}
+	return lineIndex;
 }
 
 void Scene::activateTextField(TextField* object) {
