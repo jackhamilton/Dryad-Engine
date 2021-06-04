@@ -1,3 +1,4 @@
+#pragma warning( disable : 4244 ) 
 #include "Input.h"
 #include <vector>
 #include <map>

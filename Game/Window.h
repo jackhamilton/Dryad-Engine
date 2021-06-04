@@ -54,8 +54,10 @@ public:
         return renderer;
     }
 	static pair<int, int> calculateResolution(Resolution res);
+	static pair<int, int> calculateResolution(Resolution* res);
 private:
 	Resolution resolution;
 	SDL_Window* window;
 	shared_ptr<Renderer> renderer;
+	friend class Renderer;
 };

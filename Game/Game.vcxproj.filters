@@ -212,5 +212,11 @@
     <ClInclude Include="StackFrame.h">
       <Filter>Header Files\engine\ui</Filter>
     </ClInclude>
+    <ClInclude Include="Polygon.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\engine\data</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

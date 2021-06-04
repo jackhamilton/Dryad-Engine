@@ -96,8 +96,8 @@ int main(int argc, char* args[]) {
 
 	//Wall
 	shared_ptr<Sprite> wallSpr = make_shared<Sprite>(Sprite({ lib.getAsset("wall.png") }));
-	shared_ptr<GameObject> wall = make_shared<GameObject>(GameObject(Point(200, 30), wallSpr));
-	wall->queueEvents({ static_pointer_cast<GameObjectEvent>(make_shared<DelayEvent>(DelayEvent(4000))), 
+	shared_ptr<GameObject> wall = make_shared<GameObject>(GameObject(Point(400, 200), wallSpr));
+	wall->queueEvents({ static_pointer_cast<GameObjectEvent>(make_shared<DelayEvent>(DelayEvent(10000))), 
 		make_shared<GameObjectEvent>(DestroyEvent()) });
 	wall->enableHitbox();
 	gameScene->addObject(wall);
@@ -115,7 +115,7 @@ int main(int argc, char* args[]) {
 
 	//Camera
 	gameSceneCamera = shared_ptr<Camera>(new Camera(window->getResolution()));
-	gameSceneCamera->setTrackObject(link);
+	//gameSceneCamera->setTrackObject(link);
 	gameScene->setCamera(gameSceneCamera);
 
 	shared_ptr<Button> buttonToggleFollow = make_shared<Button>(Button(&toggleCameraTracking, "Toggle Camera Tracking", "Bebas", 24, { 255, 255, 255 }, libPtr, { 30, 30, 30 }, Point(1300, 580), { 200, 100 }));
@@ -133,11 +133,11 @@ int main(int argc, char* args[]) {
 	//TextField testing
 	shared_ptr<TextField> testTextField = shared_ptr<TextField>(new TextField("Engine Test Sandbox", "OpenSans-Regular", 14, { 150, 150, 100, 30 }, libPtr));
 	menu->addObject(testTextField);
-
+	/*
 	int addX = windowDim.first / 3, addY = windowDim.second / 3;
 	Rectangle addRect = { addX, addY, addX, addY };
 	shared_ptr<UIBlock> addPopup = shared_ptr<UIBlock>(new UIBlock(addRect, { 100, 100, 100 }));
-	menu->addObject(addPopup);
+	menu->addObject(addPopup);*/
 
 	//Configure inputs
 	input->addKeyboardEvent([]() { gameLoop->stop(); }, { make_pair(SDLK_ESCAPE, SDL_KEYDOWN) });

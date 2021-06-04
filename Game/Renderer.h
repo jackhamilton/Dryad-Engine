@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <memory>
 #include "Window.h"
+#include "Polygon.h"
 
 class Renderer {
 public:
@@ -15,5 +16,11 @@ public:
 	void renderPresent();
 	void renderBackground();
 private:
+	bool DrawFilledPolygon(Polygon poly, const SDL_Color color);
+	void drawFilledTriangle(Polygon poly, const SDL_Color color);
+	void set_pixel(SDL_Surface* surface, int x, int y, Uint32 color);
+	Resolution* res;
 	SDL_Renderer* renderer;
+	friend class World;
+	friend class Window;
 };

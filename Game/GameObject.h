@@ -10,6 +10,7 @@
 #include "Vector.h"
 #include "Hitbox.h"
 #include "GameObjectEvent.h"
+#include "Polygon.h"
 
 class Physics;
 class Hitbox;
@@ -53,6 +54,11 @@ public:
 	void setIsUIElement(bool isUIElement) {
 		GameObject::isUIElement = isUIElement;
 	}
+
+	//GameObjects should inherit the highest lighting from any mask touching them. if EdgeIlluminated is true,
+	//each side should be dynamically extrapolated from surrounding light and the values should fade.
+	bool edgeIlluminated = false;
+	bool blocksLighting = true;
 
 	bool operator == (const GameObject& obj) const { return id == obj.id; }
 	bool operator != (const GameObject& obj) const { return id != obj.id; }
@@ -104,6 +110,7 @@ private:
 	weak_ptr<long double> defaultFps;
 	//set to actual time including delay
 	weak_ptr<long double> lastFrameTimeMS;
+	Polygon getLightingMask();
 	void updateSize();
 	void moveObject(ModifiableProperty<Vector, double> vector);
 	void handleEvents(clock_t ticksSinceLast);

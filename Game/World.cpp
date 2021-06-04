@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "GameObjectEvent.h"
 #include <vector>
+#include "Polygon.h"
+#include "Light.h"
 
 World::World(shared_ptr<Renderer> renderer, shared_ptr<Input> input)
 {
@@ -89,7 +91,7 @@ void World::render(int frame, int fps)
 		currentScene->handleObjectModificationQueue();
 		Point cameraPositionModifier = Point(0, 0);
 		if (camera) {
-			cameraPositionModifier = camera->getPositionMod();
+			cameraPositionModifier = camera->getPositionModifier();
 		}
 		renderer->renderBackground();
 		if (frame % 10 == 0) {
@@ -118,6 +120,46 @@ void World::render(int frame, int fps)
 					renderGameObject(obj, cameraPositionModifier, MSPerFrame);
 				}
 				obj->handleEvents(currentScene->localTime - currentScene->lastTickTime);
+			}
+		}
+		//Then draw debug lighting rectangles
+		if (camera) {
+			Light l;
+			Point cameraPos = camera->getOrigin();
+			l.p = cameraPos + input->getMouse()->position;
+			Rectangle renderBox;
+			renderBox.x = cameraPos.x;
+			renderBox.y = cameraPos.y;
+			pair<int, int> dim = Window::calculateResolution(camera->resolution);
+			renderBox.width = dim.first;
+			renderBox.height = dim.second;
+			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox);
+			for (Polygon p : masks) {
+				if (p.shape.size() == 3) {
+					renderer->drawFilledTriangle(p, { 255, 0, 0 });
+				}
+				else {
+					printf("Error generating lighting polygons");
+				}
+			}
+		}
+		else {
+			Light l;
+			l.p = input->getMouse()->position;
+			Rectangle renderBox;
+			renderBox.x = 0;
+			renderBox.y = 0;
+			pair<int, int> dim = Window::calculateResolution(renderer->res);
+			renderBox.width = dim.first;
+			renderBox.height = dim.second;
+			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox);
+			for (Polygon p : masks) {
+				if (p.shape.size() == 3) {
+					renderer->drawFilledTriangle(p, { 255, 0, 0 });
+				}
+				else {
+					printf("Error generating lighting polygons");
+				}
 			}
 		}
 		//And finally for the debug layer

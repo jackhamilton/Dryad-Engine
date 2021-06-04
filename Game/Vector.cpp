@@ -1,8 +1,6 @@
 #include <math.h>
 #include "Vector.h"
 
-#define PI 3.14159265
-
 Vector::Vector(double x, double y, double x2, double y2) {
 	Vector::x = x2 - x;
 	Vector::y = y2 - y;
@@ -111,5 +109,27 @@ Vector& Vector::operator*=(const double b)
 	r *= b;
 	x = r * cos(theta);
 	y = r * sin(theta);
+	return *this;
+}
+
+PolarVector operator+(const PolarVector& a, const PolarVector& b)
+{
+	return PolarVector(a.r + b.r, a.theta + b.theta);
+}
+
+PolarVector operator-(const PolarVector& a, const PolarVector& b)
+{
+	return PolarVector(a.r - b.r, a.theta - b.theta);
+}
+
+PolarVector& PolarVector::operator+=(const double b)
+{
+	r += b;
+	return *this;
+}
+
+PolarVector& PolarVector::operator-=(const double b)
+{
+	r += b;
 	return *this;
 }

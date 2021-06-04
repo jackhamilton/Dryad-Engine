@@ -10,7 +10,8 @@ public:
 	Camera(Resolution* r);
 	Resolution* resolution;
 	Point getPosition();
-	Point getPositionMod();
+	Point getPositionModifier();
+	Point getOrigin();
 	//Cannot currently track a child object
 	void setTrackObject(shared_ptr<GameObject> object);
 	void stopTracking();

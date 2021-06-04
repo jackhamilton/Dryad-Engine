@@ -5,6 +5,7 @@ Camera::Camera(Resolution* r)
 	resolution = r;
 }
 
+//gets camera center
 Point Camera::getPosition()
 {
 	if (tracking && trackObj) {
@@ -14,14 +15,25 @@ Point Camera::getPosition()
 	return origin;
 }
 
-Point Camera::getPositionMod() {
+Point Camera::getPositionModifier() {
 	if (!trackObj || !tracking) {
 		return Point(0, 0);
 	}
 	pair<int, int> cameraRes = Window::calculateResolution(*resolution);
 	return Point(cameraRes.first / 2, cameraRes.second / 2)
 		- getPosition()
-		- Point(trackObj->getSize().width/2, trackObj->getSize().height/2);
+		- Point(trackObj->getSize().width / 2, trackObj->getSize().height / 2);
+}
+
+Point Camera::getOrigin() {
+	if (!trackObj || !tracking) {
+		return origin;
+	}
+	pair<int, int> cameraRes = Window::calculateResolution(*resolution);
+	return trackObj->getPosition() 
+		- (Point(cameraRes.first / 2, cameraRes.second / 2)
+		- getPosition()
+		- Point(trackObj->getSize().width/2, trackObj->getSize().height/2));
 }
 
 void Camera::setTrackObject(shared_ptr<GameObject> object)

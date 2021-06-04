@@ -32,6 +32,10 @@ pair<int, int> Window::calculateResolution(Resolution res) {
 	return make_pair(width, height);
 }
 
+pair<int, int> Window::calculateResolution(Resolution* res) {
+	return calculateResolution(*res);
+}
+
 Window::~Window()
 {
 	SDL_DestroyWindow(window);
@@ -58,6 +62,7 @@ Window::Window(string title, int width, int height, Resolution res) {
 	else {
 		window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
         renderer = shared_ptr<Renderer>(new Renderer(window));
+		renderer->res = &resolution;
 		if (window == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		}

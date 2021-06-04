@@ -1,4 +1,5 @@
 #include "Line.h"
+#pragma warning( disable : 4244 ) 
 
 Line::Line(SDL_Color color, Point positionA, Point positionB)
 {
@@ -6,6 +7,7 @@ Line::Line(SDL_Color color, Point positionA, Point positionB)
     position = surface.second;
 	shared_ptr<Sprite> s = shared_ptr<Sprite>(new Sprite({ surface.first }));
 	setSprite(s);
+    isUIElement = true;
 }
 
 pair<SDL_Surface*, Point> Line::drawLine(Point positionA, Point positionB, SDL_Color color) {
