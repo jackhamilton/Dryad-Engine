@@ -32,6 +32,7 @@ public:
 
 class PolarVector {
 public:
+	//theta stored as radians
 	double r, theta;
 	//degrees
 	PolarVector(double x1, double y1, double x2, double y2) {
@@ -40,8 +41,8 @@ public:
 	}
 	PolarVector(double r, double theta) {
 		double rad = (((double)theta) * PI) / 180.0;
-		PolarVector::r = rad;
-		PolarVector::theta = theta;
+		PolarVector::r = r;
+		PolarVector::theta = rad;
 	};
 	PolarVector() : PolarVector(0.0, 0.0) {};
 
@@ -53,12 +54,22 @@ public:
 		PolarVector::theta = (theta * PI) / 180.0;
 	}
 
+	void setThetaRadians(double theta) {
+		PolarVector::theta = theta;
+	}
+
+	double getThetaDegrees() {
+		return theta * 180 / PI;
+	}
+
 	Point getCartesian() {
 		return Point(r * cos(theta), r * sin(theta));
 	}
 
 	friend PolarVector operator+(const PolarVector& a, const PolarVector& b);
 	friend PolarVector operator-(const PolarVector& a, const PolarVector& b);
+	friend PolarVector operator+(const PolarVector& a, const double b);
+	friend PolarVector operator-(const PolarVector& a, const double b);
 
 	PolarVector& operator+=(const double b);
 	PolarVector& operator-=(const double b);

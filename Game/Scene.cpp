@@ -160,14 +160,9 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 	if (lightingMasks.size() != 0) {
 		//Raytracing setup
 		Point origin = l.p;
-		PolarVector vec = PolarVector();
-		vec.r = 10000;
-		vec.theta = 0.0;
-		double vecCTheta = 0.0;
 		//nearest object data
 		//given a point, find the line it's attached to
 		vector<LineData> collidableLines;
-		vector<PolarVector> testVectorsTmp;
 		vector<PolarVector> testVectors;
 		set<Point> ptSet;
 		for (Polygon p : lightingMasks) {
@@ -180,18 +175,27 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 				ptSet.insert(p2);
 			}
 		}
-		sort(testVectorsTmp.begin(), testVectorsTmp.end(), [](const PolarVector& a, const PolarVector& b) -> bool
-			{
-				return a.theta > b.theta;
-			});
+		ptSet.insert(Point(renderZone.x, renderZone.y));
+		ptSet.insert(Point(renderZone.x + renderZone.width, renderZone.y));
+		ptSet.insert(Point(renderZone.x + renderZone.width, renderZone.y + renderZone.height));
+		ptSet.insert(Point(renderZone.x, renderZone.y + renderZone.height));
 		for (Point pt : ptSet) {
 			PolarVector v1 = PolarVector(origin.x, origin.y, pt.x, pt.y);
-			PolarVector v0 = PolarVector(v1.r, v1.theta - .01);
-			PolarVector v2 = PolarVector(v1.r, v1.theta + .01);
+			v1.r += 10000;
+			PolarVector v0 = PolarVector(v1.r, v1.getThetaDegrees() - 0.1);
+			PolarVector v2 = PolarVector(v1.r, v1.getThetaDegrees() + 0.1);
+			PolarVector v3 = PolarVector(v1.r, v1.getThetaDegrees() - 1.5);
+			PolarVector v4 = PolarVector(v1.r, v1.getThetaDegrees() + 1.5);
+			testVectors.push_back(v3);
 			testVectors.push_back(v0);
 			testVectors.push_back(v1);
 			testVectors.push_back(v2);
+			testVectors.push_back(v4);
 		}
+		sort(testVectors.begin(), testVectors.end(), [](const PolarVector& a, const PolarVector& b) -> bool
+			{
+				return a.theta < b.theta;
+			});
 
 		//view bounding rect
 		collidableLines.push_back({ (double)renderZone.x, (double)renderZone.y, (double)renderZone.x + (double)renderZone.width, (double)renderZone.y });
@@ -203,9 +207,9 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 		Point prevTestedPt;
 		Point firstTriangleVertex;
 		bool testingBegun = false, firstJump = true;
-		do {
+		for(PolarVector v: testVectors) {
 			shared_ptr<Point> result = make_shared<Point>();
-			bool collided = raytrace(result, &origin, &vec, &collidableLines);
+			bool collided = raytrace(result, &origin, &v, &collidableLines);
 			if (collided) {
 				if (testingBegun) {
 					if (!onSameLine(&prevTestedPt, result, &collidableLines)) {
@@ -282,9 +286,7 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 					testingBegun = true;
 				}
 			}
-			vecCTheta += precision;
-			vec.setTheta(vecCTheta);
-		} while (vecCTheta <= 360);
+		}
 		if (!firstJump) {
 			Polygon poly;
 			poly.shape.push_back(origin);

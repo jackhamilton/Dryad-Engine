@@ -122,6 +122,16 @@ PolarVector operator-(const PolarVector& a, const PolarVector& b)
 	return PolarVector(a.r - b.r, a.theta - b.theta);
 }
 
+PolarVector operator+(const PolarVector& a, const double b)
+{
+	return PolarVector(a.r + b, a.theta);
+}
+
+PolarVector operator-(const PolarVector& a, const double b)
+{
+	return PolarVector(a.r - b, a.theta);
+}
+
 PolarVector& PolarVector::operator+=(const double b)
 {
 	r += b;
