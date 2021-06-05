@@ -34,6 +34,10 @@ class PolarVector {
 public:
 	double r, theta;
 	//degrees
+	PolarVector(double x1, double y1, double x2, double y2) {
+		r = abs(sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)));
+		theta = atan2(y2 - y1, x2 - x1);
+	}
 	PolarVector(double r, double theta) {
 		double rad = (((double)theta) * PI) / 180.0;
 		PolarVector::r = rad;

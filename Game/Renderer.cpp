@@ -1,8 +1,6 @@
 #include "Renderer.h"
 #include <utility>
 
-using namespace std;
-
 Renderer::Renderer(SDL_Window* window)
 {
 	renderer = SDL_CreateRenderer(window, -1, 0);
@@ -47,6 +45,33 @@ void Renderer::renderBackground()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
+}
+
+void Renderer::computeLighting(double globalIllumination, pair<vector<Light>, vector<vector<Polygon>>> masks)
+{
+    SDL_Surface* surface;
+    pair<int, int> dim = Window::calculateResolution(res);
+    int width = dim.first, height = dim.second;
+    surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width, height, 32, SDL_PIXELFORMAT_ABGR32);
+    SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND);
+    SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 0, 0, 0, ((1 - globalIllumination) * 255.0)));
+    //Perform blitting with light surfaces
+    vector<Light> lights = masks.first;
+    vector<vector<Polygon>> lightMasks = masks.second;
+    for (int x = 0; x < lights.size(); x++) {
+        Light light = lights.at(x);
+        vector<Polygon> maskPolys = lightMasks.at(x);
+        for (Polygon poly : maskPolys) {
+            SDL_Color color = { 0, 0, 0, 0 };
+            drawFilledTriangle(surface, poly, color);
+        }
+    }
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+    SDL_RenderCopy(renderer, tex, NULL, NULL);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(tex);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
 Renderer::~Renderer()
@@ -159,10 +184,10 @@ bool Renderer::DrawFilledPolygon(Polygon poly, const SDL_Color color) {
     return true;            // return success
 }
 
-void Renderer::drawFilledTriangle(Polygon poly, const SDL_Color color) {
+void Renderer::drawFilledTriangle(SDL_Surface* surf, Polygon poly, const SDL_Color color) {
     //if 3 changed to variable could do other things
-
     pair<int, int> dim = Window::calculateResolution(res);
+    int width = dim.first, height = dim.second;
     int polyX[3], polyY[3];
     for (int x = 0; x < 3; x++) {
         polyX[x] = poly.shape.at(x).x;
@@ -170,10 +195,7 @@ void Renderer::drawFilledTriangle(Polygon poly, const SDL_Color color) {
     }
     int x0 = polyX[0], x1 = polyX[1], x2 = polyX[2];
     int y0 = polyY[0], y1 = polyY[1], y2 = polyY[2];
-    int width = dim.first, height = dim.second;
-    SDL_Surface* surface;
-    surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width, height, 32, SDL_PIXELFORMAT_ABGR32);
-    SDL_LockSurface(surface);
+    SDL_LockSurface(surf);
     // sort the points vertically
     if (y1 > y2)
     {
@@ -202,10 +224,10 @@ void Renderer::drawFilledTriangle(Polygon poly, const SDL_Color color) {
         {
             for (int x = (xf > 0 ? int(xf) : 0);
                 x <= (xt < width ? xt : width - 1); x++)
-                set_pixel(surface, x, y, SDL_MapRGB(surface->format, color.r, color.g, color.b));
+                set_pixel(surf, x, y, SDL_MapRGBA(surf->format, color.r, color.g, color.b, color.a));
             for (int x = (xf < width ? int(xf) : width - 1);
                 x >= (xt > 0 ? xt : 0); x--)
-                set_pixel(surface, x, y, SDL_MapRGB(surface->format, color.r, color.g, color.b));
+                set_pixel(surf, x, y, SDL_MapRGBA(surf->format, color.r, color.g, color.b, color.a));
         }
         xf += dx_far;
         if (y < y1)
@@ -213,7 +235,15 @@ void Renderer::drawFilledTriangle(Polygon poly, const SDL_Color color) {
         else
             xt += dx_low;
     }
-    SDL_UnlockSurface(surface);
+    SDL_UnlockSurface(surf);
+}
+
+void Renderer::drawFilledTriangle(Polygon poly, const SDL_Color color) {
+    pair<int, int> dim = Window::calculateResolution(res);
+    int width = dim.first, height = dim.second;
+    SDL_Surface* surface;
+    surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width, height, 32, SDL_PIXELFORMAT_ABGR32);
+    drawFilledTriangle(surface, poly, color);
     SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_RenderCopy(renderer, tex, NULL, NULL);
     SDL_FreeSurface(surface);
@@ -222,7 +252,9 @@ void Renderer::drawFilledTriangle(Polygon poly, const SDL_Color color) {
 
 void Renderer::set_pixel(SDL_Surface* surface, int x, int y, Uint32 color)
 {
-    Uint8* pixel = (Uint8*)surface->pixels;
-    pixel += (y * surface->pitch) + (x * sizeof(Uint32));
-    *((Uint32*)pixel) = color;
+    Uint8* channel = (Uint8*)surface->pixels;
+    channel += (y * surface->pitch) + (x * sizeof(Uint32));
+    Uint8 r, g, b, a;
+    SDL_GetRGBA(*((Uint32*)channel), surface->format, &r, &g, &b, &a);
+    *((Uint32*)channel) = color;
 }

@@ -41,6 +41,7 @@ public:
 	string name;
 	clock_t localTime;
 	clock_t lastTickTime;
+	double globalIllumination = 1.0;
 private:
 	//deactivates unique gameobjects of the same type as the sender (text field uniqueness, etc)
 	void deactivateUniqueElements(GameObject* sender);

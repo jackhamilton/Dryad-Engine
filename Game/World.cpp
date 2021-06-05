@@ -135,15 +135,17 @@ void World::render(int frame, int fps)
 			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox, cameraPositionModifier);
 			for (Polygon p : masks) {
 				if (p.shape.size() == 3) {
-					//p.shape.at(0) -= cameraPositionModifier;
-					//p.shape.at(1) -= cameraPositionModifier;
-					//p.shape.at(2) -= cameraPositionModifier;
-					renderer->drawFilledTriangle(p, { 255, 0, 0 });
+					//renderer->drawFilledTriangle(p, { 255, 0, 0 });
 				}
 				else {
 					printf("Error generating lighting polygons");
 				}
 			}
+			vector<Light> sceneLights;
+			vector<vector<Polygon>> correspondingMasks;
+			sceneLights.push_back(l);
+			correspondingMasks.push_back(masks);
+			renderer->computeLighting(currentScene->globalIllumination, make_pair(sceneLights, correspondingMasks));
 		}
 		else {
 			Light l;
@@ -157,12 +159,17 @@ void World::render(int frame, int fps)
 			vector<Polygon> masks = currentScene->generateSceneLightingMasks(l, renderBox, cameraPositionModifier);
 			for (Polygon p : masks) {
 				if (p.shape.size() == 3) {
-					renderer->drawFilledTriangle(p, { 255, 0, 0 });
+					//renderer->drawFilledTriangle(p, { 255, 0, 0 });
 				}
 				else {
 					printf("Error generating lighting polygons");
 				}
 			}
+			vector<Light> sceneLights;
+			vector<vector<Polygon>> correspondingMasks;
+			sceneLights.push_back(l);
+			correspondingMasks.push_back(masks);
+			renderer->computeLighting(currentScene->globalIllumination, make_pair(sceneLights, correspondingMasks));
 		}
 		//And finally for the debug layer
 		for (shared_ptr<GameObject> obj : debugObjects) {

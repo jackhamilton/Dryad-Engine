@@ -5,6 +5,7 @@
 #include "TextField.h"
 #include "Button.h"
 #include "Hitbox.h"
+#include <set>
 
 Scene::Scene()
 {
@@ -166,12 +167,32 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 		//nearest object data
 		//given a point, find the line it's attached to
 		vector<LineData> collidableLines;
+		vector<PolarVector> testVectorsTmp;
+		vector<PolarVector> testVectors;
+		set<Point> ptSet;
 		for (Polygon p : lightingMasks) {
 			vector<LineData> tLines = p.getSidesAsLineData();
 			for (LineData tLine : tLines) {
 				collidableLines.push_back(tLine);
+				Point p1 = Point(tLine.x1, tLine.y1);
+				Point p2 = Point(tLine.x2, tLine.y2);
+				ptSet.insert(p1);
+				ptSet.insert(p2);
 			}
 		}
+		sort(testVectorsTmp.begin(), testVectorsTmp.end(), [](const PolarVector& a, const PolarVector& b) -> bool
+			{
+				return a.theta > b.theta;
+			});
+		for (Point pt : ptSet) {
+			PolarVector v1 = PolarVector(origin.x, origin.y, pt.x, pt.y);
+			PolarVector v0 = PolarVector(v1.r, v1.theta - .01);
+			PolarVector v2 = PolarVector(v1.r, v1.theta + .01);
+			testVectors.push_back(v0);
+			testVectors.push_back(v1);
+			testVectors.push_back(v2);
+		}
+
 		//view bounding rect
 		collidableLines.push_back({ (double)renderZone.x, (double)renderZone.y, (double)renderZone.x + (double)renderZone.width, (double)renderZone.y });
 		collidableLines.push_back({ (double)renderZone.x + (double)renderZone.width, (double)renderZone.y, (double)renderZone.x + (double)renderZone.width, (double)renderZone.y + (double)renderZone.height });

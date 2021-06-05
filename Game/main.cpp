@@ -75,6 +75,7 @@ int main(int argc, char* args[]) {
 	shared_ptr<AssetLibrary> libPtr = make_shared<AssetLibrary>(lib);
 	gameWorld->setDisplayFPS(true, libPtr);
 	gameWorld->setDisplayObjectCount(true, libPtr);
+	gameScene->globalIllumination = 0.2;
 	//--------END SETUP----------
 
 	//Metadata
@@ -83,6 +84,12 @@ int main(int argc, char* args[]) {
 	Text engineVersionLabel = Text(engineVersionText, gameWorld->getDebugFont(), 18, { 255, 255, 255 }, Point(10, 870), libPtr);
 	gameWorld->addDebugObject(make_shared<Text>(engineVersionLabel));
 
+	//bg
+	shared_ptr<Sprite> bgSpr = make_shared<Sprite>(Sprite({ lib.getAsset("floor.png") }));
+	shared_ptr<GameObject> bg = make_shared<GameObject>(GameObject(Point(0, 0), bgSpr));
+	bg->blocksLighting = false;
+	gameScene->addObject(bg);
+
 	//Spritesheet
 	vector<string> images = { lib.getAsset("zelda.png") };
     vector<int> heights = { 130, 130, 130, 130, 130, 130, 130, 130 };
@@ -90,17 +97,24 @@ int main(int argc, char* args[]) {
     vector<int> framecounts = { 3, 3, 1, 3, 10, 10, 10, 10 };
 	linkSpr = make_shared<Spritesheet>(Spritesheet(images, framecounts, looping, heights, 120, 10));
 	linkSpr->setCurrentAnimation(0);
-	link = make_shared<GameObject>(GameObject(Point(50, 50), linkSpr));
+	link = make_shared<GameObject>(GameObject(Point(100, 100), linkSpr));
 	link->enableHitbox();
+	link->blocksLighting = false;
 	gameScene->addObject(link);
 
 	//Wall
 	shared_ptr<Sprite> wallSpr = make_shared<Sprite>(Sprite({ lib.getAsset("wall.png") }));
 	shared_ptr<GameObject> wall = make_shared<GameObject>(GameObject(Point(400, 200), wallSpr));
-	wall->queueEvents({ static_pointer_cast<GameObjectEvent>(make_shared<DelayEvent>(DelayEvent(10000))), 
-		make_shared<GameObjectEvent>(DestroyEvent()) });
+	//wall->queueEvents({ static_pointer_cast<GameObjectEvent>(make_shared<DelayEvent>(DelayEvent(10000))), 
+	//	make_shared<GameObjectEvent>(DestroyEvent()) });
 	wall->enableHitbox();
 	gameScene->addObject(wall);
+	shared_ptr<GameObject> wall2 = make_shared<GameObject>(GameObject(Point(500, 600), wallSpr));
+	wall2->enableHitbox();
+	gameScene->addObject(wall2);
+	shared_ptr<GameObject> wall3 = make_shared<GameObject>(GameObject(Point(1200, 500), wallSpr));
+	wall3->enableHitbox();
+	gameScene->addObject(wall3);
 
 	//Buttons
 	shared_ptr<Button> buttonTest = make_shared<Button>(Button(&startGame, "Start", "Bebas", 24, { 255, 255, 255 }, libPtr, { 30, 30, 30 }, Point(700, 400), { 200, 100 }));
