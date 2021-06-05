@@ -22,11 +22,13 @@ public:
 	void computeLighting(double globalIllumination, pair<vector<Light>, vector<vector<Polygon>>> masks);
 private:
 	bool DrawFilledPolygon(Polygon poly, const SDL_Color color);
+	void renderLine(LineData a, const SDL_Color color);
 	void drawFilledTriangle(SDL_Surface* surf, Polygon poly, const SDL_Color color);
 	void drawFilledTriangle(Polygon poly, const SDL_Color color);
 	void set_pixel(SDL_Surface* surface, int x, int y, Uint32 color);
 	Resolution* res;
 	SDL_Renderer* renderer;
 	friend class World;
+	friend class Scene;
 	friend class Window;
 };

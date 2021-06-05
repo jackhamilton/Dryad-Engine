@@ -9,6 +9,7 @@ public:
 
 	friend Point operator+(const Point& a, const Point& b);
 	friend Point operator-(const Point& a, const Point& b);
+	friend Point operator*(const Point& a, double b);
 	//Uses weird implementation for efficiency, purely for set, map, and list sorting
 	friend bool operator<(const Point& a, const Point& b);
 	friend bool operator!=(const Point& a, const Point& b);
@@ -16,7 +17,6 @@ public:
 
 	Point& operator+=(const Point& b);
 	Point& operator-=(const Point& b);
-
 
 	double distance(Point p);
 };

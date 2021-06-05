@@ -184,6 +184,11 @@ bool Renderer::DrawFilledPolygon(Polygon poly, const SDL_Color color) {
     return true;            // return success
 }
 
+void Renderer::renderLine(LineData a, const SDL_Color color) {
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderDrawLine(renderer, a.x1, a.y1, a.x2, a.y2);
+}
+
 void Renderer::drawFilledTriangle(SDL_Surface* surf, Polygon poly, const SDL_Color color) {
     //if 3 changed to variable could do other things
     pair<int, int> dim = Window::calculateResolution(res);

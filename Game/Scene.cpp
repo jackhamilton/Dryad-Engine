@@ -5,7 +5,6 @@
 #include "TextField.h"
 #include "Button.h"
 #include "Hitbox.h"
-#include <set>
 
 Scene::Scene()
 {
@@ -164,39 +163,39 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 		//given a point, find the line it's attached to
 		vector<LineData> collidableLines;
 		vector<PolarVector> testVectors;
-		set<Point> ptSet;
+		vector<Point> ptSet;
 		for (Polygon p : lightingMasks) {
+			for (Point pt : p.shape) {
+				ptSet.push_back(pt);
+			}
 			vector<LineData> tLines = p.getSidesAsLineData();
 			for (LineData tLine : tLines) {
 				collidableLines.push_back(tLine);
-				Point p1 = Point(tLine.x1, tLine.y1);
-				Point p2 = Point(tLine.x2, tLine.y2);
-				ptSet.insert(p1);
-				ptSet.insert(p2);
 			}
 		}
-		ptSet.insert(Point(renderZone.x, renderZone.y));
-		ptSet.insert(Point(renderZone.x + renderZone.width, renderZone.y));
-		ptSet.insert(Point(renderZone.x + renderZone.width, renderZone.y + renderZone.height));
-		ptSet.insert(Point(renderZone.x, renderZone.y + renderZone.height));
+		ptSet.push_back(Point(renderZone.x, renderZone.y));
+		ptSet.push_back(Point(renderZone.x + renderZone.width, renderZone.y));
+		ptSet.push_back(Point(renderZone.x + renderZone.width, renderZone.y + renderZone.height));
+		ptSet.push_back(Point(renderZone.x, renderZone.y + renderZone.height));
 		for (Point pt : ptSet) {
 			PolarVector v1 = PolarVector(origin.x, origin.y, pt.x, pt.y);
 			v1.r += 10000;
-			PolarVector v0 = PolarVector(v1.r, v1.getThetaDegrees() - 0.1);
-			PolarVector v2 = PolarVector(v1.r, v1.getThetaDegrees() + 0.1);
-			PolarVector v3 = PolarVector(v1.r, v1.getThetaDegrees() - 1.5);
-			PolarVector v4 = PolarVector(v1.r, v1.getThetaDegrees() + 1.5);
-			testVectors.push_back(v3);
+			PolarVector v0 = PolarVector(v1.r, v1.getThetaDegrees() - 0.3);
+			PolarVector v2 = PolarVector(v1.r, v1.getThetaDegrees() + 0.3);
 			testVectors.push_back(v0);
 			testVectors.push_back(v1);
 			testVectors.push_back(v2);
-			testVectors.push_back(v4);
 		}
 		sort(testVectors.begin(), testVectors.end(), [](const PolarVector& a, const PolarVector& b) -> bool
 			{
 				return a.theta < b.theta;
 			});
-
+		if (renderer) {
+			for (PolarVector p : testVectors) {
+				Point cartesianMod = p.getCartesian();
+				renderer->renderLine({ origin.x, origin.y, origin.x + cartesianMod.x, origin.y + cartesianMod.y }, { 255, 0, 255, 0 });
+			}
+		}
 		//view bounding rect
 		collidableLines.push_back({ (double)renderZone.x, (double)renderZone.y, (double)renderZone.x + (double)renderZone.width, (double)renderZone.y });
 		collidableLines.push_back({ (double)renderZone.x + (double)renderZone.width, (double)renderZone.y, (double)renderZone.x + (double)renderZone.width, (double)renderZone.y + (double)renderZone.height });
@@ -299,15 +298,39 @@ vector<Polygon> Scene::generateSceneLightingMasks(Light l, Rectangle renderZone,
 }
 
 bool Scene::raytrace(shared_ptr<Point> result, Point* origin, PolarVector* projection, vector<LineData>* testArray) {
+	int algorithm = 0;
+	
 	Point p = *origin + projection->getCartesian();
 	int minDist = 10000;
 	for (LineData l : *testArray) {
 		shared_ptr<Point> fullCollResults = make_shared<Point>();
-		if (Hitbox::lineLine(origin->x, origin->y, p.x, p.y, l.x1, l.y1, l.x2, l.y2, fullCollResults)) {
-			int dist = origin->distance(*fullCollResults);
-			if (dist < minDist) {
-				minDist = dist;
-				*result = *fullCollResults;
+		if (algorithm == 0) {
+			if (Hitbox::lineLine(origin->x, origin->y, p.x, p.y, l.x1, l.y1, l.x2, l.y2, fullCollResults)) {
+				int dist = origin->distance(*fullCollResults);
+				if (dist < minDist) {
+					minDist = dist;
+					*result = *fullCollResults;
+				}
+			}
+		}
+		else if (algorithm == 1) {
+			Point tResult;
+			if (Hitbox::crossProductLineLine(*origin, p, Point(l.x1, l.y1), Point(l.x2, l.y2), &tResult)) {
+				int dist = origin->distance(*result);
+				if (dist < minDist) {
+					minDist = dist;
+					*result = tResult;
+				}
+			}
+		}
+		else {
+			Point tResult;
+			if (Hitbox::LeMotheLineLine(origin->x, origin->y, p.x, p.y, l.x1, l.y1, l.x2, l.y2, &tResult.x, &tResult.y)) {
+				int dist = origin->distance(*result);
+				if (dist < minDist) {
+					minDist = dist;
+					*result = tResult;
+				}
 			}
 		}
 	}
