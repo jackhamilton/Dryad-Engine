@@ -1,2 +1,0 @@
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\countlines.ps1
